@@ -1,17 +1,31 @@
 import Foundation
 
 /// An HTTP request sent by a provider.
+/// How an `HTTPClient` handles redirects. Mirrors fetch's `redirect` option.
+public enum HTTPRedirectMode: String, Sendable, Hashable {
+  /// Follow redirects automatically.
+  case follow
+  /// Return the redirect response (with its `location` header) unfollowed.
+  case manual
+  /// Fail when the server redirects.
+  case error
+}
+
 public struct HTTPRequest: Sendable, Equatable {
   public var method: String
   public var url: URL
   public var headers: [String: String]
   public var body: Data?
+  public var redirect: HTTPRedirectMode
 
-  public init(method: String, url: URL, headers: [String: String] = [:], body: Data? = nil) {
+  public init(
+    method: String, url: URL, headers: [String: String] = [:], body: Data? = nil, redirect: HTTPRedirectMode = .follow
+  ) {
     self.method = method
     self.url = url
     self.headers = headers
     self.body = body
+    self.redirect = redirect
   }
 
   /// The body decoded as JSON, if it is JSON.
