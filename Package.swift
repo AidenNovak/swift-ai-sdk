@@ -57,6 +57,11 @@ let package = Package(
       swiftSettings: swiftSettings
     ),
     .testTarget(
+      name: "AISDKLiveTests",
+      dependencies: ["AISDK", "AISDKDeepSeek", "AISDKAnthropic"],
+      swiftSettings: swiftSettings
+    ),
+    .testTarget(
       name: "AISDKDeepSeekTests",
       dependencies: ["AISDKDeepSeek", "AISDK", "AISDKTestUtils"],
       resources: [.copy("Fixtures")],

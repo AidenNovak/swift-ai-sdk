@@ -100,64 +100,12 @@ public struct DeepSeekChatLanguageModel: LanguageModelV4 {
     let preparedTools = try prepareDeepSeekTools(
       tools: options.tools, toolChoice: options.toolChoice, supportsStrictToolCalls: config.supportsStrictToolCalls)
 
-    let thinkingType = deepseekOptions.thinking?.type
-    if thinkingType == "adaptive" {
-      warnings.append(
-        .compatibility(
-          feature: "thinking.type",
-          details: "thinking.type \"adaptive\" is not a canonical DeepSeek value. mapped to \"enabled\"."))
-    }
-
-    let thinking: String? =
-      if !config.supportsThinking {
-        nil
-      } else if let thinkingType {
-        thinkingType == "adaptive" ? "enabled" : thinkingType
-      } else if isCustomReasoning(options.reasoning) {
-        options.reasoning == LanguageModelV4ReasoningEffort.none ? "disabled" : "enabled"
-      } else {
-        nil
-      }
-
-    let isThinkingEnabled =
-      config.supportsThinking && thinking != "disabled"
-      && (thinking != nil || modelId == "deepseek-reasoner" || isDeepSeekV4Model(modelId))
-
-    if isThinkingEnabled && options.temperature != nil {
-      warnings.append(
-        .unsupported(
-          feature: "temperature",
-          details:
-            "temperature has no effect when DeepSeek thinking is enabled. Set providerOptions.deepseek.thinking.type to 'disabled' to use temperature."
-        ))
-    }
-    if isThinkingEnabled && options.topP != nil {
-      warnings.append(
-        .unsupported(
-          feature: "topP",
-          details:
-            "topP has no effect when DeepSeek thinking is enabled. Set providerOptions.deepseek.thinking.type to 'disabled' to use topP."
-        ))
-    }
-
-    let reasoningEffort: String?
-    if let requested = deepseekOptions.reasoningEffort {
-      let mapped = requested == "medium" ? "high" : requested == "xhigh" ? "max" : requested
-      if mapped != requested {
-        warnings.append(
-          .compatibility(
-            feature: "reasoningEffort",
-            details: "reasoningEffort \"\(requested)\" is not a canonical DeepSeek value. mapped to \"\(mapped)\"."))
-      }
-      reasoningEffort = mapped
-    } else if let reasoning = options.reasoning, isCustomReasoning(reasoning), reasoning != .none {
-      reasoningEffort = mapReasoningToProviderEffort(
-        reasoning: reasoning,
-        effortMap: [.minimal: "low", .low: "low", .medium: "high", .high: "high", .xhigh: "max"],
-        warnings: &warnings)
-    } else {
-      reasoningEffort = nil
-    }
+    let thinking = resolveDeepSeekThinking(
+      modelId: modelId, supportsThinking: config.supportsThinking, thinkingType: deepseekOptions.thinking?.type,
+      reasoningEffort: deepseekOptions.reasoningEffort, reasoning: options.reasoning, warnings: &warnings)
+    let sampling = deepSeekSampling(
+      temperature: options.temperature, topP: options.topP, isThinkingEnabled: thinking.isEnabled,
+      warnings: &warnings)
 
     var responseFormat: JSONValue?
     if case .json(let schema, let name, let description)? = options.responseFormat {
@@ -182,8 +130,8 @@ public struct DeepSeekChatLanguageModel: LanguageModelV4 {
       "logprobs": wantsLogprobs ? true : nil,
       "top_logprobs": .optional(deepseekOptions.topLogprobs),
       "max_tokens": .optional(options.maxOutputTokens),
-      "temperature": isThinkingEnabled ? nil : .optional(options.temperature),
-      "top_p": isThinkingEnabled ? nil : .optional(options.topP),
+      "temperature": .optional(sampling.temperature),
+      "top_p": .optional(sampling.topP),
       "frequency_penalty": config.supportsPenaltySampling ? .optional(options.frequencyPenalty) : nil,
       "presence_penalty": config.supportsPenaltySampling ? .optional(options.presencePenalty) : nil,
       "response_format": responseFormat,
@@ -191,9 +139,9 @@ public struct DeepSeekChatLanguageModel: LanguageModelV4 {
       "messages": .array(converted.messages),
       "tools": preparedTools.tools,
       "tool_choice": preparedTools.toolChoice,
-      "thinking": thinking.map { ["type": .string($0)] },
+      "thinking": thinking.type.map { ["type": .string($0)] },
       "user_id": .optional(deepseekOptions.userId),
-      "reasoning_effort": thinking != "disabled" ? .optional(reasoningEffort) : nil,
+      "reasoning_effort": .optional(thinking.effort),
     ])
 
     return (args.objectValue ?? [:], warnings + preparedTools.warnings)
