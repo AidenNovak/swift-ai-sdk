@@ -5,12 +5,37 @@ private let defaultGenerateId: IdGenerator = {
 }()
 
 /// The result of `generateText`. Mirrors upstream `GenerateTextResult`.
-public struct GenerateTextResult: Sendable {
+///
+/// `OutputValue` is the type of `output`: `String` for plain text, or the
+/// parsed value of the `Output` passed to `generateText`.
+public struct GenerateTextResult<OutputValue: Sendable>: Sendable {
   /// All steps, in order.
   public let steps: [StepResult]
   /// Usage summed over all steps.
   public let totalUsage: LanguageModelUsage
   let initialResponseMessages: [ModelMessage]
+  let resolvedOutput: OutputValue?
+
+  init(
+    steps: [StepResult], totalUsage: LanguageModelUsage, initialResponseMessages: [ModelMessage],
+    output: OutputValue?
+  ) {
+    self.steps = steps
+    self.totalUsage = totalUsage
+    self.initialResponseMessages = initialResponseMessages
+    self.resolvedOutput = output
+  }
+
+  /// The parsed output of the final step.
+  ///
+  /// - Throws: `NoOutputGeneratedError` when the final step ended with tool
+  ///   calls or without text, so there was nothing to parse.
+  public var output: OutputValue {
+    get throws {
+      guard let resolvedOutput else { throw NoOutputGeneratedError() }
+      return resolvedOutput
+    }
+  }
 
   /// The last step.
   public var finalStep: StepResult { steps[steps.count - 1] }
@@ -62,7 +87,7 @@ public struct GenerateTextResult: Sendable {
 ///   - repairToolCall: Repairs tool calls that fail to parse.
 ///   - toolApproval: Decides which tool calls need approval.
 ///   - toolsContext: Context passed to tools, keyed by tool name.
-public func generateText(
+public func generateText<Value, Partial, Element>(
   model: LanguageModel,
   instructions: Instructions? = nil,
   prompt: Prompt,
@@ -71,6 +96,7 @@ public func generateText(
   toolChoice: ToolChoice? = nil,
   activeTools: [String]? = nil,
   toolOrder: [String]? = nil,
+  output: Output<Value, Partial, Element>,
   maxOutputTokens: Int? = nil,
   temperature: Double? = nil,
   topP: Double? = nil,
@@ -93,8 +119,8 @@ public func generateText(
   generateId: IdGenerator? = nil,
   currentDate: @escaping @Sendable () -> Date = Date.init,
   onStepFinish: (@Sendable (StepResult) async -> Void)? = nil,
-  onFinish: (@Sendable (GenerateTextResult) async -> Void)? = nil
-) async throws -> GenerateTextResult {
+  onFinish: (@Sendable (GenerateTextResult<Value>) async -> Void)? = nil
+) async throws -> GenerateTextResult<Value> {
   let generateId = generateId ?? defaultGenerateId
   let callSettings = try CallSettings(
     maxOutputTokens: maxOutputTokens, temperature: temperature, topP: topP, topK: topK,
@@ -184,6 +210,7 @@ public func generateText(
     callOptions.tools = prepareTools(stepTools, toolOrder: prepared?.toolOrder ?? toolOrder)
     callOptions.toolChoice = stepToolChoice
     callOptions.providerOptions = mergeProviderOptions(providerOptions, prepared?.providerOptions)
+    callOptions.responseFormat = output.name == "text" ? nil : output.responseFormat
     let stepCallOptions = callOptions
 
     let modelResult = try await retry { try await stepModel.doGenerate(stepCallOptions) }
@@ -320,10 +347,73 @@ public func generateText(
   }
 
   let totalUsage = steps.reduce(LanguageModelUsage()) { $0 + $1.usage }
+  let lastStep = steps[steps.count - 1]
+  let resolvedOutput = try shouldParseOutput(lastStep) ? output.parseCompleteOutput(lastStep.text, context: OutputContext(lastStep)) : nil
   let result = GenerateTextResult(
-    steps: steps, totalUsage: totalUsage, initialResponseMessages: initialResponseMessages)
+    steps: steps, totalUsage: totalUsage, initialResponseMessages: initialResponseMessages, output: resolvedOutput)
   await onFinish?(result)
   return result
+}
+
+/// Generates text and calls tools with a language model. Mirrors upstream
+/// `generateText` without an `output` setting; `result.output` is the text.
+public func generateText(
+  model: LanguageModel,
+  instructions: Instructions? = nil,
+  prompt: Prompt,
+  allowSystemInMessages: Bool = false,
+  tools: ToolSet? = nil,
+  toolChoice: ToolChoice? = nil,
+  activeTools: [String]? = nil,
+  toolOrder: [String]? = nil,
+  maxOutputTokens: Int? = nil,
+  temperature: Double? = nil,
+  topP: Double? = nil,
+  topK: Int? = nil,
+  presencePenalty: Double? = nil,
+  frequencyPenalty: Double? = nil,
+  stopSequences: [String]? = nil,
+  seed: Int? = nil,
+  reasoning: LanguageModelV4ReasoningEffort? = nil,
+  maxRetries: Int = 2,
+  headers: [String: String]? = nil,
+  providerOptions: ProviderOptions? = nil,
+  stopWhen: [StopCondition] = [.isStepCount(1)],
+  prepareStep: PrepareStepFunction? = nil,
+  repairToolCall: ToolCallRepairFunction? = nil,
+  toolApproval: ToolApprovalConfiguration? = nil,
+  toolsContext: [String: JSONValue]? = nil,
+  download: DownloadFunction? = nil,
+  include: IncludeOptions = IncludeOptions(),
+  generateId: IdGenerator? = nil,
+  currentDate: @escaping @Sendable () -> Date = Date.init,
+  onStepFinish: (@Sendable (StepResult) async -> Void)? = nil,
+  onFinish: (@Sendable (GenerateTextResult<String>) async -> Void)? = nil
+) async throws -> GenerateTextResult<String> {
+  try await generateText(
+    model: model, instructions: instructions, prompt: prompt, allowSystemInMessages: allowSystemInMessages,
+    tools: tools, toolChoice: toolChoice, activeTools: activeTools, toolOrder: toolOrder, output: .text(),
+    maxOutputTokens: maxOutputTokens, temperature: temperature, topP: topP, topK: topK,
+    presencePenalty: presencePenalty, frequencyPenalty: frequencyPenalty, stopSequences: stopSequences, seed: seed,
+    reasoning: reasoning, maxRetries: maxRetries, headers: headers, providerOptions: providerOptions,
+    stopWhen: stopWhen, prepareStep: prepareStep, repairToolCall: repairToolCall, toolApproval: toolApproval,
+    toolsContext: toolsContext, download: download, include: include, generateId: generateId,
+    currentDate: currentDate, onStepFinish: onStepFinish, onFinish: onFinish)
+}
+
+/// Output is parsed for stop responses and for non-empty responses that are
+/// not tool calls. Mirrors upstream `generateText`.
+func shouldParseOutput(_ step: StepResult) -> Bool {
+  step.finishReason == .stop || (step.finishReason != .toolCalls && !step.text.isEmpty)
+}
+
+extension OutputContext {
+  init(_ step: StepResult) {
+    var response = step.response
+    response.messages = []
+    response.body = nil
+    self.init(response: response, usage: step.usage, finishReason: step.finishReason)
+  }
 }
 
 /// Tools only run when the model finished normally. Mirrors upstream

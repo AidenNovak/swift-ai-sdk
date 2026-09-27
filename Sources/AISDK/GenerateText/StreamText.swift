@@ -13,7 +13,9 @@ private let defaultStreamGenerateId: IdGenerator = {
 ///
 /// Cancelling a task that iterates one of the streams cancels the generation,
 /// as does calling `cancel()`.
-public final class StreamTextResult: @unchecked Sendable {
+public final class StreamTextResult<OutputValue: Sendable, Partial: Sendable & Equatable, Element: Sendable>:
+  StreamTextRecorder, @unchecked Sendable
+{
   private let lock = NSLock()
   private var parts: [TextStreamPart] = []
   private var isFinished = false
@@ -22,9 +24,14 @@ public final class StreamTextResult: @unchecked Sendable {
   private var recordedSteps: [StepResult] = []
   private var recordedInitialResponseMessages: [ModelMessage] = []
   private var recordedError: (any Error)?
+  private var recordedOutput: OutputValue?
+  private var outputError: (any Error)?
   private var generationTask: Task<Void, Never>?
+  let outputSpecification: Output<OutputValue, Partial, Element>
 
-  init() {}
+  init(output: Output<OutputValue, Partial, Element>) {
+    self.outputSpecification = output
+  }
 
   // MARK: Streams
 
@@ -70,6 +77,77 @@ public final class StreamTextResult: @unchecked Sendable {
     }
     continuation.onTermination = { @Sendable _ in task.cancel() }
     return stream
+  }
+
+  /// Partial outputs parsed from the text of the current step, emitted
+  /// whenever they change. Mirrors upstream `partialOutputStream`.
+  public var partialOutputStream: AsyncThrowingStream<Partial, any Error> {
+    let parts = fullStream
+    let output = outputSpecification
+    let (stream, continuation) = AsyncThrowingStream<Partial, any Error>.makeStream()
+    let task = Task {
+      var text = ""
+      var last: Partial?
+      do {
+        for try await part in parts {
+          switch part {
+          case .startStep:
+            text = ""
+          case .textDelta(_, let delta, _):
+            text += delta
+            if let partial = output.parsePartialOutput(text), partial != last {
+              last = partial
+              continuation.yield(partial)
+            }
+          default:
+            break
+          }
+        }
+        continuation.finish()
+      } catch {
+        continuation.finish(throwing: error)
+      }
+    }
+    continuation.onTermination = { @Sendable _ in task.cancel() }
+    return stream
+  }
+
+  /// Array elements as soon as they are complete. Empty for non-array
+  /// outputs. Mirrors upstream `elementStream`.
+  public var elementStream: AsyncThrowingStream<Element, any Error> {
+    let partials = partialOutputStream
+    let elements = outputSpecification.elements
+    let (stream, continuation) = AsyncThrowingStream<Element, any Error>.makeStream()
+    let task = Task {
+      var published = 0
+      do {
+        for try await partial in partials {
+          guard let values = elements?(partial) else { continue }
+          while published < values.count {
+            continuation.yield(values[published])
+            published += 1
+          }
+        }
+        continuation.finish()
+      } catch {
+        continuation.finish(throwing: error)
+      }
+    }
+    continuation.onTermination = { @Sendable _ in task.cancel() }
+    return stream
+  }
+
+  /// The parsed output of the final step.
+  ///
+  /// - Throws: `NoOutputGeneratedError` when nothing was generated, or the
+  ///   parse error (e.g. `NoObjectGeneratedError`).
+  public var output: OutputValue {
+    get async throws {
+      _ = try await steps
+      let (output, error) = lock.withLock { (recordedOutput, outputError) }
+      if let output { return output }
+      throw error ?? NoOutputGeneratedError()
+    }
   }
 
   /// Cancels the generation. The stream ends with an `.abort` part.
@@ -158,6 +236,13 @@ public final class StreamTextResult: @unchecked Sendable {
     lock.withLock { recordedError = error }
   }
 
+  func recordOutput(_ output: OutputValue?, error: (any Error)?) {
+    lock.withLock {
+      recordedOutput = output
+      outputError = error
+    }
+  }
+
   func finish() {
     let (continuations, waiters) = lock.withLock {
       isFinished = true
@@ -187,6 +272,105 @@ public final class StreamTextResult: @unchecked Sendable {
 ///
 /// Takes the same options as `generateText`, plus stream-specific callbacks
 /// and transforms. Returns immediately; generation runs in the background.
+public func streamText<Value, Partial, Element>(
+  model: LanguageModel,
+  instructions: Instructions? = nil,
+  prompt: Prompt,
+  allowSystemInMessages: Bool = false,
+  tools: ToolSet? = nil,
+  toolChoice: ToolChoice? = nil,
+  activeTools: [String]? = nil,
+  toolOrder: [String]? = nil,
+  output: Output<Value, Partial, Element>,
+  maxOutputTokens: Int? = nil,
+  temperature: Double? = nil,
+  topP: Double? = nil,
+  topK: Int? = nil,
+  presencePenalty: Double? = nil,
+  frequencyPenalty: Double? = nil,
+  stopSequences: [String]? = nil,
+  seed: Int? = nil,
+  reasoning: LanguageModelV4ReasoningEffort? = nil,
+  maxRetries: Int = 2,
+  headers: [String: String]? = nil,
+  providerOptions: ProviderOptions? = nil,
+  stopWhen: [StopCondition] = [.isStepCount(1)],
+  prepareStep: PrepareStepFunction? = nil,
+  repairToolCall: ToolCallRepairFunction? = nil,
+  toolApproval: ToolApprovalConfiguration? = nil,
+  toolsContext: [String: JSONValue]? = nil,
+  download: DownloadFunction? = nil,
+  include: IncludeOptions = IncludeOptions(),
+  includeRawChunks: Bool = false,
+  transform: [StreamTextTransform] = [],
+  generateId: IdGenerator? = nil,
+  currentDate: @escaping @Sendable () -> Date = Date.init,
+  onChunk: (@Sendable (TextStreamPart) async -> Void)? = nil,
+  onError: (@Sendable (any Error) async -> Void)? = nil,
+  onStepFinish: (@Sendable (StepResult) async -> Void)? = nil,
+  onFinish: (@Sendable (GenerateTextResult<Value>) async -> Void)? = nil,
+  onAbort: (@Sendable ([StepResult]) async -> Void)? = nil
+) -> StreamTextResult<Value, Partial, Element> {
+  let result = StreamTextResult(output: output)
+  let (raw, rawContinuation) = AsyncThrowingStream<TextStreamPart, any Error>.makeStream()
+  let transformed = transform.reduce(raw) { stream, transform in transform(stream) }
+
+  let run = StreamTextRun(
+    model: model, instructions: instructions, prompt: prompt, allowSystemInMessages: allowSystemInMessages,
+    tools: tools, toolChoice: toolChoice, activeTools: activeTools, toolOrder: toolOrder,
+    settings: CallSettings(
+      maxOutputTokens: maxOutputTokens, temperature: temperature, topP: topP, topK: topK,
+      presencePenalty: presencePenalty, frequencyPenalty: frequencyPenalty, stopSequences: stopSequences, seed: seed,
+      reasoning: reasoning, maxRetries: maxRetries, headers: headers),
+    providerOptions: providerOptions, stopWhen: stopWhen, prepareStep: prepareStep, repairToolCall: repairToolCall,
+    toolApproval: toolApproval, toolsContext: toolsContext, download: download, include: include,
+    includeRawChunks: includeRawChunks, generateId: generateId ?? defaultStreamGenerateId, currentDate: currentDate,
+    onStepFinish: onStepFinish,
+    responseFormat: output.name == "text" ? nil : output.responseFormat,
+    onFinish: { steps, totalUsage, initialResponseMessages in
+      let lastStep = steps[steps.count - 1]
+      var parsed: Value?
+      var parseError: (any Error)?
+      if shouldParseOutput(lastStep) {
+        do {
+          parsed = try output.parseCompleteOutput(lastStep.text, context: OutputContext(lastStep))
+        } catch {
+          parseError = error
+        }
+      }
+      result.recordOutput(parsed, error: parseError)
+      await onFinish?(
+        GenerateTextResult(
+          steps: steps, totalUsage: totalUsage, initialResponseMessages: initialResponseMessages, output: parsed))
+    },
+    onAbort: onAbort,
+    emit: { rawContinuation.yield($0) }, result: result)
+
+  // The pump is not a child of the generation task, so cancelling generation
+  // still delivers the trailing `.abort` part to subscribers.
+  let pump = Task {
+    do {
+      for try await part in transformed {
+        if part.isChunk { await onChunk?(part) }
+        if case .error(let error) = part { await onError?(error) }
+        result.broadcast(part)
+      }
+    } catch {
+      result.broadcast(.error(error))
+    }
+  }
+  let task = Task {
+    await run.run()
+    rawContinuation.finish()
+    await pump.value
+    result.finish()
+  }
+  result.setTask(task)
+  return result
+}
+
+/// Streams text and tool calls from a language model. Mirrors upstream
+/// `streamText` without an `output` setting.
 public func streamText(
   model: LanguageModel,
   instructions: Instructions? = nil,
@@ -222,47 +406,19 @@ public func streamText(
   onChunk: (@Sendable (TextStreamPart) async -> Void)? = nil,
   onError: (@Sendable (any Error) async -> Void)? = nil,
   onStepFinish: (@Sendable (StepResult) async -> Void)? = nil,
-  onFinish: (@Sendable (GenerateTextResult) async -> Void)? = nil,
+  onFinish: (@Sendable (GenerateTextResult<String>) async -> Void)? = nil,
   onAbort: (@Sendable ([StepResult]) async -> Void)? = nil
-) -> StreamTextResult {
-  let result = StreamTextResult()
-  let (raw, rawContinuation) = AsyncThrowingStream<TextStreamPart, any Error>.makeStream()
-  let transformed = transform.reduce(raw) { stream, transform in transform(stream) }
-
-  let run = StreamTextRun(
+) -> StreamTextResult<String, String, NoElement> {
+  streamText(
     model: model, instructions: instructions, prompt: prompt, allowSystemInMessages: allowSystemInMessages,
-    tools: tools, toolChoice: toolChoice, activeTools: activeTools, toolOrder: toolOrder,
-    settings: CallSettings(
-      maxOutputTokens: maxOutputTokens, temperature: temperature, topP: topP, topK: topK,
-      presencePenalty: presencePenalty, frequencyPenalty: frequencyPenalty, stopSequences: stopSequences, seed: seed,
-      reasoning: reasoning, maxRetries: maxRetries, headers: headers),
-    providerOptions: providerOptions, stopWhen: stopWhen, prepareStep: prepareStep, repairToolCall: repairToolCall,
-    toolApproval: toolApproval, toolsContext: toolsContext, download: download, include: include,
-    includeRawChunks: includeRawChunks, generateId: generateId ?? defaultStreamGenerateId, currentDate: currentDate,
-    onStepFinish: onStepFinish, onFinish: onFinish, onAbort: onAbort,
-    emit: { rawContinuation.yield($0) }, result: result)
-
-  // The pump is not a child of the generation task, so cancelling generation
-  // still delivers the trailing `.abort` part to subscribers.
-  let pump = Task {
-    do {
-      for try await part in transformed {
-        if part.isChunk { await onChunk?(part) }
-        if case .error(let error) = part { await onError?(error) }
-        result.broadcast(part)
-      }
-    } catch {
-      result.broadcast(.error(error))
-    }
-  }
-  let task = Task {
-    await run.run()
-    rawContinuation.finish()
-    await pump.value
-    result.finish()
-  }
-  result.setTask(task)
-  return result
+    tools: tools, toolChoice: toolChoice, activeTools: activeTools, toolOrder: toolOrder, output: .text(),
+    maxOutputTokens: maxOutputTokens, temperature: temperature, topP: topP, topK: topK,
+    presencePenalty: presencePenalty, frequencyPenalty: frequencyPenalty, stopSequences: stopSequences, seed: seed,
+    reasoning: reasoning, maxRetries: maxRetries, headers: headers, providerOptions: providerOptions,
+    stopWhen: stopWhen, prepareStep: prepareStep, repairToolCall: repairToolCall, toolApproval: toolApproval,
+    toolsContext: toolsContext, download: download, include: include, includeRawChunks: includeRawChunks,
+    transform: transform, generateId: generateId, currentDate: currentDate, onChunk: onChunk, onError: onError,
+    onStepFinish: onStepFinish, onFinish: onFinish, onAbort: onAbort)
 }
 
 /// One `streamText` invocation.
@@ -288,10 +444,11 @@ private struct StreamTextRun: Sendable {
   let generateId: IdGenerator
   let currentDate: @Sendable () -> Date
   let onStepFinish: (@Sendable (StepResult) async -> Void)?
-  let onFinish: (@Sendable (GenerateTextResult) async -> Void)?
+  let responseFormat: LanguageModelV4ResponseFormat?
+  let onFinish: @Sendable ([StepResult], LanguageModelUsage, [ModelMessage]) async -> Void
   let onAbort: (@Sendable ([StepResult]) async -> Void)?
   let emit: @Sendable (TextStreamPart) -> Void
-  let result: StreamTextResult
+  let result: any StreamTextRecorder
 
   func run() async {
     emit(.start)
@@ -336,6 +493,7 @@ private struct StreamTextRun: Sendable {
         callOptions.toolChoice = (prepared?.toolChoice ?? toolChoice ?? .auto).languageModelToolChoice
         callOptions.providerOptions = mergeProviderOptions(providerOptions, prepared?.providerOptions)
         callOptions.includeRawChunks = includeRawChunks
+        callOptions.responseFormat = responseFormat
         let stepCallOptions = callOptions
 
         let modelStream = try await retry { try await stepModel.doStream(stepCallOptions) }
@@ -359,8 +517,7 @@ private struct StreamTextRun: Sendable {
       let totalUsage = steps.reduce(LanguageModelUsage()) { $0 + $1.usage }
       let lastStep = steps[steps.count - 1]
       emit(.finish(finishReason: lastStep.finishReason, rawFinishReason: lastStep.rawFinishReason, totalUsage: totalUsage))
-      await onFinish?(
-        GenerateTextResult(steps: steps, totalUsage: totalUsage, initialResponseMessages: initialResponseMessages))
+      await onFinish(steps, totalUsage, initialResponseMessages)
     } catch let error where isCancellationError(error) || Task.isCancelled {
       emit(.abort(reason: nil))
       await onAbort?(steps)
@@ -716,4 +873,11 @@ private struct ContentRecorder {
     }
     activeReasoning.removeValue(forKey: id)
   }
+}
+
+/// What a running `streamText` call records into its result.
+protocol StreamTextRecorder: AnyObject, Sendable {
+  func appendStep(_ step: StepResult)
+  func setInitialResponseMessages(_ messages: [ModelMessage])
+  func recordError(_ error: any Error)
 }
