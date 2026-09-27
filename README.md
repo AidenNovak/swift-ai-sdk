@@ -14,6 +14,8 @@ A native Swift port of the [Vercel AI SDK](https://github.com/vercel/ai), built 
 | Module | Upstream package | Purpose |
 | --- | --- | --- |
 | `AISDKProvider` | `@ai-sdk/provider` | The provider specification every model implements |
+| `AISDKProviderUtils` | `@ai-sdk/provider-utils` | HTTP transport, server-sent events, JSON parsing, schemas, retries |
+| `AISDKTestUtils` | `@ai-sdk/test-server` | Replaying HTTP client and stream helpers for tests |
 
 More modules land through pull requests; see [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
