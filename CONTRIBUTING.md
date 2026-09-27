@@ -33,3 +33,13 @@ These are enforced in review and, where possible, in CI:
 swift build
 swift test
 ```
+
+## Live tests
+
+`Tests/AISDKLiveTests` calls real APIs. They are skipped unless explicitly enabled, never run in CI, and cost a few cents per run:
+
+```sh
+AISDK_LIVE_TESTS=1 DEEPSEEK_API_KEY=sk-... swift test --filter AISDKLiveTests
+```
+
+Never commit API keys. Fixtures recorded from live APIs must not contain credentials or account data.

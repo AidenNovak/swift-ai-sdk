@@ -79,7 +79,6 @@ private func simpleResponse(model: String = "deepseek-chat", content: String = "
         ],
         "model": "deepseek-chat",
         "temperature": 0.5,
-        "top_p": 0.3,
       ])
     #expect(request.headers["authorization"] == "Bearer test-api-key")
     #expect(request.headers["x-request"] == "1")
@@ -106,7 +105,7 @@ private func simpleResponse(model: String = "deepseek-chat", content: String = "
     #expect(result.response?.metadata.timestamp == Date(timeIntervalSince1970: 1_764_656_316))
   }
 
-  @Test func omitsIneffectiveSamplingInV4ThinkingMode() async throws {
+  @Test func appliesThinkingModeSamplingRules() async throws {
     let client = MockHTTPClient([chatURL: simpleResponse()])
     let result = try await makeProvider(client).chat("deepseek-v4-flash").doGenerate(
       LanguageModelV4CallOptions(
@@ -116,13 +115,15 @@ private func simpleResponse(model: String = "deepseek-chat", content: String = "
       client.lastRequest?.bodyJSON == [
         "model": "deepseek-v4-flash",
         "messages": [["role": "user", "content": "Hello"]],
+        "top_p": 0.4,
       ])
     #expect(result.warnings.count == 4)
+    #expect(result.warnings.contains { if case .compatibility(feature: "topP", _) = $0 { true } else { false } })
     #expect(result.warnings.contains { if case .deprecated(setting: "frequencyPenalty", _) = $0 { true } else { false } })
     #expect(result.warnings.contains { if case .unsupported(feature: "temperature", _) = $0 { true } else { false } })
   }
 
-  @Test func preservesSamplingWhenV4ThinkingDisabled() async throws {
+  @Test func appliesNonThinkingSamplingRules() async throws {
     let client = MockHTTPClient([chatURL: simpleResponse()])
     _ = try await makeProvider(client).chat("deepseek-v4-flash").doGenerate(
       LanguageModelV4CallOptions(
@@ -130,7 +131,7 @@ private func simpleResponse(model: String = "deepseek-chat", content: String = "
         providerOptions: ["deepseek": ["thinking": ["type": "disabled"]]]))
     let body = try #require(client.lastRequest?.bodyJSON)
     #expect(body["temperature"] == 0.2)
-    #expect(body["top_p"] == 0.4)
+    #expect(body["top_p"] == nil)
     #expect(body["thinking"] == ["type": "disabled"])
   }
 

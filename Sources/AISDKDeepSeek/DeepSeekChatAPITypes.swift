@@ -109,7 +109,8 @@ public struct DeepSeekChatOptions: Codable, Sendable, Equatable {
   /// An end-user identifier, matching `^[a-zA-Z0-9_-]+$`.
   public var userId: String?
   public var thinking: Thinking?
-  /// `low`, `high` or `max`. `medium` and `xhigh` are mapped with a warning.
+  /// `low`, `high` or `max`, or `none` to disable thinking. `minimal`,
+  /// `medium`, `xhigh` and `ultra` are mapped with a warning.
   public var reasoningEffort: String?
   /// Whether JSON schema outputs are strict. Defaults to true.
   public var strictJsonSchema: Bool?
@@ -145,7 +146,8 @@ public struct DeepSeekChatOptions: Codable, Sendable, Equatable {
     if let type = thinking?.type, !["adaptive", "enabled", "disabled"].contains(type) {
       throw InvalidArgumentError(argument: "thinking.type", message: "invalid thinking type \(type)")
     }
-    if let reasoningEffort, !["low", "medium", "high", "xhigh", "max"].contains(reasoningEffort) {
+    if let reasoningEffort,
+      !["none", "minimal", "low", "medium", "high", "xhigh", "max", "ultra"].contains(reasoningEffort) {
       throw InvalidArgumentError(argument: "reasoningEffort", message: "invalid reasoningEffort \(reasoningEffort)")
     }
   }

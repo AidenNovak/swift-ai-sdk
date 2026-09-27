@@ -1,0 +1,48 @@
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":"","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":"   ","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" return","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" a","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" if","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" not","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" b","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" else","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" add","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":"(a","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" ^","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" b","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":",","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" (","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":"a","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" &","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" b","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":")","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" <<","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":" ","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":"1","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":")","index":0,"logprobs":null,"finish_reason":null}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":null}
+
+data: {"id":"76ab8fc2-b9df-49e7-bd0a-860e05c8fba2","choices":[{"text":"","index":0,"logprobs":null,"finish_reason":"stop"}],"created":1790481112,"model":"deepseek-flash","system_fingerprint":"aeb56401ca74e127821c4f9126dcb669","object":"text_completion","usage":{"prompt_tokens":19,"completion_tokens":22,"total_tokens":41,"prompt_tokens_details":{"cached_tokens":0},"prompt_cache_hit_tokens":0,"prompt_cache_miss_tokens":19}}
+
+data: [DONE]
+

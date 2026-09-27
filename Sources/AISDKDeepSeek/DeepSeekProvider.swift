@@ -52,29 +52,77 @@ public struct DeepSeekProvider: ProviderV4 {
     chat(modelId)
   }
 
-  /// Creates a chat model.
+  /// Creates a chat completions model (`POST /chat/completions`).
   public func chat(_ modelId: String) -> DeepSeekChatLanguageModel {
-    let settings = settings
-    let baseURL = baseURL
-    let isBeta = baseURL.hasSuffix("/beta")
-    return DeepSeekChatLanguageModel(
-      modelId: modelId,
-      config: DeepSeekChatConfig(
-        provider: "deepseek.chat",
-        headers: {
-          var headers = ["Authorization": "Bearer \(try loadDeepSeekAPIKey(settings.apiKey))"]
-          for (name, value) in settings.headers ?? [:] { headers[name] = value }
-          return withUserAgentSuffix(headers, "ai-sdk/deepseek/\(DEEPSEEK_PROVIDER_VERSION)")
-        },
-        url: { path in "\(baseURL)\(path)" },
-        httpClient: settings.httpClient,
-        supportsAssistantPrefixCompletion: isBeta,
-        supportsStrictToolCalls: isBeta,
-        generateId: settings.generateId ?? AISDKProviderUtils.generateId))
+    DeepSeekChatLanguageModel(modelId: modelId, config: config(provider: "deepseek.chat"))
+  }
+
+  /// Creates a FIM (fill-in-the-middle) completion model (`POST /beta/completions`).
+  public func completion(_ modelId: String) -> DeepSeekCompletionLanguageModel {
+    DeepSeekCompletionLanguageModel(modelId: modelId, config: config(provider: "deepseek.completion"))
+  }
+
+  /// Creates a Responses API model (`POST /responses`).
+  public func responses(_ modelId: String) -> DeepSeekResponsesLanguageModel {
+    DeepSeekResponsesLanguageModel(modelId: modelId, config: config(provider: "deepseek.responses"))
+  }
+
+  /// The Files API.
+  public func files() -> DeepSeekFiles {
+    DeepSeekFiles(baseURL: apiRootURL, headers: headers, httpClient: settings.httpClient)
+  }
+
+  /// Lists the models available to the API key (`GET /models`).
+  public func listModels() async throws -> [DeepSeekModelInfo] {
+    try await getFromApi(
+      url: "\(apiRootURL)/models", headers: try headers(),
+      failedResponseHandler: createJsonErrorResponseHandler(
+        errorType: DeepSeekErrorData.self, errorToMessage: { $0.error.message }),
+      successfulResponseHandler: createJsonResponseHandler(DeepSeekModelList.self),
+      httpClient: settings.httpClient
+    ).value.data
+  }
+
+  /// Returns the account balance (`GET /user/balance`).
+  public func balance() async throws -> DeepSeekBalance {
+    try await getFromApi(
+      url: "\(apiRootURL)/user/balance", headers: try headers(),
+      failedResponseHandler: createJsonErrorResponseHandler(
+        errorType: DeepSeekErrorData.self, errorToMessage: { $0.error.message }),
+      successfulResponseHandler: createJsonResponseHandler(DeepSeekBalance.self),
+      httpClient: settings.httpClient
+    ).value
   }
 
   public func languageModel(_ modelId: String) throws -> any LanguageModelV4 {
     chat(modelId)
+  }
+
+  /// The base URL without a `/beta` suffix, for non-beta endpoints.
+  private var apiRootURL: String {
+    baseURL.hasSuffix("/beta") ? String(baseURL.dropLast("/beta".count)) : baseURL
+  }
+
+  private var headers: @Sendable () throws -> [String: String] {
+    let settings = settings
+    return {
+      var headers = ["Authorization": "Bearer \(try loadDeepSeekAPIKey(settings.apiKey))"]
+      for (name, value) in settings.headers ?? [:] { headers[name] = value }
+      return withUserAgentSuffix(headers, "ai-sdk/deepseek/\(DEEPSEEK_PROVIDER_VERSION)")
+    }
+  }
+
+  private func config(provider: String) -> DeepSeekChatConfig {
+    let baseURL = baseURL
+    let isBeta = baseURL.hasSuffix("/beta")
+    return DeepSeekChatConfig(
+      provider: provider,
+      headers: headers,
+      url: { path in "\(baseURL)\(path)" },
+      httpClient: settings.httpClient,
+      supportsAssistantPrefixCompletion: isBeta,
+      supportsStrictToolCalls: isBeta,
+      generateId: settings.generateId ?? AISDKProviderUtils.generateId)
   }
 }
 
