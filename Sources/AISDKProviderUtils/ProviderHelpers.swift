@@ -83,6 +83,13 @@ public func createLanguageModelResponseMetadata(id: String?, model: String?, cre
     id: id, timestamp: created.map { Date(timeIntervalSince1970: $0) }, modelId: model)
 }
 
+extension LanguageModelV4ResponseMetadata {
+  /// True when no field carries a value; empty strings count as missing.
+  public var isEmpty: Bool {
+    (id ?? "").isEmpty && (modelId ?? "").isEmpty && timestamp == nil
+  }
+}
+
 /// Resolves a file part's full media type, detecting it from inline bytes if
 /// needed. Mirrors upstream `resolveFullMediaType`.
 public func resolveFullMediaType(_ part: LanguageModelV4FilePart) throws -> String {

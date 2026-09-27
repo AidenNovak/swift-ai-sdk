@@ -203,7 +203,7 @@ public struct OpenAICompatibleChatLanguageModel: LanguageModelV4 {
       providerMetadata: providerMetadata,
       request: LanguageModelV4RequestInfo(body: .object(body)),
       response: LanguageModelV4ResponseInfo(
-        metadata: createLanguageModelResponseMetadata(
+        metadata: getResponseMetadata(
           id: responseBody.id, model: responseBody.model, created: responseBody.created),
         headers: response.responseHeaders,
         body: response.rawValue),
@@ -325,8 +325,8 @@ private final class OpenAICompatibleStreamState {
     }
 
     if !metadataExtracted {
-      let metadata = createLanguageModelResponseMetadata(id: value.id, model: value.model, created: value.created)
-      if metadata.id != nil || metadata.modelId != nil || metadata.timestamp != nil {
+      let metadata = getResponseMetadata(id: value.id, model: value.model, created: value.created)
+      if !metadata.isEmpty {
         metadataExtracted = true
         emit(.responseMetadata(metadata))
       }

@@ -188,7 +188,7 @@ public struct OpenAICompatibleCompletionLanguageModel: LanguageModelV4 {
       usage: convertOpenAICompatibleCompletionUsage(body.usage, raw: response.rawValue?["usage"]),
       request: LanguageModelV4RequestInfo(body: .object(args)),
       response: LanguageModelV4ResponseInfo(
-        metadata: createLanguageModelResponseMetadata(id: body.id, model: body.model, created: body.created),
+        metadata: getResponseMetadata(id: body.id, model: body.model, created: body.created),
         headers: response.responseHeaders, body: response.rawValue),
       warnings: warnings)
   }
@@ -234,7 +234,7 @@ public struct OpenAICompatibleCompletionLanguageModel: LanguageModelV4 {
           if isFirstChunk {
             isFirstChunk = false
             continuation.yield(
-              .responseMetadata(createLanguageModelResponseMetadata(id: value.id, model: value.model, created: value.created)))
+              .responseMetadata(getResponseMetadata(id: value.id, model: value.model, created: value.created)))
             continuation.yield(.textStart(id: "0"))
           }
           if let chunkUsage = value.usage {
