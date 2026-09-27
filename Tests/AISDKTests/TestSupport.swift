@@ -32,14 +32,3 @@ func toolCallResult(
 
 let fixedIds: IdGenerator = { "test-id" }
 
-/// Collects values from concurrent callbacks.
-final class Recorder<Value: Sendable>: @unchecked Sendable {
-  private let lock = NSLock()
-  private var storage: [Value] = []
-
-  func append(_ value: Value) {
-    lock.withLock { storage.append(value) }
-  }
-
-  var values: [Value] { lock.withLock { storage } }
-}

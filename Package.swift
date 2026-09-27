@@ -21,6 +21,7 @@ let package = Package(
     .library(name: "AISDKAnthropic", targets: ["AISDKAnthropic"]),
     .library(name: "AISDKOpenAICompatible", targets: ["AISDKOpenAICompatible"]),
     .library(name: "AISDKOpenAI", targets: ["AISDKOpenAI"]),
+    .library(name: "AISDKMCP", targets: ["AISDKMCP"]),
   ],
   targets: [
     .target(
@@ -58,6 +59,22 @@ let package = Package(
       swiftSettings: swiftSettings
     ),
     .target(
+      name: "AISDKMCP",
+      dependencies: ["AISDKProviderUtils"],
+      swiftSettings: swiftSettings
+    ),
+    .executableTarget(
+      name: "MCPTestServer",
+      path: "Tests/MCPTestServer",
+      swiftSettings: swiftSettings
+    ),
+    .testTarget(
+      name: "AISDKMCPTests",
+      dependencies: ["AISDKMCP", "AISDK", "AISDKProviderUtils", "AISDKTestUtils", "MCPTestServer"],
+      resources: [.copy("Fixtures")],
+      swiftSettings: swiftSettings
+    ),
+    .target(
       name: "AISDKOpenAI",
       dependencies: ["AISDKProviderUtils"],
       swiftSettings: swiftSettings
@@ -81,7 +98,9 @@ let package = Package(
     ),
     .testTarget(
       name: "AISDKLiveTests",
-      dependencies: ["AISDK", "AISDKDeepSeek", "AISDKAnthropic", "AISDKOpenAICompatible", "AISDKOpenAI", "AISDKTestUtils"],
+      dependencies: [
+        "AISDK", "AISDKDeepSeek", "AISDKAnthropic", "AISDKOpenAICompatible", "AISDKOpenAI", "AISDKMCP", "AISDKTestUtils",
+      ],
       swiftSettings: swiftSettings
     ),
     .testTarget(

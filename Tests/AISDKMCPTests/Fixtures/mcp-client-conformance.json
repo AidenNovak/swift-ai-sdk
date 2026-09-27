@@ -1,0 +1,1545 @@
+[
+ {
+  "name": "initialize-and-tools",
+  "config": {
+   "clientName": "swift-tests",
+   "version": "9.9.9",
+   "capabilities": {
+    "elicitation": {}
+   }
+  },
+  "replies": {
+   "initialize": [
+    {
+     "result": {
+      "protocolVersion": "2025-11-25",
+      "capabilities": {
+       "tools": {},
+       "resources": {},
+       "prompts": {},
+       "completions": {}
+      },
+      "serverInfo": {
+       "name": "test-server",
+       "version": "1.2.3",
+       "title": "Test Server"
+      },
+      "instructions": "Use the tools wisely."
+     }
+    }
+   ],
+   "tools/list": [
+    {
+     "result": {
+      "tools": [
+       {
+        "name": "get_weather",
+        "title": "Get Weather",
+        "description": "Current weather",
+        "inputSchema": {
+         "type": "object",
+         "properties": {
+          "city": {
+           "type": "string"
+          }
+         },
+         "required": [
+          "city"
+         ]
+        },
+        "annotations": {
+         "readOnlyHint": true,
+         "openWorldHint": false,
+         "custom": "ignored"
+        },
+        "_meta": {
+         "ui": {
+          "resourceUri": "ui://weather/app.html",
+          "visibility": [
+           "model",
+           "app"
+          ]
+         }
+        }
+       }
+      ],
+      "nextCursor": "page-2"
+     }
+    },
+    {
+     "result": {
+      "tools": [
+       {
+        "name": "no_args",
+        "inputSchema": {
+         "type": "object"
+        }
+       },
+       {
+        "name": "legacy_title",
+        "inputSchema": {
+         "type": "object",
+         "properties": {}
+        },
+        "annotations": {
+         "title": "Legacy"
+        }
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "operations": [
+   {
+    "op": "tools"
+   }
+  ],
+  "sent": [
+   {
+    "method": "initialize",
+    "params": {
+     "protocolVersion": "2025-11-25",
+     "capabilities": {
+      "elicitation": {}
+     },
+     "clientInfo": {
+      "name": "swift-tests",
+      "version": "9.9.9"
+     }
+    }
+   },
+   {
+    "method": "notifications/initialized"
+   },
+   {
+    "method": "tools/list"
+   },
+   {
+    "method": "tools/list",
+    "params": {
+     "cursor": "page-2"
+    }
+   }
+  ],
+  "results": [
+   {
+    "op": "init",
+    "serverInfo": {
+     "name": "test-server",
+     "version": "1.2.3",
+     "title": "Test Server"
+    },
+    "instructions": "Use the tools wisely.",
+    "protocolVersion": "2025-11-25"
+   },
+   {
+    "op": "tools",
+    "tools": [
+     {
+      "name": "get_weather",
+      "type": "dynamic",
+      "description": "Current weather",
+      "title": "Get Weather",
+      "metadata": {
+       "clientName": "swift-tests",
+       "toolName": "get_weather",
+       "title": "Get Weather",
+       "annotations": {
+        "readOnlyHint": true,
+        "openWorldHint": false
+       },
+       "app": {
+        "resourceUri": "ui://weather/app.html",
+        "visibility": [
+         "model",
+         "app"
+        ],
+        "mimeType": "text/html;profile=mcp-app"
+       }
+      },
+      "inputSchema": {
+       "type": "object",
+       "properties": {
+        "city": {
+         "type": "string"
+        }
+       },
+       "required": [
+        "city"
+       ],
+       "additionalProperties": false
+      }
+     },
+     {
+      "name": "no_args",
+      "type": "dynamic",
+      "metadata": {
+       "clientName": "swift-tests",
+       "toolName": "no_args"
+      },
+      "inputSchema": {
+       "type": "object",
+       "properties": {},
+       "additionalProperties": false
+      }
+     },
+     {
+      "name": "legacy_title",
+      "type": "dynamic",
+      "title": "Legacy",
+      "metadata": {
+       "clientName": "swift-tests",
+       "toolName": "legacy_title",
+       "title": "Legacy",
+       "annotations": {
+        "title": "Legacy"
+       }
+      },
+      "inputSchema": {
+       "type": "object",
+       "properties": {},
+       "additionalProperties": false
+      }
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "name": "execute-and-model-output",
+  "replies": {
+   "initialize": [
+    {
+     "result": {
+      "protocolVersion": "2025-11-25",
+      "capabilities": {
+       "tools": {},
+       "resources": {},
+       "prompts": {},
+       "completions": {}
+      },
+      "serverInfo": {
+       "name": "test-server",
+       "version": "1.2.3",
+       "title": "Test Server"
+      },
+      "instructions": "Use the tools wisely."
+     }
+    }
+   ],
+   "tools/list": [
+    {
+     "result": {
+      "tools": [
+       {
+        "name": "get_weather",
+        "title": "Get Weather",
+        "description": "Current weather",
+        "inputSchema": {
+         "type": "object",
+         "properties": {
+          "city": {
+           "type": "string"
+          }
+         },
+         "required": [
+          "city"
+         ]
+        },
+        "annotations": {
+         "readOnlyHint": true,
+         "openWorldHint": false,
+         "custom": "ignored"
+        },
+        "_meta": {
+         "ui": {
+          "resourceUri": "ui://weather/app.html",
+          "visibility": [
+           "model",
+           "app"
+          ]
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "tools/call": [
+    {
+     "result": {
+      "content": [
+       {
+        "type": "text",
+        "text": "Sunny"
+       },
+       {
+        "type": "image",
+        "data": "AAECAw==",
+        "mimeType": "image/png"
+       },
+       {
+        "type": "resource_link",
+        "uri": "file:///a",
+        "name": "a"
+       }
+      ]
+     }
+    },
+    {
+     "result": {
+      "structuredContent": {
+       "temperature": 23
+      }
+     }
+    },
+    {
+     "result": {
+      "toolResult": {
+       "legacy": true
+      }
+     }
+    },
+    {
+     "result": {
+      "content": [
+       {
+        "type": "text",
+        "text": "boom"
+       }
+      ],
+      "isError": true
+     }
+    }
+   ]
+  },
+  "operations": [
+   {
+    "op": "execute",
+    "tool": "get_weather",
+    "input": {
+     "city": "Hangzhou"
+    }
+   },
+   {
+    "op": "execute",
+    "tool": "get_weather",
+    "input": {
+     "city": "Shanghai"
+    }
+   },
+   {
+    "op": "execute",
+    "tool": "get_weather",
+    "input": {
+     "city": "Legacy"
+    }
+   },
+   {
+    "op": "execute",
+    "tool": "get_weather",
+    "input": {
+     "city": "Error"
+    }
+   }
+  ],
+  "sent": [
+   {
+    "method": "initialize",
+    "params": {
+     "protocolVersion": "2025-11-25",
+     "capabilities": {},
+     "clientInfo": {
+      "name": "ai-sdk-mcp-client",
+      "version": "1.0.0"
+     }
+    }
+   },
+   {
+    "method": "notifications/initialized"
+   },
+   {
+    "method": "tools/list"
+   },
+   {
+    "method": "tools/call",
+    "params": {
+     "name": "get_weather",
+     "arguments": {
+      "city": "Hangzhou"
+     }
+    }
+   },
+   {
+    "method": "tools/list"
+   },
+   {
+    "method": "tools/call",
+    "params": {
+     "name": "get_weather",
+     "arguments": {
+      "city": "Shanghai"
+     }
+    }
+   },
+   {
+    "method": "tools/list"
+   },
+   {
+    "method": "tools/call",
+    "params": {
+     "name": "get_weather",
+     "arguments": {
+      "city": "Legacy"
+     }
+    }
+   },
+   {
+    "method": "tools/list"
+   },
+   {
+    "method": "tools/call",
+    "params": {
+     "name": "get_weather",
+     "arguments": {
+      "city": "Error"
+     }
+    }
+   }
+  ],
+  "results": [
+   {
+    "op": "init",
+    "serverInfo": {
+     "name": "test-server",
+     "version": "1.2.3",
+     "title": "Test Server"
+    },
+    "instructions": "Use the tools wisely.",
+    "protocolVersion": "2025-11-25"
+   },
+   {
+    "op": "execute",
+    "output": {
+     "content": [
+      {
+       "type": "text",
+       "text": "Sunny"
+      },
+      {
+       "type": "image",
+       "data": "AAECAw==",
+       "mimeType": "image/png"
+      },
+      {
+       "type": "resource_link",
+       "uri": "file:///a",
+       "name": "a"
+      }
+     ],
+     "isError": false
+    },
+    "modelOutput": {
+     "type": "content",
+     "value": [
+      {
+       "type": "text",
+       "text": "Sunny"
+      },
+      {
+       "type": "file",
+       "mediaType": "image/png",
+       "data": {
+        "type": "data",
+        "data": "AAECAw=="
+       }
+      },
+      {
+       "type": "text",
+       "text": "{\"type\":\"resource_link\",\"uri\":\"file:///a\",\"name\":\"a\"}"
+      }
+     ]
+    }
+   },
+   {
+    "op": "execute",
+    "output": {
+     "content": [
+      {
+       "type": "text",
+       "text": "{\"temperature\":23}"
+      }
+     ],
+     "structuredContent": {
+      "temperature": 23
+     },
+     "isError": false
+    },
+    "modelOutput": {
+     "type": "content",
+     "value": [
+      {
+       "type": "text",
+       "text": "{\"temperature\":23}"
+      }
+     ]
+    }
+   },
+   {
+    "op": "execute",
+    "output": {
+     "toolResult": {
+      "legacy": true
+     }
+    },
+    "modelOutput": {
+     "type": "json",
+     "value": {
+      "toolResult": {
+       "legacy": true
+      }
+     }
+    }
+   },
+   {
+    "op": "execute",
+    "output": {
+     "content": [
+      {
+       "type": "text",
+       "text": "boom"
+      }
+     ],
+     "isError": true
+    },
+    "modelOutput": {
+     "type": "content",
+     "value": [
+      {
+       "type": "text",
+       "text": "boom"
+      }
+     ]
+    }
+   }
+  ]
+ },
+ {
+  "name": "typed-tools-with-output-schema",
+  "replies": {
+   "initialize": [
+    {
+     "result": {
+      "protocolVersion": "2025-11-25",
+      "capabilities": {
+       "tools": {},
+       "resources": {},
+       "prompts": {},
+       "completions": {}
+      },
+      "serverInfo": {
+       "name": "test-server",
+       "version": "1.2.3",
+       "title": "Test Server"
+      },
+      "instructions": "Use the tools wisely."
+     }
+    }
+   ],
+   "tools/list": [
+    {
+     "result": {
+      "tools": [
+       {
+        "name": "get_weather",
+        "title": "Get Weather",
+        "description": "Current weather",
+        "inputSchema": {
+         "type": "object",
+         "properties": {
+          "city": {
+           "type": "string"
+          }
+         },
+         "required": [
+          "city"
+         ]
+        },
+        "annotations": {
+         "readOnlyHint": true,
+         "openWorldHint": false,
+         "custom": "ignored"
+        },
+        "_meta": {
+         "ui": {
+          "resourceUri": "ui://weather/app.html",
+          "visibility": [
+           "model",
+           "app"
+          ]
+         }
+        }
+       },
+       {
+        "name": "other",
+        "inputSchema": {
+         "type": "object"
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "tools/call": [
+    {
+     "result": {
+      "content": [
+       {
+        "type": "text",
+        "text": "ignored"
+       }
+      ],
+      "structuredContent": {
+       "temperature": 21
+      }
+     }
+    },
+    {
+     "result": {
+      "content": [
+       {
+        "type": "text",
+        "text": "{\"temperature\":19}"
+       }
+      ]
+     }
+    },
+    {
+     "result": {
+      "content": [
+       {
+        "type": "text",
+        "text": "not json"
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "operations": [
+   {
+    "op": "execute",
+    "tool": "get_weather",
+    "input": {
+     "city": "A"
+    },
+    "schemas": {
+     "get_weather": {
+      "inputSchema": {
+       "type": "object",
+       "properties": {
+        "city": {
+         "type": "string"
+        }
+       }
+      },
+      "outputSchema": {
+       "type": "object",
+       "properties": {
+        "temperature": {
+         "type": "number"
+        }
+       },
+       "required": [
+        "temperature"
+       ]
+      }
+     }
+    }
+   },
+   {
+    "op": "execute",
+    "tool": "get_weather",
+    "input": {
+     "city": "B"
+    },
+    "schemas": {
+     "get_weather": {
+      "inputSchema": {
+       "type": "object",
+       "properties": {
+        "city": {
+         "type": "string"
+        }
+       }
+      },
+      "outputSchema": {
+       "type": "object",
+       "properties": {
+        "temperature": {
+         "type": "number"
+        }
+       },
+       "required": [
+        "temperature"
+       ]
+      }
+     }
+    }
+   },
+   {
+    "op": "execute",
+    "tool": "get_weather",
+    "input": {
+     "city": "C"
+    },
+    "schemas": {
+     "get_weather": {
+      "inputSchema": {
+       "type": "object",
+       "properties": {
+        "city": {
+         "type": "string"
+        }
+       }
+      },
+      "outputSchema": {
+       "type": "object",
+       "properties": {
+        "temperature": {
+         "type": "number"
+        }
+       },
+       "required": [
+        "temperature"
+       ]
+      }
+     }
+    }
+   }
+  ],
+  "sent": [
+   {
+    "method": "initialize",
+    "params": {
+     "protocolVersion": "2025-11-25",
+     "capabilities": {},
+     "clientInfo": {
+      "name": "ai-sdk-mcp-client",
+      "version": "1.0.0"
+     }
+    }
+   },
+   {
+    "method": "notifications/initialized"
+   },
+   {
+    "method": "tools/list"
+   },
+   {
+    "method": "tools/call",
+    "params": {
+     "name": "get_weather",
+     "arguments": {
+      "city": "A"
+     }
+    }
+   },
+   {
+    "method": "tools/list"
+   },
+   {
+    "method": "tools/call",
+    "params": {
+     "name": "get_weather",
+     "arguments": {
+      "city": "B"
+     }
+    }
+   },
+   {
+    "method": "tools/list"
+   },
+   {
+    "method": "tools/call",
+    "params": {
+     "name": "get_weather",
+     "arguments": {
+      "city": "C"
+     }
+    }
+   }
+  ],
+  "results": [
+   {
+    "op": "init",
+    "serverInfo": {
+     "name": "test-server",
+     "version": "1.2.3",
+     "title": "Test Server"
+    },
+    "instructions": "Use the tools wisely.",
+    "protocolVersion": "2025-11-25"
+   },
+   {
+    "op": "execute",
+    "output": {
+     "temperature": 21
+    },
+    "modelOutput": {
+     "type": "json",
+     "value": {
+      "temperature": 21
+     }
+    }
+   },
+   {
+    "op": "execute",
+    "output": {
+     "temperature": 19
+    },
+    "modelOutput": {
+     "type": "json",
+     "value": {
+      "temperature": 19
+     }
+    }
+   },
+   {
+    "op": "execute",
+    "error": {
+     "message": "Tool \"get_weather\" returned content that does not match the expected outputSchema",
+     "code": null,
+     "data": null
+    }
+   }
+  ]
+ },
+ {
+  "name": "resources-prompts-completions",
+  "replies": {
+   "initialize": [
+    {
+     "result": {
+      "protocolVersion": "2025-11-25",
+      "capabilities": {
+       "tools": {},
+       "resources": {},
+       "prompts": {},
+       "completions": {}
+      },
+      "serverInfo": {
+       "name": "test-server",
+       "version": "1.2.3",
+       "title": "Test Server"
+      },
+      "instructions": "Use the tools wisely."
+     }
+    }
+   ],
+   "resources/list": [
+    {
+     "result": {
+      "resources": [
+       {
+        "uri": "file:///a.txt",
+        "name": "a.txt",
+        "mimeType": "text/plain"
+       }
+      ]
+     }
+    }
+   ],
+   "resources/read": [
+    {
+     "result": {
+      "contents": [
+       {
+        "uri": "file:///a.txt",
+        "text": "hello"
+       }
+      ]
+     }
+    }
+   ],
+   "resources/templates/list": [
+    {
+     "result": {
+      "resourceTemplates": [
+       {
+        "uriTemplate": "file:///{path}",
+        "name": "file"
+       }
+      ]
+     }
+    }
+   ],
+   "prompts/list": [
+    {
+     "result": {
+      "prompts": [
+       {
+        "name": "review",
+        "arguments": [
+         {
+          "name": "code",
+          "required": true
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ],
+   "prompts/get": [
+    {
+     "result": {
+      "description": "Review",
+      "messages": [
+       {
+        "role": "user",
+        "content": {
+         "type": "text",
+         "text": "Review this"
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "completion/complete": [
+    {
+     "result": {
+      "completion": {
+       "values": [
+        "python",
+        "pytorch"
+       ],
+       "total": 2,
+       "hasMore": false
+      }
+     }
+    }
+   ]
+  },
+  "operations": [
+   {
+    "op": "listResources"
+   },
+   {
+    "op": "readResource",
+    "uri": "file:///a.txt"
+   },
+   {
+    "op": "listResourceTemplates"
+   },
+   {
+    "op": "listPrompts"
+   },
+   {
+    "op": "getPrompt",
+    "name": "review",
+    "arguments": {
+     "code": "x"
+    }
+   },
+   {
+    "op": "complete",
+    "ref": {
+     "type": "ref/prompt",
+     "name": "review"
+    },
+    "argument": {
+     "name": "language",
+     "value": "py"
+    }
+   }
+  ],
+  "sent": [
+   {
+    "method": "initialize",
+    "params": {
+     "protocolVersion": "2025-11-25",
+     "capabilities": {},
+     "clientInfo": {
+      "name": "ai-sdk-mcp-client",
+      "version": "1.0.0"
+     }
+    }
+   },
+   {
+    "method": "notifications/initialized"
+   },
+   {
+    "method": "resources/list"
+   },
+   {
+    "method": "resources/read",
+    "params": {
+     "uri": "file:///a.txt"
+    }
+   },
+   {
+    "method": "resources/templates/list"
+   },
+   {
+    "method": "prompts/list"
+   },
+   {
+    "method": "prompts/get",
+    "params": {
+     "name": "review",
+     "arguments": {
+      "code": "x"
+     }
+    }
+   },
+   {
+    "method": "completion/complete",
+    "params": {
+     "ref": {
+      "type": "ref/prompt",
+      "name": "review"
+     },
+     "argument": {
+      "name": "language",
+      "value": "py"
+     }
+    }
+   }
+  ],
+  "results": [
+   {
+    "op": "init",
+    "serverInfo": {
+     "name": "test-server",
+     "version": "1.2.3",
+     "title": "Test Server"
+    },
+    "instructions": "Use the tools wisely.",
+    "protocolVersion": "2025-11-25"
+   },
+   {
+    "op": "listResources",
+    "result": {
+     "resources": [
+      {
+       "uri": "file:///a.txt",
+       "name": "a.txt",
+       "mimeType": "text/plain"
+      }
+     ]
+    }
+   },
+   {
+    "op": "readResource",
+    "result": {
+     "contents": [
+      {
+       "uri": "file:///a.txt",
+       "text": "hello"
+      }
+     ]
+    }
+   },
+   {
+    "op": "listResourceTemplates",
+    "result": {
+     "resourceTemplates": [
+      {
+       "uriTemplate": "file:///{path}",
+       "name": "file"
+      }
+     ]
+    }
+   },
+   {
+    "op": "listPrompts",
+    "result": {
+     "prompts": [
+      {
+       "name": "review",
+       "arguments": [
+        {
+         "name": "code",
+         "required": true
+        }
+       ]
+      }
+     ]
+    }
+   },
+   {
+    "op": "getPrompt",
+    "result": {
+     "description": "Review",
+     "messages": [
+      {
+       "role": "user",
+       "content": {
+        "type": "text",
+        "text": "Review this"
+       }
+      }
+     ]
+    }
+   },
+   {
+    "op": "complete",
+    "result": {
+     "completion": {
+      "values": [
+       "python",
+       "pytorch"
+      ],
+      "total": 2,
+      "hasMore": false
+     }
+    }
+   }
+  ]
+ },
+ {
+  "name": "errors-and-capabilities",
+  "replies": {
+   "initialize": [
+    {
+     "result": {
+      "protocolVersion": "2025-11-25",
+      "capabilities": {
+       "tools": {}
+      },
+      "serverInfo": {
+       "name": "test-server",
+       "version": "1.2.3",
+       "title": "Test Server"
+      },
+      "instructions": "Use the tools wisely."
+     }
+    }
+   ],
+   "tools/call": [
+    {
+     "error": {
+      "code": -32602,
+      "message": "Invalid params",
+      "data": {
+       "field": "city"
+      }
+     }
+    },
+    {
+     "result": {
+      "content": [
+       {
+        "type": "image",
+        "data": "not base64!",
+        "mimeType": "image/png"
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "operations": [
+   {
+    "op": "callTool",
+    "name": "get_weather",
+    "arguments": {
+     "city": 1
+    }
+   },
+   {
+    "op": "callTool",
+    "name": "get_weather",
+    "arguments": {}
+   },
+   {
+    "op": "listResources"
+   },
+   {
+    "op": "listPrompts"
+   },
+   {
+    "op": "complete",
+    "ref": {
+     "type": "ref/prompt",
+     "name": "x"
+    },
+    "argument": {
+     "name": "a",
+     "value": "b"
+    }
+   }
+  ],
+  "sent": [
+   {
+    "method": "initialize",
+    "params": {
+     "protocolVersion": "2025-11-25",
+     "capabilities": {},
+     "clientInfo": {
+      "name": "ai-sdk-mcp-client",
+      "version": "1.0.0"
+     }
+    }
+   },
+   {
+    "method": "notifications/initialized"
+   },
+   {
+    "method": "tools/call",
+    "params": {
+     "name": "get_weather",
+     "arguments": {
+      "city": 1
+     }
+    }
+   },
+   {
+    "method": "tools/call",
+    "params": {
+     "name": "get_weather",
+     "arguments": {}
+    }
+   }
+  ],
+  "results": [
+   {
+    "op": "init",
+    "serverInfo": {
+     "name": "test-server",
+     "version": "1.2.3",
+     "title": "Test Server"
+    },
+    "instructions": "Use the tools wisely.",
+    "protocolVersion": "2025-11-25"
+   },
+   {
+    "op": "callTool",
+    "error": {
+     "message": "Invalid params",
+     "code": -32602,
+     "data": {
+      "field": "city"
+     }
+    }
+   },
+   {
+    "op": "callTool",
+    "error": {
+     "message": "Failed to parse server response",
+     "code": null,
+     "data": null
+    }
+   },
+   {
+    "op": "listResources",
+    "error": {
+     "message": "Server does not support resources",
+     "code": null,
+     "data": null
+    }
+   },
+   {
+    "op": "listPrompts",
+    "error": {
+     "message": "Server does not support prompts",
+     "code": null,
+     "data": null
+    }
+   },
+   {
+    "op": "complete",
+    "error": {
+     "message": "Server does not support completions",
+     "code": null,
+     "data": null
+    }
+   }
+  ]
+ },
+ {
+  "name": "unsupported-protocol-version",
+  "replies": {
+   "initialize": [
+    {
+     "result": {
+      "protocolVersion": "2023-01-01",
+      "capabilities": {
+       "tools": {},
+       "resources": {},
+       "prompts": {},
+       "completions": {}
+      },
+      "serverInfo": {
+       "name": "test-server",
+       "version": "1.2.3",
+       "title": "Test Server"
+      },
+      "instructions": "Use the tools wisely."
+     }
+    }
+   ]
+  },
+  "operations": [],
+  "sent": [
+   {
+    "method": "initialize",
+    "params": {
+     "protocolVersion": "2025-11-25",
+     "capabilities": {},
+     "clientInfo": {
+      "name": "ai-sdk-mcp-client",
+      "version": "1.0.0"
+     }
+    }
+   }
+  ],
+  "results": [
+   {
+    "op": "init",
+    "error": {
+     "message": "Server's protocol version is not supported: 2023-01-01",
+     "code": null,
+     "data": null
+    }
+   }
+  ]
+ },
+ {
+  "name": "older-protocol-version",
+  "replies": {
+   "initialize": [
+    {
+     "result": {
+      "protocolVersion": "2024-11-05",
+      "capabilities": {
+       "tools": {},
+       "resources": {},
+       "prompts": {},
+       "completions": {}
+      },
+      "serverInfo": {
+       "name": "test-server",
+       "version": "1.2.3",
+       "title": "Test Server"
+      }
+     }
+    }
+   ]
+  },
+  "operations": [
+   {
+    "op": "close"
+   }
+  ],
+  "sent": [
+   {
+    "method": "initialize",
+    "params": {
+     "protocolVersion": "2025-11-25",
+     "capabilities": {},
+     "clientInfo": {
+      "name": "ai-sdk-mcp-client",
+      "version": "1.0.0"
+     }
+    }
+   },
+   {
+    "method": "notifications/initialized"
+   }
+  ],
+  "results": [
+   {
+    "op": "init",
+    "serverInfo": {
+     "name": "test-server",
+     "version": "1.2.3",
+     "title": "Test Server"
+    },
+    "instructions": null,
+    "protocolVersion": "2024-11-05"
+   },
+   {
+    "op": "close"
+   }
+  ]
+ },
+ {
+  "name": "modern-discovery",
+  "modernDiscovery": true,
+  "replies": {
+   "server/discover": [
+    {
+     "result": {
+      "resultType": "complete",
+      "supportedVersions": [
+       "2026-07-28"
+      ],
+      "capabilities": {
+       "tools": {}
+      },
+      "instructions": "modern",
+      "_meta": {
+       "io.modelcontextprotocol/serverInfo": {
+        "name": "modern-server",
+        "version": "2.0.0"
+       }
+      }
+     }
+    }
+   ],
+   "tools/list": [
+    {
+     "result": {
+      "resultType": "complete",
+      "tools": [
+       {
+        "name": "header_tool",
+        "inputSchema": {
+         "type": "object",
+         "properties": {
+          "region": {
+           "type": "string",
+           "x-mcp-header": "Region"
+          },
+          "count": {
+           "type": "integer"
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "tools/call": [
+    {
+     "result": {
+      "resultType": "complete",
+      "content": [
+       {
+        "type": "text",
+        "text": "ok"
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "operations": [
+   {
+    "op": "tools"
+   },
+   {
+    "op": "callTool",
+    "name": "header_tool",
+    "arguments": {
+     "region": "eu-west",
+     "count": 2
+    }
+   }
+  ],
+  "sent": [
+   {
+    "method": "server/discover",
+    "params": {
+     "_meta": {
+      "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+      "io.modelcontextprotocol/clientCapabilities": {},
+      "io.modelcontextprotocol/clientInfo": {
+       "name": "ai-sdk-mcp-client",
+       "version": "1.0.0"
+      }
+     }
+    }
+   },
+   {
+    "method": "tools/list",
+    "params": {
+     "_meta": {
+      "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+      "io.modelcontextprotocol/clientCapabilities": {},
+      "io.modelcontextprotocol/clientInfo": {
+       "name": "ai-sdk-mcp-client",
+       "version": "1.0.0"
+      }
+     }
+    }
+   },
+   {
+    "method": "tools/call",
+    "params": {
+     "name": "header_tool",
+     "arguments": {
+      "region": "eu-west",
+      "count": 2
+     },
+     "_meta": {
+      "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+      "io.modelcontextprotocol/clientCapabilities": {},
+      "io.modelcontextprotocol/clientInfo": {
+       "name": "ai-sdk-mcp-client",
+       "version": "1.0.0"
+      }
+     }
+    },
+    "headers": {
+     "Mcp-Param-Region": "eu-west"
+    }
+   }
+  ],
+  "results": [
+   {
+    "op": "init",
+    "serverInfo": {
+     "name": "modern-server",
+     "version": "2.0.0"
+    },
+    "instructions": "modern",
+    "protocolVersion": "2026-07-28"
+   },
+   {
+    "op": "tools",
+    "tools": [
+     {
+      "name": "header_tool",
+      "type": "dynamic",
+      "metadata": {
+       "clientName": "ai-sdk-mcp-client",
+       "toolName": "header_tool"
+      },
+      "inputSchema": {
+       "type": "object",
+       "properties": {
+        "region": {
+         "type": "string",
+         "x-mcp-header": "Region"
+        },
+        "count": {
+         "type": "integer"
+        }
+       },
+       "additionalProperties": false
+      }
+     }
+    ]
+   },
+   {
+    "op": "callTool",
+    "result": {
+     "resultType": "complete",
+     "content": [
+      {
+       "type": "text",
+       "text": "ok"
+      }
+     ],
+     "isError": false
+    }
+   }
+  ]
+ }
+]

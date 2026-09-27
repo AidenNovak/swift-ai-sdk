@@ -57,6 +57,16 @@ extension SharedV4FileData {
     }
   }
 
+  /// Tagged JSON form (`{type: 'data' | 'url' | 'reference' | 'text'}`), required in tool results.
+  var taggedJSON: JSONValue {
+    switch self {
+    case .data(let data): ["type": "data", "data": .string(data.base64EncodedString())]
+    case .base64(let string): ["type": "data", "data": .string(string)]
+    case .url(let url, _): ["type": "url", "url": .string(url.absoluteString)]
+    case .reference, .text: messageJSON
+    }
+  }
+
   init(messageJSON value: JSONValue) throws {
     if let string = value.stringValue {
       self = Self(dataContent: string)
@@ -138,7 +148,7 @@ extension ToolResultOutput.ContentPart {
       build([("type", "text"), ("text", .string(text)), ("providerOptions", encodeProviderOptions(options))])
     case .file(let data, let mediaType, let filename, let options):
       build([
-        ("type", "file"), ("data", data.messageJSON), ("mediaType", .string(mediaType)),
+        ("type", "file"), ("data", data.taggedJSON), ("mediaType", .string(mediaType)),
         ("filename", filename.map(JSONValue.string)), ("providerOptions", encodeProviderOptions(options)),
       ])
     case .custom(let options):

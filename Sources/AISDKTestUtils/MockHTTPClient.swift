@@ -23,15 +23,26 @@ public final class MockHTTPClient: HTTPClient, @unchecked Sendable {
     case failure(any Error)
     /// Chunks followed by a transport failure mid-body.
     case streamChunksThenFailure([String], any Error, statusCode: Int = 200)
+    /// A body the test feeds over time, e.g. a long-lived SSE stream.
+    case stream(HTTPBodyStream, statusCode: Int = 200, headers: [String: String] = [:])
   }
 
   private let lock = NSLock()
   private var responses: [String: [Response]]
   private var recordedRequests: [HTTPRequest] = []
+  private let handler: (@Sendable (HTTPRequest) async throws -> Response?)?
 
   /// Creates a client. Each URL maps to one response, reused for every call.
   public init(_ responses: [String: Response] = [:]) {
     self.responses = responses.mapValues { [$0] }
+    self.handler = nil
+  }
+
+  /// Creates a client that answers each request with `handler`, e.g. by
+  /// method. Returning `nil` falls back to the URL responses.
+  public init(handler: @escaping @Sendable (HTTPRequest) async throws -> Response?) {
+    self.responses = [:]
+    self.handler = handler
   }
 
   /// Sets the response for a URL, reused for every call.
@@ -55,8 +66,12 @@ public final class MockHTTPClient: HTTPClient, @unchecked Sendable {
   }
 
   public func send(_ request: HTTPRequest) async throws -> HTTPResponse {
+    if let handler {
+      lock.withLock { recordedRequests.append(request) }
+      if let response = try await handler(request) { return try makeResponse(response) }
+    }
     let response: Response? = lock.withLock {
-      recordedRequests.append(request)
+      if handler == nil { recordedRequests.append(request) }
       let key = request.url.absoluteString
       guard var queue = responses[key], let first = queue.first else { return nil }
       if queue.count > 1 {
@@ -69,7 +84,10 @@ public final class MockHTTPClient: HTTPClient, @unchecked Sendable {
     guard let response else {
       return HTTPResponse(statusCode: 404, body: Data("No mock response for \(request.url)".utf8))
     }
+    return try makeResponse(response)
+  }
 
+  private func makeResponse(_ response: Response) throws -> HTTPResponse {
     switch response {
     case .jsonValue(let value, let statusCode, let headers):
       return HTTPResponse(
@@ -102,6 +120,10 @@ public final class MockHTTPClient: HTTPClient, @unchecked Sendable {
           for chunk in chunks { continuation.yield(Data(chunk.utf8)) }
           continuation.finish(throwing: error)
         })
+    case .stream(let body, let statusCode, let headers):
+      return HTTPResponse(
+        statusCode: statusCode,
+        headers: ["content-type": "text/event-stream"].merging(headers) { _, new in new }, body: body)
     }
   }
 }
