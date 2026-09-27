@@ -18,6 +18,8 @@ jobs:
       - run: swift --version
       - run: swift build
       - run: swift test
+      - name: Build the MacChat example
+        run: swift build --package-path Examples/MacChat
 
   linux:
     name: Linux

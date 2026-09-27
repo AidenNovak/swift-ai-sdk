@@ -3,7 +3,9 @@
 # TypeScript sources directly. Needs node, a vercel/ai checkout at the commit in
 # docs/UPSTREAM.md, and network access for a small temporary npm install.
 #
-#   Tools/conformance/run.sh /path/to/vercel-ai
+#   Tools/conformance/run.sh /path/to/vercel-ai [script-name]
+#
+# With a script name (e.g. `ui-message-stream`), only that script runs.
 set -eu
 
 UPSTREAM=$(cd "$1" && pwd)
@@ -13,7 +15,7 @@ trap 'rm -rf "$WORK"; rm -f "$UPSTREAM/node_modules"' EXIT
 
 cd "$WORK"
 npm init -y >/dev/null
-npm install --silent zod@4 eventsource-parser@3 @standard-schema/spec @workflow/serde@4.1.0 undici@7 json-schema tsx@4 pkce-challenge@5 cross-spawn@7
+npm install --silent zod@4 eventsource-parser@3 @standard-schema/spec @workflow/serde@4.1.0 undici@7 json-schema tsx@4 pkce-challenge@5 cross-spawn@7 @vercel/oidc@3.2.0
 [ -e "$UPSTREAM/node_modules" ] || ln -s "$WORK/node_modules" "$UPSTREAM/node_modules"
 
 cat >tsconfig.json <<EOF
@@ -25,12 +27,13 @@ cat >tsconfig.json <<EOF
     "paths": {
       "@ai-sdk/provider": ["$UPSTREAM/packages/provider/src/index.ts"],
       "@ai-sdk/provider-utils": ["$UPSTREAM/packages/provider-utils/src/index.ts"],
-      "@ai-sdk/provider-utils/*": ["$UPSTREAM/packages/provider-utils/src/*"]
+      "@ai-sdk/provider-utils/*": ["$UPSTREAM/packages/provider-utils/src/*"],
+      "@ai-sdk/*": ["$UPSTREAM/packages/*/src/index.ts"]
     }
   }
 }
 EOF
 
-for script in "$HERE"/*.mts; do
+for script in "$HERE"/${2:-*}.mts; do
   UPSTREAM="$UPSTREAM" TSX_TSCONFIG_PATH="$WORK/tsconfig.json" npx tsx "$script"
 done

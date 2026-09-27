@@ -15,12 +15,13 @@ A native Swift port of the [Vercel AI SDK](https://github.com/vercel/ai), built 
 | --- | --- | --- |
 | `AISDKProvider` | `@ai-sdk/provider` | The provider specification every model implements |
 | `AISDKProviderUtils` | `@ai-sdk/provider-utils` | HTTP transport, server-sent events, JSON parsing, schemas, retries, `Tool` and `ModelMessage` types |
-| `AISDK` | `ai` | `generateText`, `streamText`, structured output (`Output`, `generateObject`, `streamObject`), `ToolLoopAgent`, tools, multi-step tool loops, tool approval, messages, `embed`/`embedMany`, middleware (`wrapLanguageModel`, `extractReasoningMiddleware`, …), provider registry |
+| `AISDK` | `ai` | `generateText`, `streamText`, structured output (`Output`, `generateObject`, `streamObject`), `ToolLoopAgent`, tools, multi-step tool loops, tool approval, messages, `embed`/`embedMany`, middleware (`wrapLanguageModel`, `extractReasoningMiddleware`, …), provider registry, UI message stream protocol (`UIMessage`, `toUIMessageStream`, `createUIMessageStream`, `convertToModelMessages`, `validateUIMessages`), chat state machine and transports |
 | `AISDKDeepSeek` | `@ai-sdk/deepseek` | DeepSeek chat models (thinking, reasoning effort, tools, JSON output, prefix completion, logprobs) |
 | `AISDKAnthropic` | `@ai-sdk/anthropic` | Claude Messages API (thinking, effort, tools, cache control, PDFs, JSON output); also Anthropic-compatible endpoints such as DeepSeek |
 | `AISDKOpenAICompatible` | `@ai-sdk/openai-compatible` | Any OpenAI-format API (vLLM, Ollama, LM Studio, OpenRouter, Groq, …): chat, completions, embeddings, pass-through provider options |
 | `AISDKOpenAI` | `@ai-sdk/openai` | OpenAI Responses API (default; built-in tools: web search, file search, code interpreter, image generation, MCP, shell, apply patch, computer, tool search, custom tools), Chat Completions, completions, embeddings |
 | `AISDKMCP` | `@ai-sdk/mcp` | MCP client: stdio, Streamable HTTP and SSE transports, OAuth (discovery, dynamic registration, PKCE, refresh), tools as SDK tools, resources, prompts, completions, elicitation, MCP Apps |
+| `AISDKUI` | `@ai-sdk/react` | Observable `Chat` (the `useChat` equivalent) and `Completion` (`useCompletion`) for SwiftUI; the only module that builds on Apple UI observation, and it still runs on Linux |
 | `AISDKTestUtils` | `@ai-sdk/test-server`, `ai/test` | Replaying HTTP client, mock language model, stream helpers |
 
 ## Quick start
@@ -52,6 +53,56 @@ print(result.text)
 ```
 
 More modules land through pull requests; see [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
+## Chat UI
+
+`Chat` streams a conversation into observable `UIMessage`s. With
+`DirectChatTransport` the agent runs inside the app, with no server:
+
+```swift
+import AISDK
+import AISDKDeepSeek
+import AISDKUI
+import SwiftUI
+
+struct ChatView: View {
+  @State private var chat = Chat(
+    transport: DirectChatTransport(agent: ToolLoopAgent(model: deepseek("deepseek-flash"), tools: tools)),
+    sendAutomaticallyWhen: { lastAssistantMessageIsCompleteWithApprovalResponses($0) })
+  @State private var input = ""
+
+  var body: some View {
+    List(chat.messages) { message in
+      ForEach(Array(message.parts.enumerated()), id: \.offset) { _, part in
+        switch part {
+        case .text(let text): Text(text.text)
+        case .tool(let tool): Text("\(tool.toolName): \(tool.state.rawValue)")
+        default: EmptyView()
+        }
+      }
+    }
+    TextField("Message", text: $input).onSubmit {
+      let text = input
+      input = ""
+      Task { try await chat.sendMessage(text: text) }
+    }
+  }
+}
+```
+
+The UI message stream protocol is the same one `useChat` speaks, so the
+pieces mix with JavaScript: `DefaultChatTransport(api:)` talks to a Next.js
+route that returns `toUIMessageStreamResponse()`, and a Swift server can
+answer a React client with
+
+```swift
+let messages = try validateUIMessages(requestBody["messages"])
+let result = streamText(model: model, prompt: .messages(try await convertToModelMessages(messages)))
+return result.toUIMessageStreamResponse(options: UIMessageStreamOptions(originalMessages: messages))
+```
+
+[`Examples/MacChat`](Examples/MacChat) is a runnable macOS app with a tool
+and a tool approval: `cd Examples/MacChat && DEEPSEEK_API_KEY=... swift run`.
 
 ## Requirements
 

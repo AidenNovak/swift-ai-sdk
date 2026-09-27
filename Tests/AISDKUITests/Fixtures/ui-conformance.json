@@ -1,0 +1,7637 @@
+{
+ "process": [
+  {
+   "name": "text",
+   "chunks": [
+    {
+     "type": "start",
+     "messageId": "msg-1"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "text-start",
+     "id": "t1"
+    },
+    {
+     "type": "text-delta",
+     "id": "t1",
+     "delta": "Hello"
+    },
+    {
+     "type": "text-delta",
+     "id": "t1",
+     "delta": ", world"
+    },
+    {
+     "type": "text-end",
+     "id": "t1"
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "stop"
+    }
+   ],
+   "events": [
+    {
+     "type": "write",
+     "updateStatus": false,
+     "message": {
+      "id": "msg-1",
+      "role": "assistant",
+      "parts": []
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "msg-1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "",
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "msg-1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "Hello",
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "msg-1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "Hello, world",
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "msg-1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "Hello, world",
+        "state": "done"
+       }
+      ]
+     }
+    }
+   ],
+   "message": {
+    "id": "msg-1",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "text",
+      "text": "Hello, world",
+      "state": "done"
+     }
+    ]
+   },
+   "finishReason": "stop"
+  },
+  {
+   "name": "reasoning-and-text-metadata",
+   "chunks": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "reasoning-start",
+     "id": "r1",
+     "providerMetadata": {
+      "p": {
+       "a": 1
+      }
+     }
+    },
+    {
+     "type": "reasoning-delta",
+     "id": "r1",
+     "delta": "Think"
+    },
+    {
+     "type": "reasoning-delta",
+     "id": "r1",
+     "delta": "ing",
+     "providerMetadata": {
+      "p": {
+       "b": 2
+      }
+     }
+    },
+    {
+     "type": "reasoning-end",
+     "id": "r1"
+    },
+    {
+     "type": "text-start",
+     "id": "t1"
+    },
+    {
+     "type": "text-delta",
+     "id": "t1",
+     "delta": "Answer"
+    },
+    {
+     "type": "text-end",
+     "id": "t1",
+     "providerMetadata": {
+      "p": {
+       "done": true
+      }
+     }
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish"
+    }
+   ],
+   "events": [
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "reasoning",
+        "id": "r1",
+        "text": "",
+        "providerMetadata": {
+         "p": {
+          "a": 1
+         }
+        },
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "reasoning",
+        "id": "r1",
+        "text": "Think",
+        "providerMetadata": {
+         "p": {
+          "a": 1
+         }
+        },
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "reasoning",
+        "id": "r1",
+        "text": "Thinking",
+        "providerMetadata": {
+         "p": {
+          "b": 2
+         }
+        },
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "reasoning",
+        "id": "r1",
+        "text": "Thinking",
+        "providerMetadata": {
+         "p": {
+          "b": 2
+         }
+        },
+        "state": "done"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "reasoning",
+        "id": "r1",
+        "text": "Thinking",
+        "providerMetadata": {
+         "p": {
+          "b": 2
+         }
+        },
+        "state": "done"
+       },
+       {
+        "type": "text",
+        "text": "",
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "reasoning",
+        "id": "r1",
+        "text": "Thinking",
+        "providerMetadata": {
+         "p": {
+          "b": 2
+         }
+        },
+        "state": "done"
+       },
+       {
+        "type": "text",
+        "text": "Answer",
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "reasoning",
+        "id": "r1",
+        "text": "Thinking",
+        "providerMetadata": {
+         "p": {
+          "b": 2
+         }
+        },
+        "state": "done"
+       },
+       {
+        "type": "text",
+        "text": "Answer",
+        "providerMetadata": {
+         "p": {
+          "done": true
+         }
+        },
+        "state": "done"
+       }
+      ]
+     }
+    }
+   ],
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "reasoning",
+      "id": "r1",
+      "text": "Thinking",
+      "providerMetadata": {
+       "p": {
+        "b": 2
+       }
+      },
+      "state": "done"
+     },
+     {
+      "type": "text",
+      "text": "Answer",
+      "providerMetadata": {
+       "p": {
+        "done": true
+       }
+      },
+      "state": "done"
+     }
+    ]
+   }
+  },
+  {
+   "name": "static-tool-streaming",
+   "chunks": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "tool-input-start",
+     "toolCallId": "c1",
+     "toolName": "weather",
+     "title": "Weather"
+    },
+    {
+     "type": "tool-input-delta",
+     "toolCallId": "c1",
+     "inputTextDelta": "{\"city\":"
+    },
+    {
+     "type": "tool-input-delta",
+     "toolCallId": "c1",
+     "inputTextDelta": "\"Par"
+    },
+    {
+     "type": "tool-input-delta",
+     "toolCallId": "c1",
+     "inputTextDelta": "is\"}"
+    },
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "weather",
+     "input": {
+      "city": "Paris"
+     },
+     "providerMetadata": {
+      "p": {
+       "call": 1
+      }
+     }
+    },
+    {
+     "type": "tool-output-available",
+     "toolCallId": "c1",
+     "output": {
+      "temperature": 20
+     },
+     "providerMetadata": {
+      "p": {
+       "result": 1
+      }
+     }
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "tool-calls"
+    }
+   ],
+   "events": [
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "input-streaming",
+        "title": "Weather"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "input-streaming",
+        "title": "Weather",
+        "input": {}
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "input-streaming",
+        "title": "Weather",
+        "input": {
+         "city": "Par"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "input-streaming",
+        "title": "Weather",
+        "input": {
+         "city": "Paris"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "input-available",
+        "title": "Weather",
+        "input": {
+         "city": "Paris"
+        },
+        "callProviderMetadata": {
+         "p": {
+          "call": 1
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "toolCall",
+     "toolCall": {
+      "type": "tool-input-available",
+      "toolCallId": "c1",
+      "toolName": "weather",
+      "input": {
+       "city": "Paris"
+      },
+      "providerMetadata": {
+       "p": {
+        "call": 1
+       }
+      }
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "title": "Weather",
+        "input": {
+         "city": "Paris"
+        },
+        "output": {
+         "temperature": 20
+        },
+        "callProviderMetadata": {
+         "p": {
+          "call": 1
+         }
+        },
+        "resultProviderMetadata": {
+         "p": {
+          "result": 1
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "tool-weather",
+      "toolCallId": "c1",
+      "state": "output-available",
+      "title": "Weather",
+      "input": {
+       "city": "Paris"
+      },
+      "output": {
+       "temperature": 20
+      },
+      "callProviderMetadata": {
+       "p": {
+        "call": 1
+       }
+      },
+      "resultProviderMetadata": {
+       "p": {
+        "result": 1
+       }
+      }
+     }
+    ]
+   },
+   "finishReason": "tool-calls"
+  },
+  {
+   "name": "dynamic-tool-error",
+   "chunks": [
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "tool-input-start",
+     "toolCallId": "c1",
+     "toolName": "mcp_search",
+     "dynamic": true,
+     "toolMetadata": {
+      "server": "docs"
+     }
+    },
+    {
+     "type": "tool-input-delta",
+     "toolCallId": "c1",
+     "inputTextDelta": "{\"q\":\"swift\"}"
+    },
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "mcp_search",
+     "input": {
+      "q": "swift"
+     },
+     "dynamic": true
+    },
+    {
+     "type": "tool-output-error",
+     "toolCallId": "c1",
+     "errorText": "Server unavailable"
+    }
+   ],
+   "events": [
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "mcp_search",
+        "toolCallId": "c1",
+        "state": "input-streaming",
+        "toolMetadata": {
+         "server": "docs"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "mcp_search",
+        "toolCallId": "c1",
+        "state": "input-streaming",
+        "input": {
+         "q": "swift"
+        },
+        "toolMetadata": {
+         "server": "docs"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "mcp_search",
+        "toolCallId": "c1",
+        "state": "input-available",
+        "input": {
+         "q": "swift"
+        },
+        "toolMetadata": {
+         "server": "docs"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "toolCall",
+     "toolCall": {
+      "type": "tool-input-available",
+      "toolCallId": "c1",
+      "toolName": "mcp_search",
+      "input": {
+       "q": "swift"
+      },
+      "dynamic": true
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "mcp_search",
+        "toolCallId": "c1",
+        "state": "output-error",
+        "input": {
+         "q": "swift"
+        },
+        "errorText": "Server unavailable",
+        "toolMetadata": {
+         "server": "docs"
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "dynamic-tool",
+      "toolName": "mcp_search",
+      "toolCallId": "c1",
+      "state": "output-error",
+      "input": {
+       "q": "swift"
+      },
+      "errorText": "Server unavailable",
+      "toolMetadata": {
+       "server": "docs"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "tool-input-error",
+   "chunks": [
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "tool-input-error",
+     "toolCallId": "c1",
+     "toolName": "weather",
+     "input": "{\"city\":",
+     "errorText": "Invalid JSON"
+    },
+    {
+     "type": "tool-input-start",
+     "toolCallId": "c2",
+     "toolName": "lookup",
+     "dynamic": true
+    },
+    {
+     "type": "tool-input-error",
+     "toolCallId": "c2",
+     "toolName": "lookup",
+     "input": {
+      "id": 1
+     },
+     "errorText": "Bad input"
+    },
+    {
+     "type": "tool-input-error",
+     "toolCallId": "c3",
+     "toolName": "other",
+     "input": {},
+     "errorText": "No tool",
+     "dynamic": true
+    }
+   ],
+   "events": [
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-error",
+        "rawInput": "{\"city\":",
+        "errorText": "Invalid JSON"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-error",
+        "rawInput": "{\"city\":",
+        "errorText": "Invalid JSON"
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "lookup",
+        "toolCallId": "c2",
+        "state": "input-streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-error",
+        "rawInput": "{\"city\":",
+        "errorText": "Invalid JSON"
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "lookup",
+        "toolCallId": "c2",
+        "state": "output-error",
+        "input": {
+         "id": 1
+        },
+        "errorText": "Bad input"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-error",
+        "rawInput": "{\"city\":",
+        "errorText": "Invalid JSON"
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "lookup",
+        "toolCallId": "c2",
+        "state": "output-error",
+        "input": {
+         "id": 1
+        },
+        "errorText": "Bad input"
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "other",
+        "toolCallId": "c3",
+        "state": "output-error",
+        "input": {},
+        "errorText": "No tool"
+       }
+      ]
+     }
+    }
+   ],
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "tool-weather",
+      "toolCallId": "c1",
+      "state": "output-error",
+      "rawInput": "{\"city\":",
+      "errorText": "Invalid JSON"
+     },
+     {
+      "type": "dynamic-tool",
+      "toolName": "lookup",
+      "toolCallId": "c2",
+      "state": "output-error",
+      "input": {
+       "id": 1
+      },
+      "errorText": "Bad input"
+     },
+     {
+      "type": "dynamic-tool",
+      "toolName": "other",
+      "toolCallId": "c3",
+      "state": "output-error",
+      "input": {},
+      "errorText": "No tool"
+     }
+    ]
+   }
+  },
+  {
+   "name": "approval-denied",
+   "chunks": [
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "delete_file",
+     "input": {
+      "path": "/tmp/x"
+     }
+    },
+    {
+     "type": "tool-approval-request",
+     "approvalId": "a1",
+     "toolCallId": "c1",
+     "reason": "Deletes a file",
+     "isAutomatic": false,
+     "signature": "sig",
+     "approvalDescriptor": {
+      "risk": "high"
+     }
+    },
+    {
+     "type": "tool-approval-response",
+     "approvalId": "a1",
+     "approved": false,
+     "reason": "Not now"
+    },
+    {
+     "type": "tool-output-denied",
+     "toolCallId": "c1"
+    }
+   ],
+   "events": [
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-delete_file",
+        "toolCallId": "c1",
+        "state": "input-available",
+        "input": {
+         "path": "/tmp/x"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "toolCall",
+     "toolCall": {
+      "type": "tool-input-available",
+      "toolCallId": "c1",
+      "toolName": "delete_file",
+      "input": {
+       "path": "/tmp/x"
+      }
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-delete_file",
+        "toolCallId": "c1",
+        "state": "approval-requested",
+        "input": {
+         "path": "/tmp/x"
+        },
+        "approval": {
+         "id": "a1",
+         "descriptor": {
+          "risk": "high"
+         },
+         "requestReason": "Deletes a file",
+         "signature": "sig"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-delete_file",
+        "toolCallId": "c1",
+        "state": "approval-responded",
+        "input": {
+         "path": "/tmp/x"
+        },
+        "approval": {
+         "id": "a1",
+         "descriptor": {
+          "risk": "high"
+         },
+         "requestReason": "Deletes a file",
+         "signature": "sig",
+         "approved": false,
+         "reason": "Not now"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-delete_file",
+        "toolCallId": "c1",
+        "state": "output-denied",
+        "input": {
+         "path": "/tmp/x"
+        },
+        "approval": {
+         "id": "a1",
+         "descriptor": {
+          "risk": "high"
+         },
+         "requestReason": "Deletes a file",
+         "signature": "sig",
+         "approved": false,
+         "reason": "Not now"
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "tool-delete_file",
+      "toolCallId": "c1",
+      "state": "output-denied",
+      "input": {
+       "path": "/tmp/x"
+      },
+      "approval": {
+       "id": "a1",
+       "descriptor": {
+        "risk": "high"
+       },
+       "requestReason": "Deletes a file",
+       "signature": "sig",
+       "approved": false,
+       "reason": "Not now"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "approval-granted-provider-executed",
+   "chunks": [
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "web_search",
+     "input": {
+      "query": "swift"
+     },
+     "providerExecuted": true
+    },
+    {
+     "type": "tool-approval-request",
+     "approvalId": "a1",
+     "toolCallId": "c1",
+     "isAutomatic": true
+    },
+    {
+     "type": "tool-approval-response",
+     "approvalId": "a1",
+     "approved": true,
+     "providerMetadata": {
+      "p": {
+       "x": 1
+      }
+     }
+    },
+    {
+     "type": "tool-output-available",
+     "toolCallId": "c1",
+     "output": [
+      {
+       "url": "https://swift.org"
+      }
+     ],
+     "providerExecuted": true
+    }
+   ],
+   "events": [
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-web_search",
+        "toolCallId": "c1",
+        "state": "input-available",
+        "input": {
+         "query": "swift"
+        },
+        "providerExecuted": true
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-web_search",
+        "toolCallId": "c1",
+        "state": "approval-requested",
+        "input": {
+         "query": "swift"
+        },
+        "providerExecuted": true,
+        "approval": {
+         "id": "a1",
+         "isAutomatic": true
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-web_search",
+        "toolCallId": "c1",
+        "state": "approval-responded",
+        "input": {
+         "query": "swift"
+        },
+        "providerExecuted": true,
+        "approval": {
+         "id": "a1",
+         "isAutomatic": true,
+         "approved": true
+        },
+        "callProviderMetadata": {
+         "p": {
+          "x": 1
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-web_search",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "query": "swift"
+        },
+        "output": [
+         {
+          "url": "https://swift.org"
+         }
+        ],
+        "providerExecuted": true,
+        "approval": {
+         "id": "a1",
+         "isAutomatic": true,
+         "approved": true
+        },
+        "callProviderMetadata": {
+         "p": {
+          "x": 1
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "tool-web_search",
+      "toolCallId": "c1",
+      "state": "output-available",
+      "input": {
+       "query": "swift"
+      },
+      "output": [
+       {
+        "url": "https://swift.org"
+       }
+      ],
+      "providerExecuted": true,
+      "approval": {
+       "id": "a1",
+       "isAutomatic": true,
+       "approved": true
+      },
+      "callProviderMetadata": {
+       "p": {
+        "x": 1
+       }
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "data-parts",
+   "chunks": [
+    {
+     "type": "data-weather",
+     "id": "w1",
+     "data": {
+      "status": "loading"
+     }
+    },
+    {
+     "type": "data-weather",
+     "id": "w1",
+     "data": {
+      "status": "done",
+      "temperature": 21
+     }
+    },
+    {
+     "type": "data-notice",
+     "data": "transient!",
+     "transient": true
+    },
+    {
+     "type": "data-log",
+     "data": "one"
+    },
+    {
+     "type": "data-log",
+     "data": "two"
+    },
+    {
+     "type": "data-weather",
+     "id": "w2",
+     "data": {
+      "status": "loading"
+     }
+    }
+   ],
+   "events": [
+    {
+     "type": "data",
+     "part": {
+      "type": "data-weather",
+      "id": "w1",
+      "data": {
+       "status": "loading"
+      }
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "data-weather",
+        "id": "w1",
+        "data": {
+         "status": "loading"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "data",
+     "part": {
+      "type": "data-weather",
+      "id": "w1",
+      "data": {
+       "status": "done",
+       "temperature": 21
+      }
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "data-weather",
+        "id": "w1",
+        "data": {
+         "status": "done",
+         "temperature": 21
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "data",
+     "part": {
+      "type": "data-notice",
+      "data": "transient!"
+     }
+    },
+    {
+     "type": "data",
+     "part": {
+      "type": "data-log",
+      "data": "one"
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "data-weather",
+        "id": "w1",
+        "data": {
+         "status": "done",
+         "temperature": 21
+        }
+       },
+       {
+        "type": "data-log",
+        "data": "one"
+       }
+      ]
+     }
+    },
+    {
+     "type": "data",
+     "part": {
+      "type": "data-log",
+      "data": "two"
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "data-weather",
+        "id": "w1",
+        "data": {
+         "status": "done",
+         "temperature": 21
+        }
+       },
+       {
+        "type": "data-log",
+        "data": "one"
+       },
+       {
+        "type": "data-log",
+        "data": "two"
+       }
+      ]
+     }
+    },
+    {
+     "type": "data",
+     "part": {
+      "type": "data-weather",
+      "id": "w2",
+      "data": {
+       "status": "loading"
+      }
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "data-weather",
+        "id": "w1",
+        "data": {
+         "status": "done",
+         "temperature": 21
+        }
+       },
+       {
+        "type": "data-log",
+        "data": "one"
+       },
+       {
+        "type": "data-log",
+        "data": "two"
+       },
+       {
+        "type": "data-weather",
+        "id": "w2",
+        "data": {
+         "status": "loading"
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "data-weather",
+      "id": "w1",
+      "data": {
+       "status": "done",
+       "temperature": 21
+      }
+     },
+     {
+      "type": "data-log",
+      "data": "one"
+     },
+     {
+      "type": "data-log",
+      "data": "two"
+     },
+     {
+      "type": "data-weather",
+      "id": "w2",
+      "data": {
+       "status": "loading"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "message-metadata-merge",
+   "chunks": [
+    {
+     "type": "start",
+     "messageId": "m1",
+     "messageMetadata": {
+      "a": 1,
+      "nested": {
+       "x": 1
+      },
+      "list": [
+       1,
+       2
+      ]
+     }
+    },
+    {
+     "type": "message-metadata",
+     "messageMetadata": {
+      "nested": {
+       "y": 2
+      },
+      "list": [
+       3
+      ]
+     }
+    },
+    {
+     "type": "finish",
+     "finishReason": "length",
+     "messageMetadata": {
+      "b": 2
+     }
+    }
+   ],
+   "events": [
+    {
+     "type": "write",
+     "updateStatus": false,
+     "message": {
+      "id": "m1",
+      "metadata": {
+       "a": 1,
+       "nested": {
+        "x": 1
+       },
+       "list": [
+        1,
+        2
+       ]
+      },
+      "role": "assistant",
+      "parts": []
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "m1",
+      "metadata": {
+       "a": 1,
+       "nested": {
+        "x": 1,
+        "y": 2
+       },
+       "list": [
+        3
+       ]
+      },
+      "role": "assistant",
+      "parts": []
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "m1",
+      "metadata": {
+       "a": 1,
+       "nested": {
+        "x": 1,
+        "y": 2
+       },
+       "list": [
+        3
+       ],
+       "b": 2
+      },
+      "role": "assistant",
+      "parts": []
+     }
+    }
+   ],
+   "message": {
+    "id": "m1",
+    "metadata": {
+     "a": 1,
+     "nested": {
+      "x": 1,
+      "y": 2
+     },
+     "list": [
+      3
+     ],
+     "b": 2
+    },
+    "role": "assistant",
+    "parts": []
+   },
+   "finishReason": "length"
+  },
+  {
+   "name": "sources-files-custom",
+   "chunks": [
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "source-url",
+     "sourceId": "s1",
+     "url": "https://example.com",
+     "title": "Example"
+    },
+    {
+     "type": "source-document",
+     "sourceId": "s2",
+     "mediaType": "application/pdf",
+     "title": "Doc",
+     "filename": "doc.pdf"
+    },
+    {
+     "type": "file",
+     "url": "data:image/png;base64,iVBORw0KGgo=",
+     "mediaType": "image/png",
+     "providerMetadata": {
+      "p": {
+       "f": 1
+      }
+     }
+    },
+    {
+     "type": "reasoning-file",
+     "url": "data:text/plain;base64,aGk=",
+     "mediaType": "text/plain"
+    },
+    {
+     "type": "custom",
+     "kind": "openai.compaction",
+     "providerMetadata": {
+      "openai": {
+       "id": "x"
+      }
+     }
+    }
+   ],
+   "events": [
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "source-url",
+        "sourceId": "s1",
+        "url": "https://example.com",
+        "title": "Example"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "source-url",
+        "sourceId": "s1",
+        "url": "https://example.com",
+        "title": "Example"
+       },
+       {
+        "type": "source-document",
+        "sourceId": "s2",
+        "mediaType": "application/pdf",
+        "title": "Doc",
+        "filename": "doc.pdf"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "source-url",
+        "sourceId": "s1",
+        "url": "https://example.com",
+        "title": "Example"
+       },
+       {
+        "type": "source-document",
+        "sourceId": "s2",
+        "mediaType": "application/pdf",
+        "title": "Doc",
+        "filename": "doc.pdf"
+       },
+       {
+        "type": "file",
+        "mediaType": "image/png",
+        "url": "data:image/png;base64,iVBORw0KGgo=",
+        "providerMetadata": {
+         "p": {
+          "f": 1
+         }
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "source-url",
+        "sourceId": "s1",
+        "url": "https://example.com",
+        "title": "Example"
+       },
+       {
+        "type": "source-document",
+        "sourceId": "s2",
+        "mediaType": "application/pdf",
+        "title": "Doc",
+        "filename": "doc.pdf"
+       },
+       {
+        "type": "file",
+        "mediaType": "image/png",
+        "url": "data:image/png;base64,iVBORw0KGgo=",
+        "providerMetadata": {
+         "p": {
+          "f": 1
+         }
+        }
+       },
+       {
+        "type": "reasoning-file",
+        "mediaType": "text/plain",
+        "url": "data:text/plain;base64,aGk="
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "source-url",
+        "sourceId": "s1",
+        "url": "https://example.com",
+        "title": "Example"
+       },
+       {
+        "type": "source-document",
+        "sourceId": "s2",
+        "mediaType": "application/pdf",
+        "title": "Doc",
+        "filename": "doc.pdf"
+       },
+       {
+        "type": "file",
+        "mediaType": "image/png",
+        "url": "data:image/png;base64,iVBORw0KGgo=",
+        "providerMetadata": {
+         "p": {
+          "f": 1
+         }
+        }
+       },
+       {
+        "type": "reasoning-file",
+        "mediaType": "text/plain",
+        "url": "data:text/plain;base64,aGk="
+       },
+       {
+        "type": "custom",
+        "kind": "openai.compaction",
+        "providerMetadata": {
+         "openai": {
+          "id": "x"
+         }
+        }
+       }
+      ]
+     }
+    }
+   ],
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "source-url",
+      "sourceId": "s1",
+      "url": "https://example.com",
+      "title": "Example"
+     },
+     {
+      "type": "source-document",
+      "sourceId": "s2",
+      "mediaType": "application/pdf",
+      "title": "Doc",
+      "filename": "doc.pdf"
+     },
+     {
+      "type": "file",
+      "mediaType": "image/png",
+      "url": "data:image/png;base64,iVBORw0KGgo=",
+      "providerMetadata": {
+       "p": {
+        "f": 1
+       }
+      }
+     },
+     {
+      "type": "reasoning-file",
+      "mediaType": "text/plain",
+      "url": "data:text/plain;base64,aGk="
+     },
+     {
+      "type": "custom",
+      "kind": "openai.compaction",
+      "providerMetadata": {
+       "openai": {
+        "id": "x"
+       }
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "multi-step-and-reset",
+   "chunks": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "weather",
+     "input": {
+      "city": "Rome"
+     }
+    },
+    {
+     "type": "tool-output-available",
+     "toolCallId": "c1",
+     "output": "sunny"
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "text-start",
+     "id": "t1"
+    },
+    {
+     "type": "text-delta",
+     "id": "t1",
+     "delta": "Draft"
+    },
+    {
+     "type": "reset-step"
+    },
+    {
+     "type": "text-start",
+     "id": "t2"
+    },
+    {
+     "type": "text-delta",
+     "id": "t2",
+     "delta": "It is sunny."
+    },
+    {
+     "type": "text-end",
+     "id": "t2"
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish"
+    }
+   ],
+   "events": [
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "input-available",
+        "input": {
+         "city": "Rome"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "toolCall",
+     "toolCall": {
+      "type": "tool-input-available",
+      "toolCallId": "c1",
+      "toolName": "weather",
+      "input": {
+       "city": "Rome"
+      }
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Rome"
+        },
+        "output": "sunny"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Rome"
+        },
+        "output": "sunny"
+       },
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "",
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Rome"
+        },
+        "output": "sunny"
+       },
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "Draft",
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Rome"
+        },
+        "output": "sunny"
+       },
+       {
+        "type": "step-start"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Rome"
+        },
+        "output": "sunny"
+       },
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "",
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Rome"
+        },
+        "output": "sunny"
+       },
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "It is sunny.",
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "generated-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Rome"
+        },
+        "output": "sunny"
+       },
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "It is sunny.",
+        "state": "done"
+       }
+      ]
+     }
+    }
+   ],
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "tool-weather",
+      "toolCallId": "c1",
+      "state": "output-available",
+      "input": {
+       "city": "Rome"
+      },
+      "output": "sunny"
+     },
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "text",
+      "text": "It is sunny.",
+      "state": "done"
+     }
+    ]
+   }
+  },
+  {
+   "name": "continue-assistant-message",
+   "message": {
+    "id": "assistant-1",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "tool-weather",
+      "toolCallId": "c1",
+      "state": "output-available",
+      "input": {
+       "city": "Oslo"
+      },
+      "output": {
+       "temperature": -2
+      }
+     },
+     {
+      "type": "tool-delete",
+      "toolCallId": "c2",
+      "state": "approval-responded",
+      "input": {
+       "path": "/x"
+      },
+      "approval": {
+       "id": "a2",
+       "approved": true,
+       "reason": "ok"
+      }
+     },
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "text",
+      "text": "Cold.",
+      "state": "done"
+     }
+    ]
+   },
+   "chunks": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "tool-approval-response",
+     "approvalId": "a2",
+     "approved": true,
+     "reason": "ok"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "tool-output-available",
+     "toolCallId": "c1",
+     "output": {
+      "temperature": -3
+     },
+     "preliminary": true
+    },
+    {
+     "type": "tool-output-available",
+     "toolCallId": "c1",
+     "output": {
+      "temperature": -2
+     }
+    },
+    {
+     "type": "text-start",
+     "id": "t1"
+    },
+    {
+     "type": "text-delta",
+     "id": "t1",
+     "delta": "Cold."
+    },
+    {
+     "type": "text-end",
+     "id": "t1"
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish"
+    }
+   ],
+   "events": [
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "assistant-1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "input-available",
+        "input": {
+         "city": "Oslo"
+        }
+       },
+       {
+        "type": "tool-delete",
+        "toolCallId": "c2",
+        "state": "approval-responded",
+        "input": {
+         "path": "/x"
+        },
+        "approval": {
+         "id": "a2",
+         "approved": true,
+         "reason": "ok"
+        }
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "assistant-1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Oslo"
+        },
+        "output": {
+         "temperature": -3
+        },
+        "preliminary": true
+       },
+       {
+        "type": "tool-delete",
+        "toolCallId": "c2",
+        "state": "approval-responded",
+        "input": {
+         "path": "/x"
+        },
+        "approval": {
+         "id": "a2",
+         "approved": true,
+         "reason": "ok"
+        }
+       },
+       {
+        "type": "step-start"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "assistant-1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Oslo"
+        },
+        "output": {
+         "temperature": -2
+        }
+       },
+       {
+        "type": "tool-delete",
+        "toolCallId": "c2",
+        "state": "approval-responded",
+        "input": {
+         "path": "/x"
+        },
+        "approval": {
+         "id": "a2",
+         "approved": true,
+         "reason": "ok"
+        }
+       },
+       {
+        "type": "step-start"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "assistant-1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Oslo"
+        },
+        "output": {
+         "temperature": -2
+        }
+       },
+       {
+        "type": "tool-delete",
+        "toolCallId": "c2",
+        "state": "approval-responded",
+        "input": {
+         "path": "/x"
+        },
+        "approval": {
+         "id": "a2",
+         "approved": true,
+         "reason": "ok"
+        }
+       },
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "",
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "assistant-1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Oslo"
+        },
+        "output": {
+         "temperature": -2
+        }
+       },
+       {
+        "type": "tool-delete",
+        "toolCallId": "c2",
+        "state": "approval-responded",
+        "input": {
+         "path": "/x"
+        },
+        "approval": {
+         "id": "a2",
+         "approved": true,
+         "reason": "ok"
+        }
+       },
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "Cold.",
+        "state": "streaming"
+       }
+      ]
+     }
+    },
+    {
+     "type": "write",
+     "updateStatus": true,
+     "message": {
+      "id": "assistant-1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "city": "Oslo"
+        },
+        "output": {
+         "temperature": -2
+        }
+       },
+       {
+        "type": "tool-delete",
+        "toolCallId": "c2",
+        "state": "approval-responded",
+        "input": {
+         "path": "/x"
+        },
+        "approval": {
+         "id": "a2",
+         "approved": true,
+         "reason": "ok"
+        }
+       },
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "Cold.",
+        "state": "done"
+       }
+      ]
+     }
+    }
+   ],
+   "initialMessage": {
+    "id": "assistant-1",
+    "role": "assistant",
+    "parts": [
+     {
+      "type": "step-start"
+     },
+     {
+      "type": "tool-weather",
+      "toolCallId": "c1",
+      "state": "input-available",
+      "input": {
+       "city": "Oslo"
+      }
+     },
+     {
+      "type": "tool-delete",
+      "toolCallId": "c2",
+      "state": "approval-requested",
+      "input": {
+       "path": "/x"
+      },
+      "approval": {
+       "id": "a2"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "name": "error-chunk-and-abort",
+   "chunks": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "error",
+     "errorText": "Rate limited"
+    },
+    {
+     "type": "abort",
+     "reason": "user"
+    }
+   ],
+   "events": [
+    {
+     "type": "error",
+     "message": "Rate limited"
+    }
+   ],
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": []
+   }
+  },
+  {
+   "name": "missing-text-start",
+   "chunks": [
+    {
+     "type": "text-delta",
+     "id": "nope",
+     "delta": "x"
+    }
+   ],
+   "events": [],
+   "thrown": {
+    "name": "AI_UIMessageStreamError",
+    "message": "Received text-delta for missing text part with ID \"nope\". Ensure a \"text-start\" chunk is sent before any \"text-delta\" chunks.",
+    "chunkType": "text-delta",
+    "chunkId": "nope"
+   },
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": []
+   }
+  },
+  {
+   "name": "missing-reasoning-start",
+   "chunks": [
+    {
+     "type": "reasoning-end",
+     "id": "nope"
+    }
+   ],
+   "events": [],
+   "thrown": {
+    "name": "AI_UIMessageStreamError",
+    "message": "Received reasoning-end for missing reasoning part with ID \"nope\". Ensure a \"reasoning-start\" chunk is sent before any \"reasoning-end\" chunks.",
+    "chunkType": "reasoning-end",
+    "chunkId": "nope"
+   },
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": []
+   }
+  },
+  {
+   "name": "missing-tool-input-start",
+   "chunks": [
+    {
+     "type": "tool-input-delta",
+     "toolCallId": "c9",
+     "inputTextDelta": "{"
+    }
+   ],
+   "events": [],
+   "thrown": {
+    "name": "AI_UIMessageStreamError",
+    "message": "Received tool-input-delta for missing tool call with ID \"c9\". Ensure a \"tool-input-start\" chunk is sent before any \"tool-input-delta\" chunks.",
+    "chunkType": "tool-input-delta",
+    "chunkId": "c9"
+   },
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": []
+   }
+  },
+  {
+   "name": "missing-tool-invocation",
+   "chunks": [
+    {
+     "type": "tool-output-available",
+     "toolCallId": "c9",
+     "output": 1
+    }
+   ],
+   "events": [],
+   "thrown": {
+    "name": "AI_UIMessageStreamError",
+    "message": "No tool invocation found for tool call ID \"c9\".",
+    "chunkType": "tool-invocation",
+    "chunkId": "c9"
+   },
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": []
+   }
+  },
+  {
+   "name": "missing-approval",
+   "chunks": [
+    {
+     "type": "tool-approval-response",
+     "approvalId": "a9",
+     "approved": true
+    }
+   ],
+   "events": [],
+   "thrown": {
+    "name": "AI_UIMessageStreamError",
+    "message": "No tool invocation found for approval ID \"a9\".",
+    "chunkType": "tool-approval-response",
+    "chunkId": "a9"
+   },
+   "message": {
+    "id": "generated-id",
+    "role": "assistant",
+    "parts": []
+   }
+  }
+ ],
+ "stream": [
+  {
+   "name": "text-with-metadata",
+   "steps": [
+    [
+     {
+      "type": "stream-start",
+      "warnings": []
+     },
+     {
+      "type": "response-metadata",
+      "id": "resp",
+      "modelId": "mock"
+     },
+     {
+      "type": "text-start",
+      "id": "0"
+     },
+     {
+      "type": "text-delta",
+      "id": "0",
+      "delta": "Hello"
+     },
+     {
+      "type": "text-delta",
+      "id": "0",
+      "delta": " there"
+     },
+     {
+      "type": "text-end",
+      "id": "0"
+     },
+     {
+      "type": "finish",
+      "finishReason": {
+       "unified": "stop",
+       "raw": "stop"
+      },
+      "usage": {
+       "inputTokens": {
+        "total": 3
+       },
+       "outputTokens": {
+        "total": 5
+       }
+      }
+     }
+    ]
+   ],
+   "options": {
+    "messageMetadata": {
+     "start": {
+      "model": "mock"
+     },
+     "finish": {
+      "tokens": 5
+     }
+    }
+   },
+   "chunks": [
+    {
+     "type": "start",
+     "messageMetadata": {
+      "model": "mock"
+     }
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "text-start",
+     "id": "0"
+    },
+    {
+     "type": "text-delta",
+     "id": "0",
+     "delta": "Hello"
+    },
+    {
+     "type": "text-delta",
+     "id": "0",
+     "delta": " there"
+    },
+    {
+     "type": "text-end",
+     "id": "0"
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "stop",
+     "messageMetadata": {
+      "tokens": 5
+     }
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "completed",
+    "responseMessage": {
+     "id": "",
+     "metadata": {
+      "model": "mock",
+      "tokens": 5
+     },
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "Hello there",
+       "state": "done"
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "",
+      "metadata": {
+       "model": "mock",
+       "tokens": 5
+      },
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "Hello there",
+        "state": "done"
+       }
+      ]
+     }
+    ],
+    "finishReason": "stop"
+   }
+  },
+  {
+   "name": "reasoning-hidden",
+   "steps": [
+    [
+     {
+      "type": "reasoning-start",
+      "id": "r"
+     },
+     {
+      "type": "reasoning-delta",
+      "id": "r",
+      "delta": "secret"
+     },
+     {
+      "type": "reasoning-end",
+      "id": "r"
+     },
+     {
+      "type": "text-start",
+      "id": "t"
+     },
+     {
+      "type": "text-delta",
+      "id": "t",
+      "delta": "ok"
+     },
+     {
+      "type": "text-end",
+      "id": "t"
+     },
+     {
+      "type": "finish",
+      "finishReason": {
+       "unified": "stop",
+       "raw": "stop"
+      },
+      "usage": {
+       "inputTokens": {
+        "total": 3
+       },
+       "outputTokens": {
+        "total": 5
+       }
+      }
+     }
+    ]
+   ],
+   "options": {
+    "sendReasoning": false,
+    "sendStart": false,
+    "sendFinish": false
+   },
+   "chunks": [
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "text-start",
+     "id": "t"
+    },
+    {
+     "type": "text-delta",
+     "id": "t",
+     "delta": "ok"
+    },
+    {
+     "type": "text-end",
+     "id": "t"
+    },
+    {
+     "type": "finish-step"
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "completed",
+    "responseMessage": {
+     "id": "",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "ok",
+       "state": "done"
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "ok",
+        "state": "done"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "name": "tool-loop-with-colliding-part-ids",
+   "tools": {
+    "weather": {
+     "output": {
+      "temperature": 20
+     },
+     "title": "Weather"
+    }
+   },
+   "maxSteps": 2,
+   "steps": [
+    [
+     {
+      "type": "text-start",
+      "id": "0"
+     },
+     {
+      "type": "text-delta",
+      "id": "0",
+      "delta": "Checking."
+     },
+     {
+      "type": "text-end",
+      "id": "0"
+     },
+     {
+      "type": "tool-input-start",
+      "id": "c1",
+      "toolName": "weather"
+     },
+     {
+      "type": "tool-input-delta",
+      "id": "c1",
+      "delta": "{\"city\":\"Paris\"}"
+     },
+     {
+      "type": "tool-input-end",
+      "id": "c1"
+     },
+     {
+      "type": "tool-call",
+      "toolCallId": "c1",
+      "toolName": "weather",
+      "input": "{\"city\":\"Paris\"}"
+     },
+     {
+      "type": "finish",
+      "finishReason": {
+       "unified": "tool-calls",
+       "raw": "tool-calls"
+      },
+      "usage": {
+       "inputTokens": {
+        "total": 3
+       },
+       "outputTokens": {
+        "total": 5
+       }
+      }
+     }
+    ],
+    [
+     {
+      "type": "text-start",
+      "id": "0"
+     },
+     {
+      "type": "text-delta",
+      "id": "0",
+      "delta": "It is 20 degrees."
+     },
+     {
+      "type": "text-end",
+      "id": "0"
+     },
+     {
+      "type": "finish",
+      "finishReason": {
+       "unified": "stop",
+       "raw": "stop"
+      },
+      "usage": {
+       "inputTokens": {
+        "total": 3
+       },
+       "outputTokens": {
+        "total": 5
+       }
+      }
+     }
+    ]
+   ],
+   "chunks": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "text-start",
+     "id": "0"
+    },
+    {
+     "type": "text-delta",
+     "id": "0",
+     "delta": "Checking."
+    },
+    {
+     "type": "text-end",
+     "id": "0"
+    },
+    {
+     "type": "tool-input-start",
+     "toolCallId": "c1",
+     "toolName": "weather",
+     "title": "Weather"
+    },
+    {
+     "type": "tool-input-delta",
+     "toolCallId": "c1",
+     "inputTextDelta": "{\"city\":\"Paris\"}"
+    },
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "weather",
+     "input": {
+      "city": "Paris"
+     },
+     "title": "Weather"
+    },
+    {
+     "type": "tool-output-available",
+     "toolCallId": "c1",
+     "output": {
+      "temperature": 20
+     }
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "text-start",
+     "id": "gen-id"
+    },
+    {
+     "type": "text-delta",
+     "id": "gen-id",
+     "delta": "It is 20 degrees."
+    },
+    {
+     "type": "text-end",
+     "id": "gen-id"
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "stop"
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "completed",
+    "responseMessage": {
+     "id": "",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "Checking.",
+       "state": "done"
+      },
+      {
+       "type": "tool-weather",
+       "toolCallId": "c1",
+       "state": "output-available",
+       "title": "Weather",
+       "input": {
+        "city": "Paris"
+       },
+       "output": {
+        "temperature": 20
+       }
+      },
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "It is 20 degrees.",
+       "state": "done"
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "Checking.",
+        "state": "done"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "title": "Weather",
+        "input": {
+         "city": "Paris"
+        },
+        "output": {
+         "temperature": 20
+        }
+       },
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "It is 20 degrees.",
+        "state": "done"
+       }
+      ]
+     }
+    ],
+    "finishReason": "stop"
+   }
+  },
+  {
+   "name": "dynamic-tool",
+   "tools": {
+    "lookup": {
+     "dynamic": true,
+     "output": "found"
+    }
+   },
+   "maxSteps": 1,
+   "steps": [
+    [
+     {
+      "type": "tool-input-start",
+      "id": "c1",
+      "toolName": "lookup"
+     },
+     {
+      "type": "tool-input-end",
+      "id": "c1"
+     },
+     {
+      "type": "tool-call",
+      "toolCallId": "c1",
+      "toolName": "lookup",
+      "input": "{\"id\":7}"
+     },
+     {
+      "type": "finish",
+      "finishReason": {
+       "unified": "tool-calls",
+       "raw": "tool-calls"
+      },
+      "usage": {
+       "inputTokens": {
+        "total": 3
+       },
+       "outputTokens": {
+        "total": 5
+       }
+      }
+     }
+    ]
+   ],
+   "chunks": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "tool-input-start",
+     "toolCallId": "c1",
+     "toolName": "lookup",
+     "dynamic": true
+    },
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "lookup",
+     "input": {
+      "id": 7
+     },
+     "dynamic": true
+    },
+    {
+     "type": "tool-output-available",
+     "toolCallId": "c1",
+     "output": "found",
+     "dynamic": true
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "tool-calls"
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "completed",
+    "responseMessage": {
+     "id": "",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "dynamic-tool",
+       "toolName": "lookup",
+       "toolCallId": "c1",
+       "state": "output-available",
+       "input": {
+        "id": 7
+       },
+       "output": "found"
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "lookup",
+        "toolCallId": "c1",
+        "state": "output-available",
+        "input": {
+         "id": 7
+        },
+        "output": "found"
+       }
+      ]
+     }
+    ],
+    "finishReason": "tool-calls"
+   }
+  },
+  {
+   "name": "tool-error-and-invalid-call",
+   "tools": {
+    "weather": {
+     "error": "weather service down"
+    }
+   },
+   "maxSteps": 1,
+   "steps": [
+    [
+     {
+      "type": "tool-call",
+      "toolCallId": "c1",
+      "toolName": "weather",
+      "input": "{\"city\":\"Paris\"}"
+     },
+     {
+      "type": "tool-call",
+      "toolCallId": "c2",
+      "toolName": "unknown_tool",
+      "input": "{}"
+     },
+     {
+      "type": "tool-call",
+      "toolCallId": "c3",
+      "toolName": "weather",
+      "input": "{\"city\":1}"
+     },
+     {
+      "type": "finish",
+      "finishReason": {
+       "unified": "tool-calls",
+       "raw": "tool-calls"
+      },
+      "usage": {
+       "inputTokens": {
+        "total": 3
+       },
+       "outputTokens": {
+        "total": 5
+       }
+      }
+     }
+    ]
+   ],
+   "chunks": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "weather",
+     "input": {
+      "city": "Paris"
+     }
+    },
+    {
+     "type": "tool-input-error",
+     "toolCallId": "c2",
+     "toolName": "unknown_tool",
+     "input": {},
+     "dynamic": true,
+     "errorText": "An error occurred."
+    },
+    {
+     "type": "tool-output-error",
+     "toolCallId": "c2",
+     "errorText": "An error occurred.",
+     "dynamic": true
+    },
+    {
+     "type": "tool-input-error",
+     "toolCallId": "c3",
+     "toolName": "weather",
+     "input": {
+      "city": 1
+     },
+     "errorText": "An error occurred."
+    },
+    {
+     "type": "tool-output-error",
+     "toolCallId": "c3",
+     "errorText": "An error occurred."
+    },
+    {
+     "type": "tool-output-error",
+     "toolCallId": "c1",
+     "errorText": "An error occurred."
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "tool-calls"
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "completed",
+    "responseMessage": {
+     "id": "",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "tool-weather",
+       "toolCallId": "c1",
+       "state": "output-error",
+       "input": {
+        "city": "Paris"
+       },
+       "errorText": "An error occurred."
+      },
+      {
+       "type": "dynamic-tool",
+       "toolName": "unknown_tool",
+       "toolCallId": "c2",
+       "state": "output-error",
+       "input": {},
+       "errorText": "An error occurred."
+      },
+      {
+       "type": "tool-weather",
+       "toolCallId": "c3",
+       "state": "output-error",
+       "rawInput": {
+        "city": 1
+       },
+       "errorText": "An error occurred."
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c1",
+        "state": "output-error",
+        "input": {
+         "city": "Paris"
+        },
+        "errorText": "An error occurred."
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "unknown_tool",
+        "toolCallId": "c2",
+        "state": "output-error",
+        "input": {},
+        "errorText": "An error occurred."
+       },
+       {
+        "type": "tool-weather",
+        "toolCallId": "c3",
+        "state": "output-error",
+        "rawInput": {
+         "city": 1
+        },
+        "errorText": "An error occurred."
+       }
+      ]
+     }
+    ],
+    "finishReason": "tool-calls"
+   }
+  },
+  {
+   "name": "sources-and-files",
+   "steps": [
+    [
+     {
+      "type": "source",
+      "sourceType": "url",
+      "id": "s1",
+      "url": "https://swift.org",
+      "title": "Swift"
+     },
+     {
+      "type": "source",
+      "sourceType": "document",
+      "id": "s2",
+      "mediaType": "text/plain",
+      "title": "Notes"
+     },
+     {
+      "type": "file",
+      "mediaType": "image/png",
+      "data": {
+       "type": "data",
+       "data": "iVBORw0KGgo="
+      }
+     },
+     {
+      "type": "finish",
+      "finishReason": {
+       "unified": "stop",
+       "raw": "stop"
+      },
+      "usage": {
+       "inputTokens": {
+        "total": 3
+       },
+       "outputTokens": {
+        "total": 5
+       }
+      }
+     }
+    ]
+   ],
+   "options": {
+    "sendSources": true
+   },
+   "chunks": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "source-url",
+     "sourceId": "s1",
+     "url": "https://swift.org",
+     "title": "Swift"
+    },
+    {
+     "type": "source-document",
+     "sourceId": "s2",
+     "mediaType": "text/plain",
+     "title": "Notes"
+    },
+    {
+     "type": "file",
+     "mediaType": "image/png",
+     "url": "data:image/png;base64,iVBORw0KGgo="
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "stop"
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "completed",
+    "responseMessage": {
+     "id": "",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "source-url",
+       "sourceId": "s1",
+       "url": "https://swift.org",
+       "title": "Swift"
+      },
+      {
+       "type": "source-document",
+       "sourceId": "s2",
+       "mediaType": "text/plain",
+       "title": "Notes"
+      },
+      {
+       "type": "file",
+       "mediaType": "image/png",
+       "url": "data:image/png;base64,iVBORw0KGgo="
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "source-url",
+        "sourceId": "s1",
+        "url": "https://swift.org",
+        "title": "Swift"
+       },
+       {
+        "type": "source-document",
+        "sourceId": "s2",
+        "mediaType": "text/plain",
+        "title": "Notes"
+       },
+       {
+        "type": "file",
+        "mediaType": "image/png",
+        "url": "data:image/png;base64,iVBORw0KGgo="
+       }
+      ]
+     }
+    ],
+    "finishReason": "stop"
+   }
+  },
+  {
+   "name": "provider-executed-tool",
+   "steps": [
+    [
+     {
+      "type": "tool-call",
+      "toolCallId": "p1",
+      "toolName": "web_search",
+      "input": "{\"q\":\"swift\"}",
+      "providerExecuted": true
+     },
+     {
+      "type": "tool-result",
+      "toolCallId": "p1",
+      "toolName": "web_search",
+      "result": [
+       {
+        "url": "https://swift.org"
+       }
+      ]
+     },
+     {
+      "type": "tool-call",
+      "toolCallId": "p2",
+      "toolName": "web_search",
+      "input": "{\"q\":\"x\"}",
+      "providerExecuted": true
+     },
+     {
+      "type": "tool-result",
+      "toolCallId": "p2",
+      "toolName": "web_search",
+      "result": {
+       "code": "unavailable"
+      },
+      "isError": true
+     },
+     {
+      "type": "text-start",
+      "id": "t"
+     },
+     {
+      "type": "text-delta",
+      "id": "t",
+      "delta": "Found it."
+     },
+     {
+      "type": "text-end",
+      "id": "t"
+     },
+     {
+      "type": "finish",
+      "finishReason": {
+       "unified": "stop",
+       "raw": "stop"
+      },
+      "usage": {
+       "inputTokens": {
+        "total": 3
+       },
+       "outputTokens": {
+        "total": 5
+       }
+      }
+     }
+    ]
+   ],
+   "chunks": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "tool-input-error",
+     "toolCallId": "p1",
+     "toolName": "web_search",
+     "input": {
+      "q": "swift"
+     },
+     "providerExecuted": true,
+     "dynamic": true,
+     "errorText": "An error occurred."
+    },
+    {
+     "type": "tool-output-available",
+     "toolCallId": "p1",
+     "output": [
+      {
+       "url": "https://swift.org"
+      }
+     ],
+     "providerExecuted": true
+    },
+    {
+     "type": "tool-input-error",
+     "toolCallId": "p2",
+     "toolName": "web_search",
+     "input": {
+      "q": "x"
+     },
+     "providerExecuted": true,
+     "dynamic": true,
+     "errorText": "An error occurred."
+    },
+    {
+     "type": "tool-output-error",
+     "toolCallId": "p2",
+     "errorText": "{\"code\":\"unavailable\"}",
+     "providerExecuted": true
+    },
+    {
+     "type": "text-start",
+     "id": "t"
+    },
+    {
+     "type": "text-delta",
+     "id": "t",
+     "delta": "Found it."
+    },
+    {
+     "type": "text-end",
+     "id": "t"
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "stop"
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "completed",
+    "responseMessage": {
+     "id": "",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "dynamic-tool",
+       "toolName": "web_search",
+       "toolCallId": "p1",
+       "state": "output-available",
+       "input": {
+        "q": "swift"
+       },
+       "output": [
+        {
+         "url": "https://swift.org"
+        }
+       ],
+       "providerExecuted": true
+      },
+      {
+       "type": "dynamic-tool",
+       "toolName": "web_search",
+       "toolCallId": "p2",
+       "state": "output-error",
+       "input": {
+        "q": "x"
+       },
+       "errorText": "{\"code\":\"unavailable\"}",
+       "providerExecuted": true
+      },
+      {
+       "type": "text",
+       "text": "Found it.",
+       "state": "done"
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "web_search",
+        "toolCallId": "p1",
+        "state": "output-available",
+        "input": {
+         "q": "swift"
+        },
+        "output": [
+         {
+          "url": "https://swift.org"
+         }
+        ],
+        "providerExecuted": true
+       },
+       {
+        "type": "dynamic-tool",
+        "toolName": "web_search",
+        "toolCallId": "p2",
+        "state": "output-error",
+        "input": {
+         "q": "x"
+        },
+        "errorText": "{\"code\":\"unavailable\"}",
+        "providerExecuted": true
+       },
+       {
+        "type": "text",
+        "text": "Found it.",
+        "state": "done"
+       }
+      ]
+     }
+    ],
+    "finishReason": "stop"
+   }
+  },
+  {
+   "name": "persistence-and-approval",
+   "tools": {
+    "delete_file": {
+     "needsApproval": true,
+     "output": "deleted"
+    }
+   },
+   "maxSteps": 2,
+   "steps": [
+    [
+     {
+      "type": "tool-call",
+      "toolCallId": "c1",
+      "toolName": "delete_file",
+      "input": "{\"city\":\"x\"}"
+     },
+     {
+      "type": "finish",
+      "finishReason": {
+       "unified": "tool-calls",
+       "raw": "tool-calls"
+      },
+      "usage": {
+       "inputTokens": {
+        "total": 3
+       },
+       "outputTokens": {
+        "total": 5
+       }
+      }
+     }
+    ]
+   ],
+   "options": {
+    "originalMessages": [
+     {
+      "id": "u1",
+      "role": "user",
+      "parts": [
+       {
+        "type": "text",
+        "text": "Delete it"
+       }
+      ]
+     }
+    ],
+    "generateMessageId": "response-1"
+   },
+   "chunks": [
+    {
+     "type": "start",
+     "messageId": "response-1"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "delete_file",
+     "input": {
+      "city": "x"
+     }
+    },
+    {
+     "type": "tool-approval-request",
+     "approvalId": "gen-id",
+     "toolCallId": "c1"
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "tool-calls"
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "completed",
+    "responseMessage": {
+     "id": "response-1",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "tool-delete_file",
+       "toolCallId": "c1",
+       "state": "approval-requested",
+       "input": {
+        "city": "x"
+       },
+       "approval": {
+        "id": "gen-id"
+       }
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "u1",
+      "role": "user",
+      "parts": [
+       {
+        "type": "text",
+        "text": "Delete it"
+       }
+      ]
+     },
+     {
+      "id": "response-1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "tool-delete_file",
+        "toolCallId": "c1",
+        "state": "approval-requested",
+        "input": {
+         "city": "x"
+        },
+        "approval": {
+         "id": "gen-id"
+        }
+       }
+      ]
+     }
+    ],
+    "finishReason": "tool-calls"
+   }
+  },
+  {
+   "name": "continuation-of-assistant-message",
+   "steps": [
+    [
+     {
+      "type": "text-start",
+      "id": "t"
+     },
+     {
+      "type": "text-delta",
+      "id": "t",
+      "delta": "More."
+     },
+     {
+      "type": "text-end",
+      "id": "t"
+     },
+     {
+      "type": "finish",
+      "finishReason": {
+       "unified": "stop",
+       "raw": "stop"
+      },
+      "usage": {
+       "inputTokens": {
+        "total": 3
+       },
+       "outputTokens": {
+        "total": 5
+       }
+      }
+     }
+    ]
+   ],
+   "options": {
+    "originalMessages": [
+     {
+      "id": "u1",
+      "role": "user",
+      "parts": [
+       {
+        "type": "text",
+        "text": "Hi"
+       }
+      ]
+     },
+     {
+      "id": "a1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "text",
+        "text": "Hello."
+       }
+      ]
+     }
+    ],
+    "generateMessageId": "unused"
+   },
+   "chunks": [
+    {
+     "type": "start",
+     "messageId": "a1"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "text-start",
+     "id": "t"
+    },
+    {
+     "type": "text-delta",
+     "id": "t",
+     "delta": "More."
+    },
+    {
+     "type": "text-end",
+     "id": "t"
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "stop"
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": true,
+    "outcome": "completed",
+    "responseMessage": {
+     "id": "a1",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hello."
+      },
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "More.",
+       "state": "done"
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "u1",
+      "role": "user",
+      "parts": [
+       {
+        "type": "text",
+        "text": "Hi"
+       }
+      ]
+     },
+     {
+      "id": "a1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "text",
+        "text": "Hello."
+       },
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "More.",
+        "state": "done"
+       }
+      ]
+     }
+    ],
+    "finishReason": "stop"
+   }
+  },
+  {
+   "name": "model-error-part",
+   "steps": [
+    [
+     {
+      "type": "text-start",
+      "id": "t"
+     },
+     {
+      "type": "text-delta",
+      "id": "t",
+      "delta": "Partial"
+     },
+     {
+      "type": "error",
+      "error": "overloaded"
+     },
+     {
+      "type": "text-end",
+      "id": "t"
+     },
+     {
+      "type": "finish",
+      "finishReason": {
+       "unified": "error",
+       "raw": "error"
+      },
+      "usage": {
+       "inputTokens": {
+        "total": 3
+       },
+       "outputTokens": {
+        "total": 5
+       }
+      }
+     }
+    ]
+   ],
+   "chunks": [
+    {
+     "type": "start"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "text-start",
+     "id": "t"
+    },
+    {
+     "type": "text-delta",
+     "id": "t",
+     "delta": "Partial"
+    },
+    {
+     "type": "error",
+     "errorText": "An error occurred."
+    },
+    {
+     "type": "text-end",
+     "id": "t"
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "error"
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "completed",
+    "responseMessage": {
+     "id": "",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "Partial",
+       "state": "done"
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "Partial",
+        "state": "done"
+       }
+      ]
+     }
+    ],
+    "finishReason": "error"
+   }
+  }
+ ],
+ "convert": [
+  {
+   "name": "system-user-assistant",
+   "messages": [
+    {
+     "id": "s",
+     "role": "system",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Be brief. ",
+       "providerMetadata": {
+        "a": {
+         "x": 1
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "Be kind."
+      }
+     ]
+    },
+    {
+     "id": "u",
+     "role": "user",
+     "parts": [
+      {
+       "type": "file",
+       "mediaType": "image/png",
+       "url": "https://example.com/cat.png",
+       "filename": "cat.png"
+      },
+      {
+       "type": "file",
+       "mediaType": "application/pdf",
+       "url": "https://example.com/doc.pdf",
+       "providerReference": {
+        "openai": "file-1"
+       }
+      },
+      {
+       "type": "text",
+       "text": "What is this?",
+       "providerMetadata": {
+        "a": {
+         "y": 2
+        }
+       }
+      },
+      {
+       "type": "data-context",
+       "data": "ignored without converter"
+      }
+     ]
+    },
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "reasoning",
+       "text": "Looking",
+       "providerMetadata": {
+        "a": {
+         "sig": "abc"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "A cat."
+      },
+      {
+       "type": "custom",
+       "kind": "openai.compaction",
+       "providerMetadata": {
+        "openai": {
+         "id": "c"
+        }
+       }
+      },
+      {
+       "type": "reasoning-file",
+       "mediaType": "image/png",
+       "url": "data:image/png;base64,iVBORw0KGgo="
+      },
+      {
+       "type": "source-url",
+       "sourceId": "s",
+       "url": "https://example.com"
+      }
+     ]
+    }
+   ],
+   "modelMessages": [
+    {
+     "role": "system",
+     "content": "Be brief. Be kind.",
+     "providerOptions": {
+      "a": {
+       "x": 1
+      }
+     }
+    },
+    {
+     "role": "user",
+     "content": [
+      {
+       "type": "file",
+       "mediaType": "image/png",
+       "filename": "cat.png",
+       "data": {
+        "type": "url",
+        "url": "https://example.com/cat.png"
+       }
+      },
+      {
+       "type": "file",
+       "mediaType": "application/pdf",
+       "data": {
+        "type": "reference",
+        "reference": {
+         "openai": "file-1"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "What is this?",
+       "providerOptions": {
+        "a": {
+         "y": 2
+        }
+       }
+      }
+     ]
+    },
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "reasoning",
+       "text": "Looking",
+       "providerOptions": {
+        "a": {
+         "sig": "abc"
+        }
+       }
+      },
+      {
+       "type": "text",
+       "text": "A cat."
+      },
+      {
+       "type": "custom",
+       "kind": "openai.compaction",
+       "providerOptions": {
+        "openai": {
+         "id": "c"
+        }
+       }
+      },
+      {
+       "type": "reasoning-file",
+       "data": {
+        "type": "url",
+        "url": "data:image/png;base64,iVBORw0KGgo="
+       },
+       "mediaType": "image/png"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "tool-states",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "Calling tools."
+      },
+      {
+       "type": "tool-weather",
+       "toolCallId": "c1",
+       "state": "output-available",
+       "input": {
+        "city": "Paris"
+       },
+       "output": {
+        "temperature": 20
+       },
+       "callProviderMetadata": {
+        "p": {
+         "a": 1
+        }
+       }
+      },
+      {
+       "type": "tool-weather",
+       "toolCallId": "c2",
+       "state": "output-error",
+       "input": {
+        "city": "X"
+       },
+       "errorText": "Unknown city"
+      },
+      {
+       "type": "tool-weather",
+       "toolCallId": "c3",
+       "state": "output-error",
+       "rawInput": "{\"city\":",
+       "errorText": "Bad JSON",
+       "resultProviderMetadata": {
+        "p": {
+         "r": 1
+        }
+       }
+      },
+      {
+       "type": "dynamic-tool",
+       "toolName": "lookup",
+       "toolCallId": "c4",
+       "state": "output-available",
+       "input": {},
+       "output": "text output"
+      },
+      {
+       "type": "tool-weather",
+       "toolCallId": "c5",
+       "state": "input-streaming",
+       "input": {
+        "city": "Pa"
+       }
+      },
+      {
+       "type": "tool-weather",
+       "toolCallId": "c6",
+       "state": "input-available",
+       "input": {
+        "city": "Rome"
+       }
+      },
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "Done."
+      }
+     ]
+    }
+   ],
+   "modelMessages": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Calling tools."
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "c1",
+       "toolName": "weather",
+       "input": {
+        "city": "Paris"
+       },
+       "providerOptions": {
+        "p": {
+         "a": 1
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "c2",
+       "toolName": "weather",
+       "input": {
+        "city": "X"
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "c3",
+       "toolName": "weather",
+       "input": "{\"city\":",
+       "providerOptions": {
+        "p": {
+         "r": 1
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "c4",
+       "toolName": "lookup",
+       "input": {}
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "c6",
+       "toolName": "weather",
+       "input": {
+        "city": "Rome"
+       }
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "content": [
+      {
+       "type": "tool-result",
+       "toolCallId": "c1",
+       "toolName": "weather",
+       "output": {
+        "type": "json",
+        "value": {
+         "temperature": 20
+        }
+       },
+       "providerOptions": {
+        "p": {
+         "a": 1
+        }
+       }
+      },
+      {
+       "type": "tool-result",
+       "toolCallId": "c2",
+       "toolName": "weather",
+       "output": {
+        "type": "error-text",
+        "value": "Unknown city"
+       }
+      },
+      {
+       "type": "tool-result",
+       "toolCallId": "c3",
+       "toolName": "weather",
+       "output": {
+        "type": "error-text",
+        "value": "Bad JSON"
+       }
+      },
+      {
+       "type": "tool-result",
+       "toolCallId": "c4",
+       "toolName": "lookup",
+       "output": {
+        "type": "text",
+        "value": "text output"
+       }
+      }
+     ]
+    },
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Done."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "approvals",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "tool-delete",
+       "toolCallId": "c1",
+       "state": "approval-requested",
+       "input": {
+        "path": "/a"
+       },
+       "approval": {
+        "id": "a1",
+        "requestReason": "Dangerous",
+        "isAutomatic": false,
+        "signature": "sig"
+       }
+      },
+      {
+       "type": "tool-delete",
+       "toolCallId": "c2",
+       "state": "approval-responded",
+       "input": {
+        "path": "/b"
+       },
+       "approval": {
+        "id": "a2",
+        "approved": true
+       }
+      },
+      {
+       "type": "tool-delete",
+       "toolCallId": "c3",
+       "state": "approval-responded",
+       "input": {
+        "path": "/c"
+       },
+       "approval": {
+        "id": "a3",
+        "approved": false,
+        "reason": "No"
+       },
+       "callProviderMetadata": {
+        "p": {
+         "z": 1
+        }
+       }
+      },
+      {
+       "type": "tool-delete",
+       "toolCallId": "c4",
+       "state": "output-denied",
+       "input": {
+        "path": "/d"
+       },
+       "approval": {
+        "id": "a4",
+        "approved": false
+       }
+      },
+      {
+       "type": "tool-delete",
+       "toolCallId": "c5",
+       "state": "output-available",
+       "input": {
+        "path": "/e"
+       },
+       "output": "deleted",
+       "approval": {
+        "id": "a5",
+        "approved": true,
+        "reason": "fine"
+       }
+      }
+     ]
+    }
+   ],
+   "modelMessages": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "c1",
+       "toolName": "delete",
+       "input": {
+        "path": "/a"
+       }
+      },
+      {
+       "type": "tool-approval-request",
+       "approvalId": "a1",
+       "toolCallId": "c1",
+       "isAutomatic": false,
+       "reason": "Dangerous",
+       "signature": "sig"
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "c2",
+       "toolName": "delete",
+       "input": {
+        "path": "/b"
+       }
+      },
+      {
+       "type": "tool-approval-request",
+       "approvalId": "a2",
+       "toolCallId": "c2"
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "c3",
+       "toolName": "delete",
+       "input": {
+        "path": "/c"
+       },
+       "providerOptions": {
+        "p": {
+         "z": 1
+        }
+       }
+      },
+      {
+       "type": "tool-approval-request",
+       "approvalId": "a3",
+       "toolCallId": "c3"
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "c4",
+       "toolName": "delete",
+       "input": {
+        "path": "/d"
+       }
+      },
+      {
+       "type": "tool-approval-request",
+       "approvalId": "a4",
+       "toolCallId": "c4"
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "c5",
+       "toolName": "delete",
+       "input": {
+        "path": "/e"
+       }
+      },
+      {
+       "type": "tool-approval-request",
+       "approvalId": "a5",
+       "toolCallId": "c5"
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "content": [
+      {
+       "type": "tool-approval-response",
+       "approvalId": "a2",
+       "approved": true
+      },
+      {
+       "type": "tool-approval-response",
+       "approvalId": "a3",
+       "approved": false,
+       "reason": "No"
+      },
+      {
+       "type": "tool-result",
+       "toolCallId": "c3",
+       "toolName": "delete",
+       "output": {
+        "type": "execution-denied",
+        "reason": "No"
+       },
+       "providerOptions": {
+        "p": {
+         "z": 1
+        }
+       }
+      },
+      {
+       "type": "tool-approval-response",
+       "approvalId": "a4",
+       "approved": false
+      },
+      {
+       "type": "tool-result",
+       "toolCallId": "c4",
+       "toolName": "delete",
+       "output": {
+        "type": "error-text",
+        "value": "Tool call execution denied."
+       }
+      },
+      {
+       "type": "tool-approval-response",
+       "approvalId": "a5",
+       "approved": true,
+       "reason": "fine"
+      },
+      {
+       "type": "tool-result",
+       "toolCallId": "c5",
+       "toolName": "delete",
+       "output": {
+        "type": "text",
+        "value": "deleted"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "provider-executed",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-web_search",
+       "toolCallId": "p1",
+       "state": "output-available",
+       "input": {
+        "q": "swift"
+       },
+       "output": [
+        {
+         "url": "https://swift.org"
+        }
+       ],
+       "providerExecuted": true,
+       "callProviderMetadata": {
+        "p": {
+         "c": 1
+        }
+       }
+      },
+      {
+       "type": "tool-web_search",
+       "toolCallId": "p2",
+       "state": "output-error",
+       "input": {
+        "q": "x"
+       },
+       "errorText": "unavailable",
+       "providerExecuted": true,
+       "resultProviderMetadata": {
+        "p": {
+         "r": 2
+        }
+       }
+      },
+      {
+       "type": "tool-web_search",
+       "toolCallId": "p3",
+       "state": "approval-responded",
+       "input": {
+        "q": "y"
+       },
+       "providerExecuted": true,
+       "approval": {
+        "id": "pa",
+        "approved": true
+       }
+      },
+      {
+       "type": "text",
+       "text": "Summary"
+      }
+     ]
+    }
+   ],
+   "modelMessages": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "p1",
+       "toolName": "web_search",
+       "input": {
+        "q": "swift"
+       },
+       "providerExecuted": true,
+       "providerOptions": {
+        "p": {
+         "c": 1
+        }
+       }
+      },
+      {
+       "type": "tool-result",
+       "toolCallId": "p1",
+       "toolName": "web_search",
+       "output": {
+        "type": "json",
+        "value": [
+         {
+          "url": "https://swift.org"
+         }
+        ]
+       },
+       "providerOptions": {
+        "p": {
+         "c": 1
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "p2",
+       "toolName": "web_search",
+       "input": {
+        "q": "x"
+       },
+       "providerExecuted": true,
+       "providerOptions": {
+        "p": {
+         "r": 2
+        }
+       }
+      },
+      {
+       "type": "tool-result",
+       "toolCallId": "p2",
+       "toolName": "web_search",
+       "output": {
+        "type": "error-json",
+        "value": "unavailable"
+       },
+       "providerOptions": {
+        "p": {
+         "r": 2
+        }
+       }
+      },
+      {
+       "type": "tool-call",
+       "toolCallId": "p3",
+       "toolName": "web_search",
+       "input": {
+        "q": "y"
+       },
+       "providerExecuted": true
+      },
+      {
+       "type": "tool-approval-request",
+       "approvalId": "pa",
+       "toolCallId": "p3"
+      },
+      {
+       "type": "text",
+       "text": "Summary"
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "content": [
+      {
+       "type": "tool-approval-response",
+       "approvalId": "pa",
+       "approved": true,
+       "providerExecuted": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ignore-incomplete-tool-calls",
+   "ignoreIncompleteToolCalls": true,
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-weather",
+       "toolCallId": "c1",
+       "state": "input-available",
+       "input": {
+        "city": "Paris"
+       }
+      },
+      {
+       "type": "tool-weather",
+       "toolCallId": "c2",
+       "state": "output-available",
+       "input": {
+        "city": "Rome"
+       },
+       "output": "sunny",
+       "preliminary": true
+      },
+      {
+       "type": "tool-weather",
+       "toolCallId": "c3",
+       "state": "output-available",
+       "input": {
+        "city": "Oslo"
+       },
+       "output": "cold"
+      }
+     ]
+    }
+   ],
+   "modelMessages": [
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "tool-call",
+       "toolCallId": "c3",
+       "toolName": "weather",
+       "input": {
+        "city": "Oslo"
+       }
+      }
+     ]
+    },
+    {
+     "role": "tool",
+     "content": [
+      {
+       "type": "tool-result",
+       "toolCallId": "c3",
+       "toolName": "weather",
+       "output": {
+        "type": "text",
+        "value": "cold"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "data-part-converter",
+   "convertData": true,
+   "messages": [
+    {
+     "id": "u",
+     "role": "user",
+     "parts": [
+      {
+       "type": "data-note",
+       "data": "user note"
+      },
+      {
+       "type": "text",
+       "text": "Hi"
+      }
+     ]
+    },
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "data-note",
+       "data": "assistant note"
+      },
+      {
+       "type": "data-skip",
+       "data": "x"
+      }
+     ]
+    }
+   ],
+   "modelMessages": [
+    {
+     "role": "user",
+     "content": [
+      {
+       "type": "text",
+       "text": "Note: user note"
+      },
+      {
+       "type": "text",
+       "text": "Hi"
+      }
+     ]
+    },
+    {
+     "role": "assistant",
+     "content": [
+      {
+       "type": "text",
+       "text": "Note: assistant note"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "validate": [
+  {
+   "name": "valid",
+   "messages": [
+    {
+     "id": "u",
+     "role": "user",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hi"
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": false,
+   "success": true,
+   "data": [
+    {
+     "id": "u",
+     "role": "user",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hi"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "missing",
+   "messages": null,
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": false,
+   "success": false,
+   "errorName": "AI_InvalidArgumentError"
+  },
+  {
+   "name": "empty-array",
+   "messages": [],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": false,
+   "success": false,
+   "errorName": "AI_TypeValidationError"
+  },
+  {
+   "name": "user-without-parts",
+   "messages": [
+    {
+     "id": "u",
+     "role": "user",
+     "parts": []
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": false,
+   "success": false,
+   "errorName": "AI_TypeValidationError"
+  },
+  {
+   "name": "assistant-without-parts",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": []
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": false,
+   "success": true,
+   "data": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": []
+    }
+   ]
+  },
+  {
+   "name": "bad-role",
+   "messages": [
+    {
+     "id": "x",
+     "role": "tool",
+     "parts": [
+      {
+       "type": "text",
+       "text": "x"
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": false,
+   "success": false,
+   "errorName": "AI_TypeValidationError"
+  },
+  {
+   "name": "bad-part",
+   "messages": [
+    {
+     "id": "u",
+     "role": "user",
+     "parts": [
+      {
+       "type": "image",
+       "url": "x"
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": false,
+   "success": false,
+   "errorName": "AI_TypeValidationError"
+  },
+  {
+   "name": "output-error-without-error-text",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-weather",
+       "toolCallId": "c",
+       "state": "output-error",
+       "input": {}
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": false,
+   "success": false,
+   "errorName": "AI_TypeValidationError"
+  },
+  {
+   "name": "strips-fields-for-state",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-weather",
+       "toolCallId": "c",
+       "state": "input-available",
+       "input": {
+        "city": "Paris"
+       },
+       "preliminary": true,
+       "rawInput": "x"
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": false,
+   "success": true,
+   "data": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-weather",
+       "toolCallId": "c",
+       "state": "input-available",
+       "input": {
+        "city": "Paris"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "metadata-schema",
+   "messages": [
+    {
+     "id": "u",
+     "role": "user",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hi"
+      }
+     ],
+     "metadata": {
+      "createdAt": 5
+     }
+    },
+    {
+     "id": "u2",
+     "role": "user",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hi"
+      }
+     ],
+     "metadata": {
+      "createdAt": "x"
+     }
+    }
+   ],
+   "metadataSchema": true,
+   "dataSchemas": false,
+   "tools": false,
+   "success": false,
+   "errorName": "AI_TypeValidationError"
+  },
+  {
+   "name": "data-schema-missing",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "data-unknown",
+       "data": 1
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": true,
+   "tools": false,
+   "success": false,
+   "errorName": "AI_TypeValidationError"
+  },
+  {
+   "name": "data-schema-valid",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "data-weather",
+       "id": "w",
+       "data": {
+        "city": "Paris"
+       }
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": true,
+   "tools": false,
+   "success": true,
+   "data": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "data-weather",
+       "id": "w",
+       "data": {
+        "city": "Paris"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "tool-input-valid",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-weather",
+       "toolCallId": "c",
+       "state": "input-available",
+       "input": {
+        "city": "Paris"
+       }
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": true,
+   "success": true,
+   "data": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-weather",
+       "toolCallId": "c",
+       "state": "input-available",
+       "input": {
+        "city": "Paris"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "tool-input-invalid",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-weather",
+       "toolCallId": "c",
+       "state": "input-available",
+       "input": {
+        "city": 3
+       }
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": true,
+   "success": false,
+   "errorName": "AI_TypeValidationError"
+  },
+  {
+   "name": "tool-invalid-output-error-becomes-dynamic",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-weather",
+       "toolCallId": "c",
+       "state": "output-error",
+       "input": {
+        "city": 3
+       },
+       "errorText": "bad"
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": true,
+   "success": true,
+   "data": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "toolCallId": "c",
+       "state": "output-error",
+       "input": {
+        "city": 3
+       },
+       "errorText": "bad",
+       "type": "dynamic-tool",
+       "toolName": "weather"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "unknown-tool-terminal-becomes-dynamic",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-legacy",
+       "toolCallId": "c",
+       "state": "output-available",
+       "input": {},
+       "output": "x"
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": true,
+   "success": true,
+   "data": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "toolCallId": "c",
+       "state": "output-available",
+       "input": {},
+       "output": "x",
+       "type": "dynamic-tool",
+       "toolName": "legacy"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "unknown-tool-pending",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-legacy",
+       "toolCallId": "c",
+       "state": "input-available",
+       "input": {}
+      }
+     ]
+    }
+   ],
+   "metadataSchema": false,
+   "dataSchemas": false,
+   "tools": true,
+   "success": false,
+   "errorName": "AI_TypeValidationError"
+  }
+ ],
+ "complete": [
+  {
+   "name": "no-messages",
+   "messages": [],
+   "toolCalls": false,
+   "approvalResponses": false
+  },
+  {
+   "name": "user-last",
+   "messages": [
+    {
+     "id": "u",
+     "role": "user",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hi"
+      }
+     ]
+    }
+   ],
+   "toolCalls": false,
+   "approvalResponses": false
+  },
+  {
+   "name": "tool-outputs-complete",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "tool-a",
+       "toolCallId": "1",
+       "state": "input-available",
+       "input": {}
+      },
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "tool-a",
+       "toolCallId": "2",
+       "state": "output-available",
+       "input": {},
+       "output": 1
+      },
+      {
+       "type": "tool-b",
+       "toolCallId": "3",
+       "state": "output-error",
+       "input": {},
+       "errorText": "x"
+      }
+     ]
+    }
+   ],
+   "toolCalls": true,
+   "approvalResponses": false
+  },
+  {
+   "name": "preliminary-output",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-a",
+       "toolCallId": "1",
+       "state": "output-available",
+       "input": {},
+       "output": 1,
+       "preliminary": true
+      }
+     ]
+    }
+   ],
+   "toolCalls": false,
+   "approvalResponses": false
+  },
+  {
+   "name": "only-provider-executed",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-a",
+       "toolCallId": "1",
+       "state": "output-available",
+       "input": {},
+       "output": 1,
+       "providerExecuted": true
+      }
+     ]
+    }
+   ],
+   "toolCalls": false,
+   "approvalResponses": false
+  },
+  {
+   "name": "approval-responded",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-a",
+       "toolCallId": "1",
+       "state": "approval-responded",
+       "input": {},
+       "approval": {
+        "id": "x",
+        "approved": true
+       }
+      },
+      {
+       "type": "tool-b",
+       "toolCallId": "2",
+       "state": "output-denied",
+       "input": {},
+       "approval": {
+        "id": "y",
+        "approved": false
+       }
+      }
+     ]
+    }
+   ],
+   "toolCalls": false,
+   "approvalResponses": true
+  },
+  {
+   "name": "approval-pending",
+   "messages": [
+    {
+     "id": "a",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "tool-a",
+       "toolCallId": "1",
+       "state": "approval-responded",
+       "input": {},
+       "approval": {
+        "id": "x",
+        "approved": true
+       }
+      },
+      {
+       "type": "tool-b",
+       "toolCallId": "2",
+       "state": "approval-requested",
+       "input": {},
+       "approval": {
+        "id": "y"
+       }
+      }
+     ]
+    }
+   ],
+   "toolCalls": false,
+   "approvalResponses": false
+  }
+ ],
+ "create": [
+  {
+   "name": "writes",
+   "onStepEnd": true,
+   "ops": [
+    {
+     "write": {
+      "type": "start"
+     }
+    },
+    {
+     "write": {
+      "type": "start-step"
+     }
+    },
+    {
+     "write": {
+      "type": "text-start",
+      "id": "t"
+     }
+    },
+    {
+     "write": {
+      "type": "text-delta",
+      "id": "t",
+      "delta": "Hi"
+     }
+    },
+    {
+     "write": {
+      "type": "text-end",
+      "id": "t"
+     }
+    },
+    {
+     "write": {
+      "type": "data-status",
+      "data": "done"
+     }
+    },
+    {
+     "write": {
+      "type": "finish-step"
+     }
+    },
+    {
+     "write": {
+      "type": "finish",
+      "finishReason": "stop"
+     }
+    },
+    {
+     "setOutcome": "completed"
+    }
+   ],
+   "chunks": [
+    {
+     "type": "start",
+     "messageId": "generated-message-id"
+    },
+    {
+     "type": "start-step"
+    },
+    {
+     "type": "text-start",
+     "id": "t"
+    },
+    {
+     "type": "text-delta",
+     "id": "t",
+     "delta": "Hi"
+    },
+    {
+     "type": "text-end",
+     "id": "t"
+    },
+    {
+     "type": "data-status",
+     "data": "done"
+    },
+    {
+     "type": "finish-step"
+    },
+    {
+     "type": "finish",
+     "finishReason": "stop"
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "completed",
+    "responseMessage": {
+     "id": "generated-message-id",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "Hi",
+       "state": "done"
+      },
+      {
+       "type": "data-status",
+       "data": "done"
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "generated-message-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "Hi",
+        "state": "done"
+       },
+       {
+        "type": "data-status",
+        "data": "done"
+       }
+      ]
+     }
+    ],
+    "finishReason": "stop"
+   },
+   "stepEnds": [
+    {
+     "isContinuation": false,
+     "responseMessage": {
+      "id": "generated-message-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "step-start"
+       },
+       {
+        "type": "text",
+        "text": "Hi",
+        "state": "done"
+       },
+       {
+        "type": "data-status",
+        "data": "done"
+       }
+      ]
+     },
+     "messages": [
+      {
+       "id": "generated-message-id",
+       "role": "assistant",
+       "parts": [
+        {
+         "type": "step-start"
+        },
+        {
+         "type": "text",
+         "text": "Hi",
+         "state": "done"
+        },
+        {
+         "type": "data-status",
+         "data": "done"
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "name": "execute-throws",
+   "ops": [
+    {
+     "write": {
+      "type": "start"
+     }
+    },
+    {
+     "throw": "kaboom"
+    }
+   ],
+   "chunks": [
+    {
+     "type": "start",
+     "messageId": "generated-message-id"
+    },
+    {
+     "type": "error",
+     "errorText": "An error occurred."
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "failed",
+    "responseMessage": {
+     "id": "generated-message-id",
+     "role": "assistant",
+     "parts": []
+    },
+    "messages": [
+     {
+      "id": "generated-message-id",
+      "role": "assistant",
+      "parts": []
+     }
+    ]
+   },
+   "stepEnds": []
+  },
+  {
+   "name": "merge-with-custom-error",
+   "onError": "handled",
+   "ops": [
+    {
+     "write": {
+      "type": "start"
+     }
+    },
+    {
+     "merge": [
+      {
+       "type": "text-start",
+       "id": "m"
+      },
+      {
+       "type": "text-delta",
+       "id": "m",
+       "delta": "merged"
+      },
+      {
+       "type": "text-end",
+       "id": "m"
+      }
+     ]
+    },
+    {
+     "throw": "late failure"
+    }
+   ],
+   "chunks": [
+    {
+     "type": "start",
+     "messageId": "generated-message-id"
+    },
+    {
+     "type": "text-start",
+     "id": "m"
+    },
+    {
+     "type": "text-delta",
+     "id": "m",
+     "delta": "merged"
+    },
+    {
+     "type": "text-end",
+     "id": "m"
+    },
+    {
+     "type": "error",
+     "errorText": "handled: late failure"
+    }
+   ],
+   "onEnd": {
+    "isAborted": false,
+    "isContinuation": false,
+    "outcome": "failed",
+    "responseMessage": {
+     "id": "generated-message-id",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "text",
+       "text": "merged",
+       "state": "done"
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "generated-message-id",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "text",
+        "text": "merged",
+        "state": "done"
+       }
+      ]
+     }
+    ]
+   },
+   "stepEnds": []
+  },
+  {
+   "name": "continues-assistant-message",
+   "originalMessages": [
+    {
+     "id": "u1",
+     "role": "user",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hi"
+      }
+     ]
+    },
+    {
+     "id": "a1",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hello"
+      }
+     ]
+    }
+   ],
+   "ops": [
+    {
+     "write": {
+      "type": "start"
+     }
+    },
+    {
+     "write": {
+      "type": "text-start",
+      "id": "t"
+     }
+    },
+    {
+     "write": {
+      "type": "text-delta",
+      "id": "t",
+      "delta": " again"
+     }
+    },
+    {
+     "write": {
+      "type": "text-end",
+      "id": "t"
+     }
+    },
+    {
+     "write": {
+      "type": "abort",
+      "reason": "stopped"
+     }
+    }
+   ],
+   "chunks": [
+    {
+     "type": "start",
+     "messageId": "a1"
+    },
+    {
+     "type": "text-start",
+     "id": "t"
+    },
+    {
+     "type": "text-delta",
+     "id": "t",
+     "delta": " again"
+    },
+    {
+     "type": "text-end",
+     "id": "t"
+    },
+    {
+     "type": "abort",
+     "reason": "stopped"
+    }
+   ],
+   "onEnd": {
+    "isAborted": true,
+    "isContinuation": true,
+    "outcome": "aborted",
+    "responseMessage": {
+     "id": "a1",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hello"
+      },
+      {
+       "type": "text",
+       "text": " again",
+       "state": "done"
+      }
+     ]
+    },
+    "messages": [
+     {
+      "id": "u1",
+      "role": "user",
+      "parts": [
+       {
+        "type": "text",
+        "text": "Hi"
+       }
+      ]
+     },
+     {
+      "id": "a1",
+      "role": "assistant",
+      "parts": [
+       {
+        "type": "text",
+        "text": "Hello"
+       },
+       {
+        "type": "text",
+        "text": " again",
+        "state": "done"
+       }
+      ]
+     }
+    ]
+   },
+   "stepEnds": []
+  }
+ ],
+ "chat": [
+  {
+   "name": "send-text",
+   "responses": [
+    {
+     "chunks": [
+      {
+       "type": "start",
+       "messageId": "server-1",
+       "messageMetadata": {
+        "model": "mock"
+       }
+      },
+      {
+       "type": "start-step"
+      },
+      {
+       "type": "text-start",
+       "id": "t"
+      },
+      {
+       "type": "text-delta",
+       "id": "t",
+       "delta": "Hello!"
+      },
+      {
+       "type": "text-end",
+       "id": "t"
+      },
+      {
+       "type": "data-usage",
+       "data": {
+        "tokens": 3
+       }
+      },
+      {
+       "type": "finish-step"
+      },
+      {
+       "type": "finish",
+       "finishReason": "stop"
+      }
+     ]
+    }
+   ],
+   "ops": [
+    {
+     "op": "send",
+     "text": "Hi",
+     "metadata": {
+      "sentAt": 1
+     }
+    }
+   ],
+   "requests": [
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messages": [
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Hi"
+        }
+       ],
+       "id": "id-0",
+       "role": "user",
+       "metadata": {
+        "sentAt": 1
+       }
+      }
+     ]
+    }
+   ],
+   "messages": [
+    {
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hi"
+      }
+     ],
+     "id": "id-0",
+     "role": "user",
+     "metadata": {
+      "sentAt": 1
+     }
+    },
+    {
+     "id": "server-1",
+     "metadata": {
+      "model": "mock"
+     },
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "Hello!",
+       "state": "done"
+      },
+      {
+       "type": "data-usage",
+       "data": {
+        "tokens": 3
+       }
+      }
+     ]
+    }
+   ],
+   "statuses": [
+    "submitted",
+    "streaming",
+    "ready"
+   ],
+   "status": "ready",
+   "finishes": [
+    {
+     "messageId": "server-1",
+     "messageCount": 2,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": false,
+     "finishReason": "stop"
+    }
+   ],
+   "toolCalls": [],
+   "data": [
+    {
+     "type": "data-usage",
+     "data": {
+      "tokens": 3
+     }
+    }
+   ],
+   "errors": []
+  },
+  {
+   "name": "client-tool-round-trip",
+   "autoSend": "toolCalls",
+   "clientTools": {
+    "getLocation": {
+     "city": "Paris"
+    }
+   },
+   "responses": [
+    {
+     "chunks": [
+      {
+       "type": "start",
+       "messageId": "server-1"
+      },
+      {
+       "type": "start-step"
+      },
+      {
+       "type": "tool-input-available",
+       "toolCallId": "c1",
+       "toolName": "getLocation",
+       "input": {}
+      },
+      {
+       "type": "finish-step"
+      },
+      {
+       "type": "finish",
+       "finishReason": "tool-calls"
+      }
+     ]
+    },
+    {
+     "chunks": [
+      {
+       "type": "start"
+      },
+      {
+       "type": "start-step"
+      },
+      {
+       "type": "text-start",
+       "id": "t"
+      },
+      {
+       "type": "text-delta",
+       "id": "t",
+       "delta": "You are in Paris."
+      },
+      {
+       "type": "text-end",
+       "id": "t"
+      },
+      {
+       "type": "finish-step"
+      },
+      {
+       "type": "finish",
+       "finishReason": "stop"
+      }
+     ]
+    }
+   ],
+   "ops": [
+    {
+     "op": "send",
+     "text": "Where am I?"
+    }
+   ],
+   "requests": [
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messages": [
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Where am I?"
+        }
+       ],
+       "id": "id-0",
+       "role": "user"
+      }
+     ]
+    },
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messageId": "server-1",
+     "messages": [
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Where am I?"
+        }
+       ],
+       "id": "id-0",
+       "role": "user"
+      },
+      {
+       "id": "server-1",
+       "role": "assistant",
+       "parts": [
+        {
+         "type": "step-start"
+        },
+        {
+         "type": "tool-getLocation",
+         "toolCallId": "c1",
+         "state": "output-available",
+         "input": {},
+         "output": {
+          "city": "Paris"
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "messages": [
+    {
+     "parts": [
+      {
+       "type": "text",
+       "text": "Where am I?"
+      }
+     ],
+     "id": "id-0",
+     "role": "user"
+    },
+    {
+     "id": "server-1",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "tool-getLocation",
+       "toolCallId": "c1",
+       "state": "output-available",
+       "input": {},
+       "output": {
+        "city": "Paris"
+       }
+      },
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "You are in Paris.",
+       "state": "done"
+      }
+     ]
+    }
+   ],
+   "statuses": [
+    "submitted",
+    "streaming",
+    "ready",
+    "submitted",
+    "streaming",
+    "ready"
+   ],
+   "status": "ready",
+   "finishes": [
+    {
+     "messageId": "server-1",
+     "messageCount": 2,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": false,
+     "finishReason": "tool-calls"
+    },
+    {
+     "messageId": "server-1",
+     "messageCount": 2,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": false,
+     "finishReason": "stop"
+    }
+   ],
+   "toolCalls": [
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "getLocation",
+     "input": {}
+    }
+   ],
+   "data": [],
+   "errors": []
+  },
+  {
+   "name": "approval-round-trip",
+   "autoSend": "approvals",
+   "responses": [
+    {
+     "chunks": [
+      {
+       "type": "start",
+       "messageId": "server-1"
+      },
+      {
+       "type": "start-step"
+      },
+      {
+       "type": "tool-input-available",
+       "toolCallId": "c1",
+       "toolName": "deleteFile",
+       "input": {
+        "path": "/tmp/a"
+       }
+      },
+      {
+       "type": "tool-approval-request",
+       "approvalId": "ap1",
+       "toolCallId": "c1"
+      },
+      {
+       "type": "finish-step"
+      },
+      {
+       "type": "finish",
+       "finishReason": "tool-calls"
+      }
+     ]
+    },
+    {
+     "chunks": [
+      {
+       "type": "start"
+      },
+      {
+       "type": "tool-output-available",
+       "toolCallId": "c1",
+       "output": "deleted"
+      },
+      {
+       "type": "start-step"
+      },
+      {
+       "type": "text-start",
+       "id": "t"
+      },
+      {
+       "type": "text-delta",
+       "id": "t",
+       "delta": "Deleted."
+      },
+      {
+       "type": "text-end",
+       "id": "t"
+      },
+      {
+       "type": "finish-step"
+      },
+      {
+       "type": "finish"
+      }
+     ]
+    }
+   ],
+   "ops": [
+    {
+     "op": "send",
+     "text": "Delete /tmp/a"
+    },
+    {
+     "op": "approve",
+     "id": "ap1",
+     "approved": true,
+     "reason": "go ahead"
+    }
+   ],
+   "requests": [
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messages": [
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Delete /tmp/a"
+        }
+       ],
+       "id": "id-0",
+       "role": "user"
+      }
+     ]
+    },
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messageId": "server-1",
+     "messages": [
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Delete /tmp/a"
+        }
+       ],
+       "id": "id-0",
+       "role": "user"
+      },
+      {
+       "id": "server-1",
+       "role": "assistant",
+       "parts": [
+        {
+         "type": "step-start"
+        },
+        {
+         "type": "tool-deleteFile",
+         "toolCallId": "c1",
+         "state": "approval-responded",
+         "input": {
+          "path": "/tmp/a"
+         },
+         "approval": {
+          "id": "ap1",
+          "approved": true,
+          "reason": "go ahead"
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "messages": [
+    {
+     "parts": [
+      {
+       "type": "text",
+       "text": "Delete /tmp/a"
+      }
+     ],
+     "id": "id-0",
+     "role": "user"
+    },
+    {
+     "id": "server-1",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "tool-deleteFile",
+       "toolCallId": "c1",
+       "state": "output-available",
+       "input": {
+        "path": "/tmp/a"
+       },
+       "output": "deleted",
+       "approval": {
+        "id": "ap1",
+        "approved": true,
+        "reason": "go ahead"
+       }
+      },
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "Deleted.",
+       "state": "done"
+      }
+     ]
+    }
+   ],
+   "statuses": [
+    "submitted",
+    "streaming",
+    "ready",
+    "submitted",
+    "streaming",
+    "ready"
+   ],
+   "status": "ready",
+   "finishes": [
+    {
+     "messageId": "server-1",
+     "messageCount": 2,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": false,
+     "finishReason": "tool-calls"
+    },
+    {
+     "messageId": "server-1",
+     "messageCount": 2,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": false
+    }
+   ],
+   "toolCalls": [
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "deleteFile",
+     "input": {
+      "path": "/tmp/a"
+     }
+    }
+   ],
+   "data": [],
+   "errors": []
+  },
+  {
+   "name": "manual-tool-output-and-send-empty",
+   "responses": [
+    {
+     "chunks": [
+      {
+       "type": "start",
+       "messageId": "server-1"
+      },
+      {
+       "type": "start-step"
+      },
+      {
+       "type": "tool-input-available",
+       "toolCallId": "c1",
+       "toolName": "confirm",
+       "input": {
+        "question": "Sure?"
+       }
+      },
+      {
+       "type": "finish-step"
+      },
+      {
+       "type": "finish"
+      }
+     ]
+    },
+    {
+     "chunks": [
+      {
+       "type": "start"
+      },
+      {
+       "type": "start-step"
+      },
+      {
+       "type": "text-start",
+       "id": "t"
+      },
+      {
+       "type": "text-delta",
+       "id": "t",
+       "delta": "Confirmed."
+      },
+      {
+       "type": "text-end",
+       "id": "t"
+      },
+      {
+       "type": "finish-step"
+      },
+      {
+       "type": "finish"
+      }
+     ]
+    }
+   ],
+   "ops": [
+    {
+     "op": "send",
+     "text": "Do it"
+    },
+    {
+     "op": "addToolOutput",
+     "toolCallId": "c1",
+     "errorText": "User declined"
+    },
+    {
+     "op": "sendEmpty"
+    }
+   ],
+   "requests": [
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messages": [
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Do it"
+        }
+       ],
+       "id": "id-0",
+       "role": "user"
+      }
+     ]
+    },
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messageId": "server-1",
+     "messages": [
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Do it"
+        }
+       ],
+       "id": "id-0",
+       "role": "user"
+      },
+      {
+       "id": "server-1",
+       "role": "assistant",
+       "parts": [
+        {
+         "type": "step-start"
+        },
+        {
+         "type": "tool-confirm",
+         "toolCallId": "c1",
+         "state": "output-error",
+         "input": {
+          "question": "Sure?"
+         },
+         "errorText": "User declined"
+        }
+       ]
+      }
+     ]
+    }
+   ],
+   "messages": [
+    {
+     "parts": [
+      {
+       "type": "text",
+       "text": "Do it"
+      }
+     ],
+     "id": "id-0",
+     "role": "user"
+    },
+    {
+     "id": "server-1",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "tool-confirm",
+       "toolCallId": "c1",
+       "state": "output-error",
+       "input": {
+        "question": "Sure?"
+       },
+       "errorText": "User declined"
+      },
+      {
+       "type": "step-start"
+      },
+      {
+       "type": "text",
+       "text": "Confirmed.",
+       "state": "done"
+      }
+     ]
+    }
+   ],
+   "statuses": [
+    "submitted",
+    "streaming",
+    "ready",
+    "submitted",
+    "streaming",
+    "ready"
+   ],
+   "status": "ready",
+   "finishes": [
+    {
+     "messageId": "server-1",
+     "messageCount": 2,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": false
+    },
+    {
+     "messageId": "server-1",
+     "messageCount": 2,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": false
+    }
+   ],
+   "toolCalls": [
+    {
+     "type": "tool-input-available",
+     "toolCallId": "c1",
+     "toolName": "confirm",
+     "input": {
+      "question": "Sure?"
+     }
+    }
+   ],
+   "data": [],
+   "errors": []
+  },
+  {
+   "name": "regenerate-and-edit",
+   "responses": [
+    {
+     "chunks": [
+      {
+       "type": "start",
+       "messageId": "r1"
+      },
+      {
+       "type": "text-start",
+       "id": "t"
+      },
+      {
+       "type": "text-delta",
+       "id": "t",
+       "delta": "First"
+      },
+      {
+       "type": "text-end",
+       "id": "t"
+      },
+      {
+       "type": "finish"
+      }
+     ]
+    },
+    {
+     "chunks": [
+      {
+       "type": "start",
+       "messageId": "r2"
+      },
+      {
+       "type": "text-start",
+       "id": "t"
+      },
+      {
+       "type": "text-delta",
+       "id": "t",
+       "delta": "Second"
+      },
+      {
+       "type": "text-end",
+       "id": "t"
+      },
+      {
+       "type": "finish"
+      }
+     ]
+    },
+    {
+     "chunks": [
+      {
+       "type": "start",
+       "messageId": "r3"
+      },
+      {
+       "type": "text-start",
+       "id": "t"
+      },
+      {
+       "type": "text-delta",
+       "id": "t",
+       "delta": "Edited"
+      },
+      {
+       "type": "text-end",
+       "id": "t"
+      },
+      {
+       "type": "finish"
+      }
+     ]
+    }
+   ],
+   "ops": [
+    {
+     "op": "send",
+     "text": "Question"
+    },
+    {
+     "op": "regenerate"
+    },
+    {
+     "op": "send",
+     "text": "Better question",
+     "messageId": "id-0"
+    }
+   ],
+   "requests": [
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messages": [
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Question"
+        }
+       ],
+       "id": "id-0",
+       "role": "user"
+      }
+     ]
+    },
+    {
+     "trigger": "regenerate-message",
+     "chatId": "chat-1",
+     "messages": [
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Question"
+        }
+       ],
+       "id": "id-0",
+       "role": "user"
+      }
+     ]
+    },
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messageId": "id-0",
+     "messages": [
+      {
+       "id": "id-0",
+       "parts": [
+        {
+         "type": "text",
+         "text": "Better question"
+        }
+       ],
+       "role": "user"
+      }
+     ]
+    }
+   ],
+   "messages": [
+    {
+     "id": "id-0",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Better question"
+      }
+     ],
+     "role": "user"
+    },
+    {
+     "id": "r3",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Edited",
+       "state": "done"
+      }
+     ]
+    }
+   ],
+   "statuses": [
+    "submitted",
+    "streaming",
+    "ready",
+    "submitted",
+    "streaming",
+    "ready",
+    "submitted",
+    "streaming",
+    "ready"
+   ],
+   "status": "ready",
+   "finishes": [
+    {
+     "messageId": "r1",
+     "messageCount": 2,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": false
+    },
+    {
+     "messageId": "r2",
+     "messageCount": 2,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": false
+    },
+    {
+     "messageId": "r3",
+     "messageCount": 2,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": false
+    }
+   ],
+   "toolCalls": [],
+   "data": [],
+   "errors": []
+  },
+  {
+   "name": "transport-error-and-clear",
+   "responses": [
+    {
+     "error": "Network down"
+    }
+   ],
+   "ops": [
+    {
+     "op": "send",
+     "text": "Hi"
+    },
+    {
+     "op": "clearError"
+    }
+   ],
+   "requests": [
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messages": [
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Hi"
+        }
+       ],
+       "id": "id-0",
+       "role": "user"
+      }
+     ]
+    }
+   ],
+   "messages": [
+    {
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hi"
+      }
+     ],
+     "id": "id-0",
+     "role": "user"
+    }
+   ],
+   "statuses": [
+    "submitted",
+    "error",
+    "ready"
+   ],
+   "status": "ready",
+   "finishes": [
+    {
+     "messageId": "id-1",
+     "messageCount": 1,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": true
+    }
+   ],
+   "toolCalls": [],
+   "data": [],
+   "errors": [
+    "Network down"
+   ]
+  },
+  {
+   "name": "error-chunk",
+   "responses": [
+    {
+     "chunks": [
+      {
+       "type": "start",
+       "messageId": "r1"
+      },
+      {
+       "type": "text-start",
+       "id": "t"
+      },
+      {
+       "type": "text-delta",
+       "id": "t",
+       "delta": "Part"
+      },
+      {
+       "type": "error",
+       "errorText": "Model overloaded"
+      },
+      {
+       "type": "text-end",
+       "id": "t"
+      }
+     ]
+    }
+   ],
+   "ops": [
+    {
+     "op": "send",
+     "text": "Hi"
+    }
+   ],
+   "requests": [
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messages": [
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Hi"
+        }
+       ],
+       "id": "id-0",
+       "role": "user"
+      }
+     ]
+    }
+   ],
+   "messages": [
+    {
+     "parts": [
+      {
+       "type": "text",
+       "text": "Hi"
+      }
+     ],
+     "id": "id-0",
+     "role": "user"
+    },
+    {
+     "id": "r1",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Part",
+       "state": "streaming"
+      }
+     ]
+    }
+   ],
+   "statuses": [
+    "submitted",
+    "streaming",
+    "error"
+   ],
+   "status": "error",
+   "finishes": [
+    {
+     "messageId": "r1",
+     "messageCount": 2,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": true
+    }
+   ],
+   "toolCalls": [],
+   "data": [],
+   "errors": [
+    "Model overloaded"
+   ]
+  },
+  {
+   "name": "continue-from-initial-messages",
+   "initialMessages": [
+    {
+     "id": "u0",
+     "role": "user",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Earlier"
+      }
+     ]
+    },
+    {
+     "id": "a0",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Earlier answer"
+      }
+     ]
+    }
+   ],
+   "responses": [
+    {
+     "chunks": [
+      {
+       "type": "start"
+      },
+      {
+       "type": "text-start",
+       "id": "t"
+      },
+      {
+       "type": "text-delta",
+       "id": "t",
+       "delta": "New answer"
+      },
+      {
+       "type": "text-end",
+       "id": "t"
+      },
+      {
+       "type": "finish"
+      }
+     ]
+    }
+   ],
+   "ops": [
+    {
+     "op": "send",
+     "text": "Next"
+    }
+   ],
+   "requests": [
+    {
+     "trigger": "submit-message",
+     "chatId": "chat-1",
+     "messages": [
+      {
+       "id": "u0",
+       "role": "user",
+       "parts": [
+        {
+         "type": "text",
+         "text": "Earlier"
+        }
+       ]
+      },
+      {
+       "id": "a0",
+       "role": "assistant",
+       "parts": [
+        {
+         "type": "text",
+         "text": "Earlier answer"
+        }
+       ]
+      },
+      {
+       "parts": [
+        {
+         "type": "text",
+         "text": "Next"
+        }
+       ],
+       "id": "id-0",
+       "role": "user"
+      }
+     ]
+    }
+   ],
+   "messages": [
+    {
+     "id": "u0",
+     "role": "user",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Earlier"
+      }
+     ]
+    },
+    {
+     "id": "a0",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "text",
+       "text": "Earlier answer"
+      }
+     ]
+    },
+    {
+     "parts": [
+      {
+       "type": "text",
+       "text": "Next"
+      }
+     ],
+     "id": "id-0",
+     "role": "user"
+    },
+    {
+     "id": "id-1",
+     "role": "assistant",
+     "parts": [
+      {
+       "type": "text",
+       "text": "New answer",
+       "state": "done"
+      }
+     ]
+    }
+   ],
+   "statuses": [
+    "submitted",
+    "streaming",
+    "ready"
+   ],
+   "status": "ready",
+   "finishes": [
+    {
+     "messageId": "id-1",
+     "messageCount": 4,
+     "isAbort": false,
+     "isDisconnect": false,
+     "isError": false
+    }
+   ],
+   "toolCalls": [],
+   "data": [],
+   "errors": []
+  }
+ ]
+}

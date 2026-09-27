@@ -167,3 +167,32 @@ public struct InvalidDataContentError: AISDKError {
   }
 }
 
+
+/// A UI message stream contained an invalid chunk sequence, e.g. a delta for
+/// a part that was never started. Mirrors upstream `UIMessageStreamError`.
+public struct UIMessageStreamError: AISDKError {
+  public let name = "AI_UIMessageStreamError"
+  public let message: String
+  /// The type of the offending chunk, e.g. `text-delta`.
+  public let chunkType: String
+  /// The id of the offending chunk (part id, tool call id or approval id).
+  public let chunkId: String
+
+  public init(chunkType: String, chunkId: String, message: String) {
+    self.chunkType = chunkType
+    self.chunkId = chunkId
+    self.message = message
+  }
+}
+
+/// A UI message could not be converted to model messages. Mirrors upstream `MessageConversionError`.
+public struct MessageConversionError: AISDKError {
+  public let name = "AI_MessageConversionError"
+  public let message: String
+  public let originalMessage: UIMessage
+
+  public init(originalMessage: UIMessage, message: String) {
+    self.originalMessage = originalMessage
+    self.message = message
+  }
+}
