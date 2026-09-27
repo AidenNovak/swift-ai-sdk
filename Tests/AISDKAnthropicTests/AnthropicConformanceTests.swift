@@ -70,6 +70,26 @@ private func record(_ differences: [String], _ label: String) {
     #expect(conformanceCases.count >= 100)
   }
 
+  /// The specification `Codable` form reads upstream's JSON the same way as
+  /// the conformance decoder, and round-trips results and stream parts.
+  @Test(arguments: conformanceCases.map(caseKey))
+  func specificationJSONReadsUpstreamValues(_ key: String) throws {
+    let entry = try #require(conformanceCases.first { caseKey($0) == key })
+    let optionsJSON = entry["options"] ?? [:]
+    let options = try LanguageModelV4CallOptions(json: optionsJSON)
+    #expect(options == (try UpstreamConformance.callOptions(optionsJSON)))
+    #expect(try LanguageModelV4CallOptions(json: options.json) == options)
+
+    for contentJSON in entry["content"]?.arrayValue ?? [] {
+      let content = try LanguageModelV4Content(json: contentJSON)
+      #expect(try LanguageModelV4Content(json: content.json) == content)
+    }
+    for partJSON in entry["parts"]?.arrayValue ?? [] where partJSON["type"] != "error" {
+      let part = try LanguageModelV4StreamPart(json: partJSON)
+      #expect(try LanguageModelV4StreamPart(json: part.json) == part)
+    }
+  }
+
   @Test(arguments: conformanceCases.map(caseKey))
   func matchesUpstream(_ key: String) async throws {
     let entry = try #require(conformanceCases.first { caseKey($0) == key })
