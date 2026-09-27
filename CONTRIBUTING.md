@@ -49,7 +49,8 @@ Never commit API keys. Fixtures recorded from live APIs must not contain credent
 Some tests replay cases recorded by running the upstream TypeScript code itself on the same fixtures, then compare request bodies, content, stream parts, usage and warnings with the Swift port (for example `Tests/AISDKOpenAITests/Fixtures/openai-responses-conformance.json`). To regenerate them after bumping the upstream commit:
 
 ```sh
-Tools/conformance/run.sh /path/to/vercel-ai
+Tools/conformance/run.sh /path/to/vercel-ai                     # every script
+Tools/conformance/run.sh /path/to/vercel-ai ui-message-stream   # one script
 ```
 
-The script installs a few npm packages into a temporary directory and removes them afterwards.
+The script installs a few npm packages into a temporary directory and removes them afterwards. `ui-message-stream.mts` covers the UI message stream processing, `toUIMessageStream` over `streamText`, `convertToModelMessages`, `validateUIMessages`, `createUIMessageStream` and the chat state machine (`Tests/AISDKUITests/Fixtures/ui-conformance.json`).

@@ -336,6 +336,95 @@ public enum UpstreamConformance {
     }
   }
 
+  // MARK: Decoding stream parts
+
+  /// Decodes an upstream `LanguageModelV4StreamPart` (as written by `JSON.stringify`).
+  public static func streamPart(_ json: JSONValue) throws -> LanguageModelV4StreamPart {
+    let metadata = providerOptions(json["providerMetadata"])
+    func string(_ key: String) throws -> String {
+      guard let value = json[key]?.stringValue else { throw fail("missing \(key) in \(json)") }
+      return value
+    }
+    switch json["type"]?.stringValue {
+    case "text-start": return .textStart(id: try string("id"), providerMetadata: metadata)
+    case "text-delta": return .textDelta(id: try string("id"), delta: try string("delta"), providerMetadata: metadata)
+    case "text-end": return .textEnd(id: try string("id"), providerMetadata: metadata)
+    case "reasoning-start": return .reasoningStart(id: try string("id"), providerMetadata: metadata)
+    case "reasoning-delta":
+      return .reasoningDelta(id: try string("id"), delta: try string("delta"), providerMetadata: metadata)
+    case "reasoning-end": return .reasoningEnd(id: try string("id"), providerMetadata: metadata)
+    case "tool-input-start":
+      return .toolInputStart(
+        LanguageModelV4ToolInputStart(
+          id: try string("id"), toolName: try string("toolName"), providerMetadata: metadata,
+          providerExecuted: json["providerExecuted"]?.boolValue, dynamic: json["dynamic"]?.boolValue,
+          title: json["title"]?.stringValue))
+    case "tool-input-delta":
+      return .toolInputDelta(id: try string("id"), delta: try string("delta"), providerMetadata: metadata)
+    case "tool-input-end": return .toolInputEnd(id: try string("id"), providerMetadata: metadata)
+    case "tool-call":
+      return .toolCall(
+        LanguageModelV4ToolCall(
+          toolCallId: try string("toolCallId"), toolName: try string("toolName"), input: try string("input"),
+          providerExecuted: json["providerExecuted"]?.boolValue, dynamic: json["dynamic"]?.boolValue,
+          providerMetadata: metadata))
+    case "tool-result":
+      return .toolResult(
+        LanguageModelV4ToolResult(
+          toolCallId: try string("toolCallId"), toolName: try string("toolName"), result: json["result"] ?? .null,
+          isError: json["isError"]?.boolValue, preliminary: json["preliminary"]?.boolValue,
+          dynamic: json["dynamic"]?.boolValue, providerMetadata: metadata))
+    case "tool-approval-request":
+      return .toolApprovalRequest(
+        LanguageModelV4ToolApprovalRequest(
+          approvalId: try string("approvalId"), toolCallId: try string("toolCallId"), providerMetadata: metadata))
+    case "custom": return .custom(LanguageModelV4CustomContent(kind: try string("kind"), providerMetadata: metadata))
+    case "file":
+      return .file(
+        LanguageModelV4File(mediaType: try string("mediaType"), data: try fileData(json["data"] ?? .null), providerMetadata: metadata))
+    case "reasoning-file":
+      return .reasoningFile(
+        LanguageModelV4ReasoningFile(
+          mediaType: try string("mediaType"), data: try fileData(json["data"] ?? .null), providerMetadata: metadata))
+    case "source":
+      if json["sourceType"]?.stringValue == "document" {
+        return .source(
+          .document(
+            id: try string("id"), mediaType: try string("mediaType"), title: try string("title"),
+            filename: json["filename"]?.stringValue, providerMetadata: metadata))
+      }
+      return .source(
+        .url(id: try string("id"), url: try string("url"), title: json["title"]?.stringValue, providerMetadata: metadata))
+    case "stream-start": return .streamStart(warnings: [])
+    case "response-metadata":
+      return .responseMetadata(
+        LanguageModelV4ResponseMetadata(
+          id: json["id"]?.stringValue,
+          timestamp: json["timestamp"]?.stringValue.flatMap { ISO8601DateFormatter().date(from: $0) },
+          modelId: json["modelId"]?.stringValue))
+    case "finish":
+      let usage = json["usage"] ?? [:]
+      let reason = json["finishReason"] ?? [:]
+      return .finish(
+        usage: LanguageModelV4Usage(
+          inputTokens: .init(
+            total: usage["inputTokens"]?["total"]?.intValue, noCache: usage["inputTokens"]?["noCache"]?.intValue,
+            cacheRead: usage["inputTokens"]?["cacheRead"]?.intValue,
+            cacheWrite: usage["inputTokens"]?["cacheWrite"]?.intValue),
+          outputTokens: .init(
+            total: usage["outputTokens"]?["total"]?.intValue, text: usage["outputTokens"]?["text"]?.intValue,
+            reasoning: usage["outputTokens"]?["reasoning"]?.intValue)),
+        finishReason: LanguageModelV4FinishReason(
+          unified: LanguageModelV4FinishReason.Unified(rawValue: reason["unified"]?.stringValue ?? "") ?? .other,
+          raw: reason["raw"]?.stringValue),
+        providerMetadata: metadata)
+    case "raw": return .raw(rawValue: json["rawValue"] ?? .null)
+    case "error":
+      return .error(DecodingError(description: json["error"]?.stringValue ?? json["error"]?.jsonString() ?? "error"))
+    default: throw fail("unknown stream part \(json)")
+    }
+  }
+
   // MARK: Comparing
 
   /// Differences between an expected and actual JSON value, by path. Strings

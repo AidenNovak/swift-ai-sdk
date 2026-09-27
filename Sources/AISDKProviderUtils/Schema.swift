@@ -72,3 +72,14 @@ public func safeValidateTypes<T>(
       rawValue: value)
   }
 }
+
+extension Schema {
+  /// A schema that validates with this schema but keeps the value as JSON,
+  /// e.g. to validate UI message metadata with a typed schema.
+  public var validatingJSON: Schema<JSONValue> {
+    Schema<JSONValue>(jsonSchema: jsonSchema) { value in
+      _ = try validate(value)
+      return value
+    }
+  }
+}

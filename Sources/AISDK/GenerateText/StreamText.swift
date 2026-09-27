@@ -466,6 +466,8 @@ private struct StreamTextRun: Sendable {
 
       var instructionsForNextStep = initialPrompt.instructions
       var messagesForNextStep = initialMessages + initialResponseMessages
+      let textPartIds = PartIDReserver(generateId: generateId)
+      let reasoningPartIds = PartIDReserver(generateId: generateId)
 
       while true {
         if !steps.isEmpty { try Task.checkCancellation() }
@@ -499,7 +501,8 @@ private struct StreamTextRun: Sendable {
         let modelStream = try await retry { try await stepModel.doStream(stepCallOptions) }
         let outcome = try await runStep(
           stepNumber: steps.count, stepModel: stepModel, modelStream: modelStream, stepTools: stepTools,
-          stepInstructions: stepInstructions, stepMessages: stepMessages, toolsContext: toolsContext)
+          stepInstructions: stepInstructions, stepMessages: stepMessages, toolsContext: toolsContext,
+          textPartIds: textPartIds, reasoningPartIds: reasoningPartIds)
 
         steps.append(outcome.step)
         result.appendStep(outcome.step)
@@ -583,9 +586,13 @@ private struct StreamTextRun: Sendable {
     stepTools: ToolSet?,
     stepInstructions: Instructions?,
     stepMessages: [ModelMessage],
-    toolsContext: [String: JSONValue]?
+    toolsContext: [String: JSONValue]?,
+    textPartIds: PartIDReserver,
+    reasoningPartIds: PartIDReserver
   ) async throws -> StepOutcome {
     var recorder = ContentRecorder()
+    var stepTextIds: [String: String] = [:]
+    var stepReasoningIds: [String: String] = [:]
     var warnings: [Warning] = []
     var didStartStep = false
     var responseId: String?
@@ -636,25 +643,29 @@ private struct StreamTextRun: Sendable {
         responseTimestamp = metadata.timestamp ?? responseTimestamp
         responseModelId = metadata.modelId ?? responseModelId
       case .textStart(let id, let metadata):
+        let uniqueId = textPartIds.reserve(id)
+        stepTextIds[id] = uniqueId
         recorder.startText(id: id, providerMetadata: metadata)
-        emit(.textStart(id: id, providerMetadata: metadata))
+        emit(.textStart(id: uniqueId, providerMetadata: metadata))
       case .textDelta(let id, let delta, let metadata):
         if !delta.isEmpty || metadata != nil {
           recorder.appendText(id: id, delta: delta, providerMetadata: metadata)
-          emit(.textDelta(id: id, text: delta, providerMetadata: metadata))
+          emit(.textDelta(id: stepTextIds[id] ?? id, text: delta, providerMetadata: metadata))
         }
       case .textEnd(let id, let metadata):
         recorder.endText(id: id, providerMetadata: metadata)
-        emit(.textEnd(id: id, providerMetadata: metadata))
+        emit(.textEnd(id: stepTextIds.removeValue(forKey: id) ?? id, providerMetadata: metadata))
       case .reasoningStart(let id, let metadata):
+        let uniqueId = reasoningPartIds.reserve(id)
+        stepReasoningIds[id] = uniqueId
         recorder.startReasoning(id: id, providerMetadata: metadata)
-        emit(.reasoningStart(id: id, providerMetadata: metadata))
+        emit(.reasoningStart(id: uniqueId, providerMetadata: metadata))
       case .reasoningDelta(let id, let delta, let metadata):
         recorder.appendReasoning(id: id, delta: delta, providerMetadata: metadata)
-        emit(.reasoningDelta(id: id, text: delta, providerMetadata: metadata))
+        emit(.reasoningDelta(id: stepReasoningIds[id] ?? id, text: delta, providerMetadata: metadata))
       case .reasoningEnd(let id, let metadata):
         recorder.endReasoning(id: id, providerMetadata: metadata)
-        emit(.reasoningEnd(id: id, providerMetadata: metadata))
+        emit(.reasoningEnd(id: stepReasoningIds.removeValue(forKey: id) ?? id, providerMetadata: metadata))
       case .toolInputStart(let start):
         let tool = stepTools?[start.toolName]
         toolInputNames[start.id] = start.toolName
@@ -729,7 +740,7 @@ private struct StreamTextRun: Sendable {
       case .toolResult(let providerResult):
         pendingDeferred.remove(providerResult.toolCallId)
         let call = stepToolCalls.first { $0.toolCallId == providerResult.toolCallId }
-        let dynamic = providerResult.dynamic ?? call?.dynamic ?? false
+        let dynamic = providerResult.dynamic ?? false
         if providerResult.isError == true {
           let toolError = ToolError(
             toolCallId: providerResult.toolCallId, toolName: providerResult.toolName, input: call?.input ?? .null,
@@ -830,6 +841,31 @@ private struct StreamTextRun: Sendable {
 
 /// Accumulates streamed parts into step content, merging text and reasoning
 /// deltas into their blocks.
+/// Keeps text and reasoning part ids unique across the steps of one run:
+/// providers only guarantee uniqueness within one call (e.g. Anthropic uses
+/// the content block index). Mirrors upstream `createPartIdReserver`.
+private final class PartIDReserver: @unchecked Sendable {
+  private let generateId: IdGenerator
+  private var usedIds = Set<String>()
+
+  init(generateId: @escaping IdGenerator) {
+    self.generateId = generateId
+  }
+
+  func reserve(_ id: String) -> String {
+    if usedIds.insert(id).inserted { return id }
+    let generated = generateId()
+    var uniqueId = generated
+    var suffix = 0
+    while usedIds.contains(uniqueId) {
+      suffix += 1
+      uniqueId = "\(generated)-\(suffix)"
+    }
+    usedIds.insert(uniqueId)
+    return uniqueId
+  }
+}
+
 private struct ContentRecorder {
   var content: [ContentPart] = []
   private var activeText: [String: Int] = [:]

@@ -194,3 +194,9 @@ private func findNetworkError(_ error: any Error) -> URLError? {
   }
   return nil
 }
+
+/// Whether the error (or one of its causes) is a network failure such as a
+/// lost connection or an unreachable host.
+public func isNetworkError(_ error: any Error) -> Bool {
+  findNetworkError(error) != nil
+}
