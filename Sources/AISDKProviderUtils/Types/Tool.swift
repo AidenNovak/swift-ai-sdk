@@ -121,7 +121,7 @@ public struct Tool: Sendable {
 
   public var isDynamic: Bool { kind == .dynamic }
 
-  var providerToolInfo: (id: String, args: JSONObject, isProviderExecuted: Bool, supportsDeferredResults: Bool)? {
+  public var providerToolInfo: (id: String, args: JSONObject, isProviderExecuted: Bool, supportsDeferredResults: Bool)? {
     if case .provider(let id, let args, let isProviderExecuted, let supportsDeferredResults) = kind {
       return (id, args, isProviderExecuted, supportsDeferredResults)
     }
