@@ -36,8 +36,8 @@ public struct OpenAIProviderSettings: Sendable {
 /// The OpenAI provider. Mirrors upstream `OpenAIProvider`.
 ///
 /// ```swift
-/// let openai = createOpenAI()
-/// let result = try await generateText(model: openai.chat("gpt-5.4-mini"), prompt: "Hello")
+/// let openai = try createOpenAI()
+/// let result = try await generateText(model: openai("gpt-5.4-mini"), prompt: "Hello")
 /// ```
 public struct OpenAIProvider: ProviderV4 {
   public let settings: OpenAIProviderSettings
@@ -53,6 +53,21 @@ public struct OpenAIProvider: ProviderV4 {
     self.baseURL = withoutTrailingSlash(configured) ?? "https://api.openai.com/v1"
     self.providerName = settings.name ?? "openai"
   }
+
+  /// Creates a Responses API model, the default OpenAI model.
+  public func callAsFunction(_ modelId: String) -> OpenAIResponsesLanguageModel {
+    responses(modelId)
+  }
+
+  /// Creates a Responses API model (`POST /responses`).
+  public func responses(_ modelId: String) -> OpenAIResponsesLanguageModel {
+    var config = config("responses")
+    config.fileIdPrefixes = ["file-"]
+    return OpenAIResponsesLanguageModel(modelId: modelId, config: config)
+  }
+
+  /// OpenAI's built-in Responses API tools.
+  public var tools: OpenAITools.Type { OpenAITools.self }
 
   /// Creates a Chat Completions model (`POST /chat/completions`).
   public func chat(_ modelId: String) -> OpenAIChatLanguageModel {
@@ -70,7 +85,7 @@ public struct OpenAIProvider: ProviderV4 {
   }
 
   public func languageModel(_ modelId: String) throws -> any LanguageModelV4 {
-    chat(modelId)
+    responses(modelId)
   }
 
   public func embeddingModel(_ modelId: String) throws -> any EmbeddingModelV4 {

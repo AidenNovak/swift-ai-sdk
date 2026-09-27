@@ -43,3 +43,13 @@ AISDK_LIVE_TESTS=1 DEEPSEEK_API_KEY=sk-... swift test --filter AISDKLiveTests
 ```
 
 Never commit API keys. Fixtures recorded from live APIs must not contain credentials or account data.
+
+## Upstream conformance cases
+
+Some tests replay cases recorded by running the upstream TypeScript code itself on the same fixtures, then compare request bodies, content, stream parts, usage and warnings with the Swift port (for example `Tests/AISDKOpenAITests/Fixtures/openai-responses-conformance.json`). To regenerate them after bumping the upstream commit:
+
+```sh
+Tools/conformance/run.sh /path/to/vercel-ai
+```
+
+The script installs a few npm packages into a temporary directory and removes them afterwards.

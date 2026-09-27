@@ -8,19 +8,32 @@ public struct OpenAIConfig: Sendable {
   public var url: @Sendable (_ path: String) -> String
   public var httpClient: (any HTTPClient)?
   public var generateId: IdGenerator
+  /// Base64 data starting with one of these prefixes is sent as a file ID
+  /// (Responses API). Soft-deprecated; use provider references instead.
+  public var fileIdPrefixes: [String]?
+  /// Adds `type: "message"` to Responses API message items.
+  public var explicitMessageItemType: Bool
+  /// Whether the Responses API accepts `web_search_call.action.sources` in `include`.
+  public var supportsWebSearchSourcesInclude: Bool
 
   public init(
     provider: String,
     headers: @escaping @Sendable () throws -> [String: String],
     url: @escaping @Sendable (_ path: String) -> String,
     httpClient: (any HTTPClient)? = nil,
-    generateId: @escaping IdGenerator = AISDKProviderUtils.generateId
+    generateId: @escaping IdGenerator = AISDKProviderUtils.generateId,
+    fileIdPrefixes: [String]? = nil,
+    explicitMessageItemType: Bool = false,
+    supportsWebSearchSourcesInclude: Bool = true
   ) {
     self.provider = provider
     self.headers = headers
     self.url = url
     self.httpClient = httpClient
     self.generateId = generateId
+    self.fileIdPrefixes = fileIdPrefixes
+    self.explicitMessageItemType = explicitMessageItemType
+    self.supportsWebSearchSourcesInclude = supportsWebSearchSourcesInclude
   }
 }
 
