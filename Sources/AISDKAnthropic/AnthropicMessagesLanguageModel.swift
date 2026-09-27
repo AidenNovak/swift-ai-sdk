@@ -11,6 +11,11 @@ public struct AnthropicMessagesConfig: Sendable {
   public var generateId: IdGenerator
   public var supportsNativeStructuredOutput: Bool
   public var supportsStrictTools: Bool
+  /// Builds the request URL from the base URL and whether the call streams,
+  /// e.g. for Bedrock or Vertex. Defaults to `{baseURL}/messages`.
+  public var buildRequestURL: (@Sendable (String, Bool) -> String)?
+  /// Adjusts the request body, e.g. to move betas into the body.
+  public var transformRequestBody: (@Sendable (JSONObject, Set<String>) -> JSONObject)?
 
   public init(
     provider: String,
@@ -20,7 +25,9 @@ public struct AnthropicMessagesConfig: Sendable {
     supportedUrls: [String: [String]] = [:],
     generateId: @escaping IdGenerator = AISDKProviderUtils.generateId,
     supportsNativeStructuredOutput: Bool = true,
-    supportsStrictTools: Bool = true
+    supportsStrictTools: Bool = true,
+    buildRequestURL: (@Sendable (String, Bool) -> String)? = nil,
+    transformRequestBody: (@Sendable (JSONObject, Set<String>) -> JSONObject)? = nil
   ) {
     self.provider = provider
     self.baseURL = baseURL
@@ -30,6 +37,8 @@ public struct AnthropicMessagesConfig: Sendable {
     self.generateId = generateId
     self.supportsNativeStructuredOutput = supportsNativeStructuredOutput
     self.supportsStrictTools = supportsStrictTools
+    self.buildRequestURL = buildRequestURL
+    self.transformRequestBody = transformRequestBody
   }
 }
 
@@ -53,7 +62,7 @@ public struct AnthropicMessagesLanguageModel: LanguageModelV4 {
   }
 
   private var providerOptionsName: String {
-    String(config.provider.split(separator: ".").first ?? "anthropic")
+    String(config.provider.split(separator: ".", maxSplits: 1).first ?? "anthropic")
   }
 
   private var failedResponseHandler: ResponseHandler<APICallError> {
@@ -65,9 +74,15 @@ public struct AnthropicMessagesLanguageModel: LanguageModelV4 {
     var warnings: [SharedV4Warning]
     var betas: Set<String>
     var usesJsonResponseTool: Bool
+    var toolNameMapping: ToolNameMapping
+    var usedCustomProviderKey: Bool
   }
 
-  func prepareRequest(_ options: LanguageModelV4CallOptions, stream: Bool) throws -> PreparedRequest {
+  // MARK: - Request
+
+  func prepareRequest(_ options: LanguageModelV4CallOptions, stream: Bool, userSuppliedBetas: Set<String> = [])
+    throws -> PreparedRequest
+  {
     var warnings: [SharedV4Warning] = []
     if options.frequencyPenalty != nil { warnings.append(.unsupported(feature: "frequencyPenalty")) }
     if options.presencePenalty != nil { warnings.append(.unsupported(feature: "presencePenalty")) }
@@ -92,14 +107,8 @@ public struct AnthropicMessagesLanguageModel: LanguageModelV4 {
           feature: "responseFormat", details: "JSON response format requires a schema. The response format is ignored."))
     }
 
-    var anthropicOptions =
-      (try parseProviderOptions(provider: "anthropic", providerOptions: options.providerOptions, as: AnthropicOptions.self)
-      ?? AnthropicOptions())
-    if providerOptionsName != "anthropic" {
-      anthropicOptions = anthropicOptions.merging(
-        try parseProviderOptions(
-          provider: providerOptionsName, providerOptions: options.providerOptions, as: AnthropicOptions.self))
-    }
+    var (anthropicOptions, usedCustomProviderKey) = try parseAnthropicOptions(
+      providerOptions: options.providerOptions, providerOptionsName: providerOptionsName)
 
     let capabilities = AnthropicModelCapabilities.forModel(modelId)
     if !capabilities.isKnownModel && options.maxOutputTokens == nil {
@@ -150,15 +159,37 @@ public struct AnthropicMessagesLanguageModel: LanguageModelV4 {
       (jsonSchema != nil && !useStructuredOutput)
       ? LanguageModelV4FunctionTool(name: "json", description: "Respond with a JSON object.", inputSchema: jsonSchema!)
       : nil
+    if jsonResponseTool != nil && anthropicOptions.disableParallelToolUse == false {
+      warnings.append(
+        .unsupported(
+          feature: "providerOptions.anthropic.disableParallelToolUse",
+          details:
+            "`disableParallelToolUse: false` is ignored when using the JSON response tool. Parallel tool use is disabled to ensure a single coherent JSON tool call."
+        ))
+    }
+
+    let contextManagement = anthropicOptions.contextManagement
+    let compaction = anthropicOptions.compaction
+    if contextManagement != nil && compaction != nil {
+      throw InvalidArgumentError(
+        argument: "providerOptions",
+        message: "Anthropic provider options `compaction` and `contextManagement` cannot be used together.")
+    }
 
     let validator = CacheControlValidator()
+    let toolNameMapping = ToolNameMapping(tools: options.tools, providerToolNames: anthropicProviderToolNames)
+    var toolsetNames: [String: String] = [:]
+    for case .provider(let tool) in options.tools ?? [] where tool.id == "anthropic.computer_toolset_20260801" {
+      toolsetNames[tool.name] = "computer"
+    }
     let converted = try convertToAnthropicPrompt(
       prompt: options.prompt, sendReasoning: anthropicOptions.sendReasoning ?? true, warnings: &warnings,
-      validator: validator)
+      validator: validator, toolNameMapping: toolNameMapping, toolsetNames: toolsetNames)
     var betas = converted.betas
 
-    if let reasoning = options.reasoning, isCustomReasoning(reasoning), anthropicOptions.effort == nil {
+    if let reasoning = options.reasoning, isCustomReasoning(reasoning), anthropicOptions.effort == nil,
       let resolved = resolveReasoning(reasoning, capabilities: capabilities, warnings: &warnings)
+    {
       if anthropicOptions.thinking == nil { anthropicOptions.thinking = resolved.thinking }
       if let effort = resolved.effort, anthropicOptions.thinking?.type != "disabled" {
         anthropicOptions.effort = effort
@@ -199,6 +230,8 @@ public struct AnthropicMessagesLanguageModel: LanguageModelV4 {
 
     let thinkingType = anthropicOptions.thinking?.type
     let isThinking = thinkingType == "enabled" || thinkingType == "adaptive"
+    let blockBinding = anthropicOptions.thinking?.blockBinding
+    let sendThinking = isThinking || thinkingType == "disabled" || blockBinding != nil
     var thinkingBudget = thinkingType == "enabled" ? anthropicOptions.thinking?.budgetTokens : nil
     let thinkingDisplay = thinkingType == "adaptive" ? anthropicOptions.thinking?.display : nil
     let maxTokens = options.maxOutputTokens ?? capabilities.maxOutputTokens
@@ -245,15 +278,83 @@ public struct AnthropicMessagesLanguageModel: LanguageModelV4 {
       maxTokensArg = capabilities.maxOutputTokens
     }
 
-    let sendThinking = isThinking || thinkingType == "disabled"
-    let outputFormat: JSONValue? =
-      useStructuredOutput && jsonSchema != nil ? ["type": "json_schema", "schema": jsonSchema!.value] : nil
-    let outputConfig: JSONValue? =
-      anthropicOptions.effort != nil || outputFormat != nil
-      ? jsonObject(["effort": .optional(anthropicOptions.effort), "format": outputFormat]) : nil
-    if thinkingDisplay == "updates" { betas.insert("thinking-display-updates-2026-08-18") }
+    let thinking: JSONValue? =
+      sendThinking
+      ? jsonObject([
+        "type": .optional(thinkingType), "budget_tokens": .optional(thinkingBudget),
+        "display": .optional(thinkingDisplay),
+        "block_binding": blockBinding.map { ["prefix_mismatch_behavior": .string($0.prefixMismatchBehavior)] },
+      ]) : nil
 
-    let tools = try prepareAnthropicTools(
+    let outputFormat: JSONValue? =
+      useStructuredOutput && jsonSchema != nil
+      ? ["type": "json_schema", "schema": sanitizeJsonSchema(jsonSchema!.value)] : nil
+    let taskBudget: JSONValue? = anthropicOptions.taskBudget.map { budget in
+      jsonObject([
+        "type": .string(budget.type), "total": .number(Double(budget.total)), "remaining": .optional(budget.remaining),
+      ])
+    }
+    let outputConfig: JSONValue? =
+      anthropicOptions.effort != nil || taskBudget != nil || outputFormat != nil
+      ? jsonObject(["effort": .optional(anthropicOptions.effort), "task_budget": taskBudget, "format": outputFormat])
+      : nil
+
+    let fallbacks: JSONValue? =
+      if let value = anthropicOptions.fallbacks, value == "default" || (value.arrayValue?.isEmpty == false) {
+        value
+      } else {
+        nil
+      }
+
+    let mcpServers: JSONValue? =
+      (anthropicOptions.mcpServers?.isEmpty == false)
+      ? .array(
+        anthropicOptions.mcpServers!.map { server in
+          jsonObject([
+            "type": .string(server.type), "name": .string(server.name), "url": .string(server.url),
+            "authorization_token": .optional(server.authorizationToken),
+            "tool_configuration": server.toolConfiguration.map { configuration in
+              jsonObject([
+                "allowed_tools": .optional(configuration.allowedTools), "enabled": .optional(configuration.enabled),
+              ])
+            },
+          ])
+        }) : nil
+
+    var container: JSONValue?
+    if let options = anthropicOptions.container {
+      if let skills = options.skills, !skills.isEmpty {
+        container = jsonObject([
+          "id": .optional(options.id),
+          "skills": .array(
+            try skills.map { skill in
+              let skillId =
+                skill.type == "custom"
+                ? try resolveProviderReference(skill.providerReference ?? [:], provider: "anthropic") : skill.skillId
+              return jsonObject([
+                "type": .string(skill.type), "skill_id": .optional(skillId), "version": .optional(skill.version),
+              ])
+            }),
+        ])
+      } else {
+        container = .optional(options.id)
+      }
+    }
+
+    let safeguards: JSONValue? =
+      (anthropicOptions.safeguards?.isEmpty == false)
+      ? .array(
+        anthropicOptions.safeguards!.map { safeguard in
+          jsonObject([
+            "type": .string(safeguard.type), "classifier_context": safeguard.classifierContext.map(JSONValue.object),
+          ])
+        }) : nil
+
+    let contextManagementArg: JSONValue? = contextManagement.map { management in
+      ["edits": .array(management.edits.compactMap { contextManagementEdit($0, warnings: &warnings) })]
+    }
+
+    let tools = prepareAnthropicTools(
       tools: jsonResponseTool.map { (options.tools ?? []) + [.function($0)] } ?? (options.tools ?? []),
       toolChoice: jsonResponseTool != nil ? .required : options.toolChoice,
       disableParallelToolUse: jsonResponseTool != nil ? true : anthropicOptions.disableParallelToolUse,
@@ -262,9 +363,37 @@ public struct AnthropicMessagesLanguageModel: LanguageModelV4 {
       supportsStrictTools: supportsStrictTools,
       eagerInputStreaming: stream && (anthropicOptions.toolStreaming ?? true),
       rejectsForcedToolUse: capabilities.rejectsForcedToolUse)
-    warnings += tools.warnings
-    betas.formUnion(tools.betas)
-    betas.formUnion(anthropicOptions.anthropicBeta ?? [])
+
+    if mcpServers != nil { betas.insert("mcp-client-2025-04-04") }
+    if safeguards != nil { betas.insert("dangerous-tool-use-2026-09-03") }
+    if compaction != nil { betas.insert("compact-2026-09-04") }
+    if let contextManagement {
+      betas.insert("context-management-2025-06-27")
+      if contextManagement.edits.contains(where: { $0["type"] == "compact_20260112" }) {
+        betas.insert("compact-2026-01-12")
+      }
+    }
+    if anthropicOptions.container?.skills?.isEmpty == false {
+      betas.formUnion(["code-execution-2025-08-25", "skills-2025-10-02", "files-api-2025-04-14"])
+      let hasCodeExecution = (options.tools ?? []).contains { tool in
+        if case .provider(let provider) = tool {
+          return provider.id == "anthropic.code_execution_20250825" || provider.id == "anthropic.code_execution_20260120"
+        }
+        return false
+      }
+      if !hasCodeExecution {
+        warnings.append(.other(message: "code execution tool is required when using skills"))
+      }
+    }
+    if anthropicOptions.taskBudget != nil { betas.insert("task-budgets-2026-03-13") }
+    if anthropicOptions.speed == "fast" { betas.insert("fast-mode-2026-02-01") }
+    if thinkingDisplay == "updates" { betas.insert("thinking-display-updates-2026-08-18") }
+    if blockBinding != nil { betas.insert("thinking-binding-controls-2026-08-01") }
+    if anthropicOptions.fallbacks == "default" {
+      betas.insert("server-side-fallback-2026-07-01")
+    } else if fallbacks != nil {
+      betas.insert("server-side-fallback-2026-06-01")
+    }
 
     let args = jsonObject([
       "model": .string(modelId),
@@ -273,31 +402,60 @@ public struct AnthropicMessagesLanguageModel: LanguageModelV4 {
       "top_k": .optional(topK),
       "top_p": .optional(topP),
       "stop_sequences": .optional(options.stopSequences),
-      "thinking": sendThinking
-        ? jsonObject([
-          "type": .optional(thinkingType), "budget_tokens": .optional(thinkingBudget),
-          "display": .optional(thinkingDisplay),
-        ]) : nil,
+      "thinking": thinking,
       "output_config": outputConfig,
+      "speed": .optional(anthropicOptions.speed),
       "service_tier": .optional(anthropicOptions.serviceTier),
+      "inference_geo": .optional(anthropicOptions.inferenceGeo),
+      "fallbacks": fallbacks,
       "cache_control": anthropicOptions.cacheControl,
       "metadata": anthropicOptions.metadata?.userId.map { ["user_id": .string($0)] },
+      "mcp_servers": mcpServers,
+      "container": container,
       "system": converted.prompt.system.map(JSONValue.array),
       "messages": .array(converted.prompt.messages),
-      "tools": tools.tools,
+      "safeguards": safeguards,
+      "compaction": compaction.map { jsonObject(["type": .string($0.type), "instructions": .optional($0.instructions)]) },
+      "context_management": contextManagementArg,
+      "tools": tools.tools.map(JSONValue.array),
       "tool_choice": tools.toolChoice,
       "stream": stream ? true : nil,
     ])
 
     return PreparedRequest(
-      args: args.objectValue ?? [:], warnings: warnings + validator.warnings, betas: betas,
-      usesJsonResponseTool: jsonResponseTool != nil)
+      args: args.objectValue ?? [:],
+      warnings: warnings + tools.warnings + validator.warnings,
+      betas: betas.union(tools.betas).union(userSuppliedBetas).union(anthropicOptions.anthropicBeta ?? []),
+      usesJsonResponseTool: jsonResponseTool != nil,
+      toolNameMapping: toolNameMapping,
+      usedCustomProviderKey: usedCustomProviderKey)
+  }
+
+  private func contextManagementEdit(_ edit: JSONObject, warnings: inout [SharedV4Warning]) -> JSONValue? {
+    let type = edit["type"]?.stringValue ?? ""
+    switch type {
+    case "clear_tool_uses_20250919":
+      return jsonObject([
+        "type": .string(type), "trigger": edit["trigger"], "keep": edit["keep"], "clear_at_least": edit["clearAtLeast"],
+        "clear_tool_inputs": edit["clearToolInputs"], "exclude_tools": edit["excludeTools"],
+      ])
+    case "clear_thinking_20251015":
+      return jsonObject(["type": .string(type), "keep": edit["keep"]])
+    case "compact_20260112":
+      return jsonObject([
+        "type": .string(type), "trigger": edit["trigger"], "pause_after_compaction": edit["pauseAfterCompaction"],
+        "instructions": edit["instructions"],
+      ])
+    default:
+      warnings.append(.other(message: "Unknown context management strategy: \(type)"))
+      return nil
+    }
   }
 
   private func resolveReasoning(
     _ reasoning: LanguageModelV4ReasoningEffort, capabilities: AnthropicModelCapabilities,
     warnings: inout [SharedV4Warning]
-  ) -> (thinking: AnthropicOptions.Thinking?, effort: String?) {
+  ) -> (thinking: AnthropicOptions.Thinking?, effort: String?)? {
     if reasoning == .none {
       if capabilities.rejectsThinkingDisabled {
         warnings.append(
@@ -323,159 +481,231 @@ public struct AnthropicMessagesLanguageModel: LanguageModelV4 {
     let budget = mapReasoningToProviderBudget(
       reasoning: reasoning, maxOutputTokens: capabilities.maxOutputTokens,
       maxReasoningBudget: capabilities.maxOutputTokens, warnings: &warnings)
-    return (budget.map { AnthropicOptions.Thinking(type: "enabled", budgetTokens: $0) }, nil)
+    return budget.map { (AnthropicOptions.Thinking(type: "enabled", budgetTokens: $0), nil) }
   }
 
-  private func headers(betas: Set<String>, requestHeaders: [String: String]?) throws -> [String: String] {
-    var allBetas = betas
-    let configHeaders = try config.headers()
-    for source in [configHeaders, requestHeaders ?? [:]] {
+  private func userSuppliedBetas(_ requestHeaders: [String: String]?) throws -> Set<String> {
+    var betas = Set<String>()
+    for source in [try config.headers(), requestHeaders ?? [:]] {
       for (name, value) in source where name.lowercased() == "anthropic-beta" {
         for beta in value.lowercased().split(separator: ",") {
           let trimmed = beta.trimmingCharacters(in: .whitespaces)
-          if !trimmed.isEmpty { allBetas.insert(trimmed) }
+          if !trimmed.isEmpty { betas.insert(trimmed) }
         }
       }
     }
-    return combineHeaders(
-      configHeaders, requestHeaders,
-      allBetas.isEmpty ? [:] : ["anthropic-beta": allBetas.sorted().joined(separator: ",")])
+    return betas
   }
 
-  private var messagesURL: String { "\(config.baseURL)/messages" }
+  private func headers(betas: Set<String>, requestHeaders: [String: String]?) throws -> [String: String] {
+    combineHeaders(
+      try config.headers(), requestHeaders,
+      betas.isEmpty ? [:] : ["anthropic-beta": betas.sorted().joined(separator: ",")])
+  }
+
+  private func requestURL(stream: Bool) -> String {
+    config.buildRequestURL?(config.baseURL, stream) ?? "\(config.baseURL)/messages"
+  }
+
+  private func requestBody(_ args: JSONObject, betas: Set<String>) -> JSONValue {
+    .object(config.transformRequestBody?(args, betas) ?? args)
+  }
+
+  /// Documents in the prompt that citations can refer to. Mirrors upstream `extractCitationDocuments`.
+  private func citationDocuments(_ prompt: LanguageModelV4Prompt) -> [AnthropicCitationDocument] {
+    prompt.flatMap { message -> [AnthropicCitationDocument] in
+      guard case .user(let parts, _) = message else { return [] }
+      return parts.compactMap { part in
+        guard case .file(let file) = part, file.mediaType == "application/pdf" || file.mediaType == "text/plain",
+          file.providerOptions?["anthropic"]?["citations"]?["enabled"]?.boolValue == true
+        else { return nil }
+        return AnthropicCitationDocument(
+          title: file.filename ?? "Untitled Document", filename: file.filename, mediaType: file.mediaType)
+      }
+    }
+  }
+
+  // MARK: - Generate
 
   public func doGenerate(_ options: LanguageModelV4CallOptions) async throws -> LanguageModelV4GenerateResult {
-    let request = try prepareRequest(options, stream: false)
+    let request = try prepareRequest(options, stream: false, userSuppliedBetas: try userSuppliedBetas(options.headers))
     let response = try await postJsonToApi(
-      url: messagesURL,
+      url: requestURL(stream: false),
       headers: try headers(betas: request.betas, requestHeaders: options.headers),
-      body: .object(request.args),
+      body: requestBody(request.args, betas: request.betas),
       failedResponseHandler: failedResponseHandler,
-      successfulResponseHandler: createJsonResponseHandler(AnthropicMessagesResponse.self),
+      successfulResponseHandler: createJsonResponseHandler(JSONValue.self),
       httpClient: config.httpClient)
 
     let body = response.value
+    let markCodeExecutionDynamic = hasDynamicFilteringWebToolWithoutCodeExecution(request.args["tools"]?.arrayValue)
+    let toolNameMapping = request.toolNameMapping
+    var converter = AnthropicContentConverter(
+      toolNameMapping: toolNameMapping, generateId: config.generateId,
+      citationDocuments: citationDocuments(options.prompt))
     var content: [LanguageModelV4Content] = []
     var isJsonResponseFromTool = false
 
-    for block in body.content {
-      switch block.type {
+    for block in body["content"]?.arrayValue ?? [] {
+      switch block["type"]?.stringValue {
       case "text":
         guard !request.usesJsonResponseTool else { continue }
-        let webCitations = (block.citations ?? []).filter { $0["type"] == "web_search_result_location" }
+        let citations = (block["citations"]?.arrayValue ?? []).map(normalizeCitation)
+        let webCitations = citations.filter { $0["type"] == "web_search_result_location" }
         content.append(
           .text(
             LanguageModelV4Text(
-              text: block.text ?? "",
+              text: block["text"]?.stringValue ?? "",
               providerMetadata: webCitations.isEmpty ? nil : ["anthropic": ["citations": .array(webCitations)]])))
-        for citation in block.citations ?? [] {
-          if let source = citationSource(citation) { content.append(.source(source)) }
+        for citation in citations {
+          if let source = createCitationSource(
+            citation, documents: converter.citationDocuments, generateId: config.generateId)
+          {
+            content.append(.source(source))
+          }
         }
       case "thinking":
         content.append(
           .reasoning(
             LanguageModelV4Reasoning(
-              text: block.thinking ?? "",
-              providerMetadata: ["anthropic": jsonObject(["signature": .optional(block.signature)]).objectValue ?? [:]])))
+              text: block["thinking"]?.stringValue ?? "",
+              providerMetadata: ["anthropic": jsonObject(["signature": block["signature"]]).objectValue ?? [:]])))
       case "redacted_thinking":
         content.append(
           .reasoning(
-            LanguageModelV4Reasoning(text: "", providerMetadata: ["anthropic": ["redactedData": .string(block.data ?? "")]])))
+            LanguageModelV4Reasoning(
+              text: "", providerMetadata: ["anthropic": ["redactedData": block["data"] ?? .null]])))
+      case "container_upload":
+        content.append(
+          .custom(
+            LanguageModelV4CustomContent(
+              kind: "anthropic.container_upload", providerMetadata: ["anthropic": ["fileId": block["file_id"] ?? .null]])))
+      case "compaction":
+        guard let text = block["content"]?.stringValue, !text.isEmpty else { continue }
+        content.append(
+          .text(
+            LanguageModelV4Text(
+              text: text,
+              providerMetadata: [
+                "anthropic": jsonObject([
+                  "type": "compaction", "signature": block["signature"].flatMap { $0.isNull ? nil : $0 },
+                ]).objectValue ?? [:]
+              ])))
       case "tool_use":
-        if request.usesJsonResponseTool && block.name == "json" {
+        let name = block["name"]?.stringValue ?? ""
+        if request.usesJsonResponseTool && name == "json" {
           isJsonResponseFromTool = true
-          content.append(.text(LanguageModelV4Text(text: (block.input ?? [:]).jsonString())))
+          content.append(.text(LanguageModelV4Text(text: (block["input"] ?? .null).jsonString())))
+        } else if let toolset = block["toolset_name"]?.stringValue {
+          var metadata: JSONObject = ["toolsetName": .string(toolset)]
+          if let caller = anthropicCallerInfo(block["caller"]) { metadata["caller"] = caller }
+          content.append(
+            .toolCall(
+              LanguageModelV4ToolCall(
+                toolCallId: block["id"]?.stringValue ?? "", toolName: toolNameMapping.toCustomToolName(toolset),
+                input: toolsetMemberInput(memberName: name, input: block["input"]).jsonString(),
+                providerMetadata: ["anthropic": metadata])))
         } else {
           content.append(
             .toolCall(
               LanguageModelV4ToolCall(
-                toolCallId: block.id ?? config.generateId(), toolName: block.name ?? "",
-                input: (block.input ?? [:]).jsonString())))
+                toolCallId: block["id"]?.stringValue ?? "", toolName: name,
+                input: (block["input"] ?? .null).jsonString(), providerMetadata: anthropicCallerMetadata(block["caller"]))))
+        }
+      case "server_tool_use":
+        if let call = serverToolCall(
+          block, toolNameMapping: toolNameMapping, markCodeExecutionDynamic: markCodeExecutionDynamic,
+          converter: &converter)
+        {
+          content.append(.toolCall(call))
         }
       default:
-        continue
+        if let parts = converter.convert(block) {
+          content += parts
+        }
       }
     }
 
-    let rawUsage = response.rawValue?["usage"]?.objectValue
+    let usageJSON = body["usage"]?.objectValue ?? [:]
+    let rawUsage = normalizeRawUsage(usageJSON)
+    let usage = (try? JSONValue.object(usageJSON).decode(as: AnthropicUsage.self)) ?? AnthropicUsage()
     let metadata = jsonObject([
-      "usage": rawUsage.map(JSONValue.object) ?? .null,
-      "stopSequence": .optional(body.stop_sequence) ?? .null,
+      "usage": .object(rawUsage),
+      "stopSequence": body["stop_sequence"] ?? .null,
+      "stopDetails": anthropicStopDetailsMetadata(body["stop_details"]),
+      "inputTransformations": normalizeInputTransformations(body["input_transformations"]),
+      "safeguardResults": normalizeSafeguardResults(body["safeguard_results"]),
+      "iterations": anthropicIterationsMetadata(usageJSON["iterations"]),
+      "container": anthropicContainerMetadata(body["container"]),
+      "contextManagement": anthropicContextManagementMetadata(body["context_management"]) ?? .null,
     ])
+    let stopReason = body["stop_reason"]?.stringValue
 
     return LanguageModelV4GenerateResult(
       content: content,
       finishReason: LanguageModelV4FinishReason(
-        unified: mapAnthropicStopReason(body.stop_reason, isJsonResponseFromTool: isJsonResponseFromTool),
-        raw: body.stop_reason),
-      usage: convertAnthropicUsage(body.usage, raw: rawUsage),
-      providerMetadata: providerMetadata(metadata.objectValue ?? [:]),
+        unified: mapAnthropicStopReason(stopReason, isJsonResponseFromTool: isJsonResponseFromTool), raw: stopReason),
+      usage: convertAnthropicUsage(usage, raw: rawUsage),
+      providerMetadata: providerMetadata(metadata.objectValue ?? [:], usedCustomProviderKey: request.usedCustomProviderKey),
       request: LanguageModelV4RequestInfo(body: .object(request.args)),
       response: LanguageModelV4ResponseInfo(
-        metadata: LanguageModelV4ResponseMetadata(id: body.id, modelId: body.model),
+        metadata: LanguageModelV4ResponseMetadata(id: body["id"]?.stringValue, modelId: body["model"]?.stringValue),
         headers: response.responseHeaders, body: response.rawValue),
       warnings: request.warnings)
   }
 
-  private func providerMetadata(_ metadata: JSONObject) -> SharedV4ProviderMetadata {
+  func providerMetadata(_ metadata: JSONObject, usedCustomProviderKey: Bool) -> SharedV4ProviderMetadata {
     var result: SharedV4ProviderMetadata = ["anthropic": metadata]
-    if providerOptionsName != "anthropic" { result[providerOptionsName] = metadata }
+    if usedCustomProviderKey && providerOptionsName != "anthropic" { result[providerOptionsName] = metadata }
     return result
   }
 
-  private func citationSource(_ citation: JSONValue) -> LanguageModelV4Source? {
-    switch citation["type"]?.stringValue {
-    case "web_search_result_location":
-      guard let url = citation["url"]?.stringValue else { return nil }
-      return .url(
-        id: config.generateId(), url: url, title: citation["title"]?.stringValue,
-        providerMetadata: citation["encrypted_index"].map { ["anthropic": ["encryptedIndex": $0]] })
-    default:
-      return nil
-    }
-  }
+  // MARK: - Stream
 
   public func doStream(_ options: LanguageModelV4CallOptions) async throws -> LanguageModelV4StreamResult {
-    let request = try prepareRequest(options, stream: true)
-    let url = messagesURL
+    let request = try prepareRequest(options, stream: true, userSuppliedBetas: try userSuppliedBetas(options.headers))
+    let url = requestURL(stream: true)
     let response = try await postJsonToApi(
       url: url,
       headers: try headers(betas: request.betas, requestHeaders: options.headers),
-      body: .object(request.args),
+      body: requestBody(request.args, betas: request.betas),
       failedResponseHandler: failedResponseHandler,
-      successfulResponseHandler: createEventSourceResponseHandler(AnthropicStreamEvent.self),
+      successfulResponseHandler: createEventSourceResponseHandler(JSONValue.self),
       httpClient: config.httpClient)
-
-    var iterator = response.value.makeAsyncIterator()
-    var buffered: [ParseResult<AnthropicStreamEvent>] = []
-    // A stream that opens with an error is surfaced as an `APICallError`
-    // so that retries apply, as upstream does.
-    while let first = try await iterator.next() {
-      if case .success(let event, let raw) = first, event.type == "error", let error = event.error {
-        let streamError = createAnthropicStreamError(type: error.type, message: error.message, data: raw)
-        throw APICallError(
-          message: error.message, url: url, requestBodyValues: .object(request.args),
-          statusCode: streamError.statusCode, responseHeaders: response.responseHeaders,
-          isRetryable: streamError.isRetryable, data: raw)
-      }
-      buffered.append(first)
-      if case .success(let event, _) = first, event.type == "ping" { continue }
-      break
-    }
 
     let state = AnthropicStreamState(
       usesJsonResponseTool: request.usesJsonResponseTool, includeRawChunks: options.includeRawChunks == true,
-      generateId: config.generateId, providerOptionsName: providerOptionsName)
+      generateId: config.generateId, toolNameMapping: request.toolNameMapping,
+      citationDocuments: citationDocuments(options.prompt),
+      markCodeExecutionDynamic: hasDynamicFilteringWebToolWithoutCodeExecution(request.args["tools"]?.arrayValue),
+      providerMetadata: { providerMetadata($0, usedCustomProviderKey: request.usedCustomProviderKey) })
+
+    // A stream that opens with an error is surfaced as an `APICallError`
+    // so that retries apply, as upstream does.
+    var iterator = response.value.makeAsyncIterator()
+    var firstParts: [LanguageModelV4StreamPart] = []
+    while let chunk = try await iterator.next() {
+      state.process(chunk) { firstParts.append($0) }
+      if let error = firstParts.lazy.compactMap({ part -> ProviderStreamError? in
+        if case .error(let error as ProviderStreamError) = part { error } else { nil }
+      }).first {
+        throw APICallError(
+          message: error.message, url: url, requestBodyValues: .object(request.args),
+          statusCode: error.statusCode ?? 500, responseHeaders: response.responseHeaders,
+          responseBody: error.data?.jsonString(), isRetryable: error.isRetryable ?? false, data: error.data)
+      }
+      if firstParts.contains(where: { if case .raw = $0 { false } else { true } }) { break }
+    }
+
     let warnings = request.warnings
     let remaining = iterator
+    let buffered = firstParts
     let (stream, continuation) = LanguageModelV4Stream.makeStream()
     let task = Task {
       var iterator = remaining
       continuation.yield(.streamStart(warnings: warnings))
+      for part in buffered { continuation.yield(part) }
       do {
-        for chunk in buffered {
-          state.process(chunk) { continuation.yield($0) }
-        }
         while let chunk = try await iterator.next() {
           state.process(chunk) { continuation.yield($0) }
         }
@@ -492,185 +722,47 @@ public struct AnthropicMessagesLanguageModel: LanguageModelV4 {
   }
 }
 
-private func formatNumber(_ value: Double) -> String {
-  value.rounded() == value ? String(Int(value)) : String(value)
+/// A provider-executed tool call from a `server_tool_use` block. Mirrors the
+/// `server_tool_use` case of upstream `doGenerate`.
+func serverToolCall(
+  _ block: JSONValue, toolNameMapping: ToolNameMapping, markCodeExecutionDynamic: Bool,
+  converter: inout AnthropicContentConverter
+) -> LanguageModelV4ToolCall? {
+  let id = block["id"]?.stringValue ?? ""
+  let name = block["name"]?.stringValue ?? ""
+  let caller = anthropicCallerMetadata(block["caller"])
+  let input = block["input"] ?? .null
+  switch name {
+  case "text_editor_code_execution", "bash_code_execution":
+    var object = input.objectValue ?? [:]
+    object["type"] = .string(name)
+    return LanguageModelV4ToolCall(
+      toolCallId: id, toolName: toolNameMapping.toCustomToolName("code_execution"), input: JSONValue.object(object).jsonString(),
+      providerExecuted: true, dynamic: markCodeExecutionDynamic ? true : nil, providerMetadata: caller)
+  case "web_search", "code_execution", "web_fetch":
+    var serialized = input
+    if name == "code_execution", var object = input.objectValue, object["code"] != nil, object["type"] == nil {
+      object["type"] = "programmatic-tool-call"
+      serialized = .object(object)
+    }
+    return LanguageModelV4ToolCall(
+      toolCallId: id, toolName: toolNameMapping.toCustomToolName(name), input: serialized.jsonString(),
+      providerExecuted: true, dynamic: markCodeExecutionDynamic && name == "code_execution" ? true : nil,
+      providerMetadata: caller)
+  case "tool_search_tool_regex", "tool_search_tool_bm25":
+    converter.serverToolCalls[id] = name
+    return LanguageModelV4ToolCall(
+      toolCallId: id, toolName: toolNameMapping.toCustomToolName(name), input: input.jsonString(),
+      providerExecuted: true, providerMetadata: caller)
+  case "advisor":
+    return LanguageModelV4ToolCall(
+      toolCallId: id, toolName: toolNameMapping.toCustomToolName("advisor"), input: input.jsonString(),
+      providerExecuted: true, providerMetadata: caller)
+  default:
+    return nil
+  }
 }
 
-/// Converts Anthropic stream events into stream parts.
-private final class AnthropicStreamState: @unchecked Sendable {
-  enum Block {
-    case text(citations: [JSONValue])
-    case reasoning
-    case toolCall(id: String, name: String, input: String)
-  }
-
-  let usesJsonResponseTool: Bool
-  let includeRawChunks: Bool
-  let generateId: IdGenerator
-  let providerOptionsName: String
-  var blocks: [Int: Block] = [:]
-  var blockType: String?
-  var isJsonResponseFromTool = false
-  var usage = AnthropicUsage()
-  var rawUsage: JSONObject = [:]
-  var finishReason = LanguageModelV4FinishReason(unified: .other)
-  var stopSequence: String?
-
-  init(usesJsonResponseTool: Bool, includeRawChunks: Bool, generateId: @escaping IdGenerator, providerOptionsName: String) {
-    self.usesJsonResponseTool = usesJsonResponseTool
-    self.includeRawChunks = includeRawChunks
-    self.generateId = generateId
-    self.providerOptionsName = providerOptionsName
-  }
-
-  func process(_ chunk: ParseResult<AnthropicStreamEvent>, emit: (LanguageModelV4StreamPart) -> Void) {
-    if includeRawChunks { emit(.raw(rawValue: chunk.rawValue ?? .null)) }
-    guard case .success(let event, let raw) = chunk else {
-      emit(.error(chunk.error ?? NoContentGeneratedError()))
-      return
-    }
-
-    switch event.type {
-    case "ping":
-      return
-
-    case "message_start":
-      guard let message = event.message else { return }
-      if let messageUsage = message.usage {
-        usage.input_tokens = messageUsage.input_tokens
-        usage.cache_read_input_tokens = messageUsage.cache_read_input_tokens ?? 0
-        usage.cache_creation_input_tokens = messageUsage.cache_creation_input_tokens ?? 0
-        rawUsage = raw["message"]?["usage"]?.objectValue ?? [:]
-      }
-      if let stopReason = message.stop_reason {
-        finishReason = LanguageModelV4FinishReason(
-          unified: mapAnthropicStopReason(stopReason, isJsonResponseFromTool: isJsonResponseFromTool), raw: stopReason)
-      }
-      emit(.responseMetadata(LanguageModelV4ResponseMetadata(id: message.id, modelId: message.model)))
-      for block in message.content ?? [] where block.type == "tool_use" {
-        let id = block.id ?? generateId()
-        let input = (block.input ?? [:]).jsonString()
-        emit(.toolInputStart(LanguageModelV4ToolInputStart(id: id, toolName: block.name ?? "")))
-        emit(.toolInputDelta(id: id, delta: input))
-        emit(.toolInputEnd(id: id))
-        emit(.toolCall(LanguageModelV4ToolCall(toolCallId: id, toolName: block.name ?? "", input: input)))
-      }
-
-    case "content_block_start":
-      guard let index = event.index, let block = event.content_block else { return }
-      blockType = block.type
-      let id = String(index)
-      switch block.type {
-      case "text":
-        guard !usesJsonResponseTool else { return }
-        blocks[index] = .text(citations: [])
-        emit(.textStart(id: id))
-      case "thinking":
-        blocks[index] = .reasoning
-        emit(.reasoningStart(id: id))
-      case "redacted_thinking":
-        blocks[index] = .reasoning
-        emit(.reasoningStart(id: id, providerMetadata: ["anthropic": ["redactedData": .string(block.data ?? "")]]))
-      case "tool_use":
-        if usesJsonResponseTool && block.name == "json" {
-          isJsonResponseFromTool = true
-          blocks[index] = .text(citations: [])
-          emit(.textStart(id: id))
-        } else {
-          let toolId = block.id ?? generateId()
-          let initialInput = (block.input?.objectValue?.isEmpty == false) ? block.input!.jsonString() : ""
-          blocks[index] = .toolCall(id: toolId, name: block.name ?? "", input: initialInput)
-          emit(.toolInputStart(LanguageModelV4ToolInputStart(id: toolId, toolName: block.name ?? "")))
-          if !initialInput.isEmpty { emit(.toolInputDelta(id: toolId, delta: initialInput)) }
-        }
-      default:
-        return
-      }
-
-    case "content_block_delta":
-      guard let index = event.index, let delta = event.delta else { return }
-      let id = String(index)
-      switch delta.type {
-      case "text_delta":
-        guard !usesJsonResponseTool, let text = delta.text else { return }
-        emit(.textDelta(id: id, delta: text))
-      case "thinking_delta":
-        emit(.reasoningDelta(id: id, delta: delta.thinking ?? ""))
-      case "signature_delta":
-        if blockType == "thinking", let signature = delta.signature {
-          emit(.reasoningDelta(id: id, delta: "", providerMetadata: ["anthropic": ["signature": .string(signature)]]))
-        }
-      case "input_json_delta":
-        guard let partial = delta.partial_json, !partial.isEmpty else { return }
-        if isJsonResponseFromTool {
-          if case .text? = blocks[index] { emit(.textDelta(id: id, delta: partial)) }
-        } else if case .toolCall(let toolId, let name, let input)? = blocks[index] {
-          emit(.toolInputDelta(id: toolId, delta: partial))
-          blocks[index] = .toolCall(id: toolId, name: name, input: input + partial)
-        }
-      case "citations_delta":
-        guard let citation = delta.citation else { return }
-        if case .text(let citations)? = blocks[index], citation["type"] == "web_search_result_location" {
-          blocks[index] = .text(citations: citations + [citation])
-        }
-        if citation["type"] == "web_search_result_location", let url = citation["url"]?.stringValue {
-          emit(.source(.url(id: generateId(), url: url, title: citation["title"]?.stringValue)))
-        }
-      default:
-        return
-      }
-
-    case "content_block_stop":
-      guard let index = event.index, let block = blocks[index] else {
-        blockType = nil
-        return
-      }
-      let id = String(index)
-      switch block {
-      case .text(let citations):
-        emit(.textEnd(id: id, providerMetadata: citations.isEmpty ? nil : ["anthropic": ["citations": .array(citations)]]))
-      case .reasoning:
-        emit(.reasoningEnd(id: id))
-      case .toolCall(let toolId, let name, let input):
-        emit(.toolInputEnd(id: toolId))
-        emit(.toolCall(LanguageModelV4ToolCall(toolCallId: toolId, toolName: name, input: input.isEmpty ? "{}" : input)))
-      }
-      blocks.removeValue(forKey: index)
-      blockType = nil
-
-    case "message_delta":
-      if let deltaUsage = event.usage {
-        if let input = deltaUsage.input_tokens { usage.input_tokens = input }
-        usage.output_tokens = deltaUsage.output_tokens
-        if let details = deltaUsage.output_tokens_details { usage.output_tokens_details = details }
-        if let cacheRead = deltaUsage.cache_read_input_tokens { usage.cache_read_input_tokens = cacheRead }
-        if let cacheCreation = deltaUsage.cache_creation_input_tokens {
-          usage.cache_creation_input_tokens = cacheCreation
-        }
-        if let iterations = deltaUsage.iterations { usage.iterations = iterations }
-        for (key, value) in raw["usage"]?.objectValue ?? [:] { rawUsage[key] = value }
-      }
-      finishReason = LanguageModelV4FinishReason(
-        unified: mapAnthropicStopReason(event.delta?.stop_reason, isJsonResponseFromTool: isJsonResponseFromTool),
-        raw: event.delta?.stop_reason)
-      stopSequence = event.delta?.stop_sequence
-
-    case "message_stop":
-      let metadata: JSONObject = [
-        "usage": .object(rawUsage),
-        "stopSequence": stopSequence.map(JSONValue.string) ?? .null,
-      ]
-      var providerMetadata: SharedV4ProviderMetadata = ["anthropic": metadata]
-      if providerOptionsName != "anthropic" { providerMetadata[providerOptionsName] = metadata }
-      emit(.finish(usage: convertAnthropicUsage(usage, raw: rawUsage), finishReason: finishReason, providerMetadata: providerMetadata))
-
-    case "error":
-      if let error = event.error {
-        emit(.error(createAnthropicStreamError(type: error.type, message: error.message, data: raw)))
-      }
-
-    default:
-      return
-    }
-  }
+private func formatNumber(_ value: Double) -> String {
+  value.rounded() == value ? String(Int(value)) : String(value)
 }

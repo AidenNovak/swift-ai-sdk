@@ -53,4 +53,4 @@ Tools/conformance/run.sh /path/to/vercel-ai                     # every script
 Tools/conformance/run.sh /path/to/vercel-ai ui-message-stream   # one script
 ```
 
-The script installs a few npm packages into a temporary directory and removes them afterwards. `ui-message-stream.mts` covers the UI message stream processing, `toUIMessageStream` over `streamText`, `convertToModelMessages`, `validateUIMessages`, `createUIMessageStream` and the chat state machine (`Tests/AISDKUITests/Fixtures/ui-conformance.json`).
+The script installs a few npm packages into a temporary directory and removes them afterwards. `anthropic-messages.mts` replays upstream's recorded Anthropic API responses (copied to `Tests/AISDKAnthropicTests/Fixtures/upstream`) plus request-only cases for options and prompt conversion. `ui-message-stream.mts` covers the UI message stream processing, `toUIMessageStream` over `streamText`, `convertToModelMessages`, `validateUIMessages`, `createUIMessageStream` and the chat state machine (`Tests/AISDKUITests/Fixtures/ui-conformance.json`).

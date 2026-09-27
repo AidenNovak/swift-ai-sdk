@@ -51,8 +51,9 @@ public enum UpstreamConformance {
       return .function(
         LanguageModelV4FunctionTool(
           name: json["name"]?.stringValue ?? "", description: json["description"]?.stringValue,
-          inputSchema: JSONSchema(json["inputSchema"] ?? ["type": "object"]), strict: json["strict"]?.boolValue,
-          providerOptions: providerOptions(json["providerOptions"])))
+          inputSchema: JSONSchema(json["inputSchema"] ?? ["type": "object"]),
+          inputExamples: json["inputExamples"]?.arrayValue?.compactMap { $0["input"]?.objectValue },
+          strict: json["strict"]?.boolValue, providerOptions: providerOptions(json["providerOptions"])))
     case "provider":
       return .provider(
         LanguageModelV4ProviderTool(
