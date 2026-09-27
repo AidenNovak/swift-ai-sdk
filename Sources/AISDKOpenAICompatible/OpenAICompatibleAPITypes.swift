@@ -265,3 +265,9 @@ func convertOpenAICompatibleContent(_ content: JSONValue?) -> [LanguageModelV4Co
     return []
   }
 }
+
+/// Response metadata, treating a `0` timestamp as missing because Azure and
+/// some compatible providers send it as a placeholder. Mirrors upstream `getResponseMetadata`.
+func getResponseMetadata(id: String?, model: String?, created: Double?) -> LanguageModelV4ResponseMetadata {
+  createLanguageModelResponseMetadata(id: id, model: model, created: created == 0 ? nil : created)
+}
