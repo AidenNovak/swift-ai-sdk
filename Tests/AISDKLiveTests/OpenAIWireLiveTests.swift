@@ -33,6 +33,25 @@ private let openaiEnabled = ProcessInfo.processInfo.environment["AISDK_LIVE_TEST
     #expect(try await result.steps.first?.toolCalls.first?.toolName == "weather")
   }
 
+  @Test func responsesModelGeneratesAndStreams() async throws {
+    let model = openaiOverDeepSeek.responses(flash)
+    let generated = try await generateText(model: model, prompt: "Reply with exactly: pong")
+    #expect(generated.text.lowercased().contains("pong"))
+    #expect(generated.providerMetadata?["openai"]?["responseId"]?.stringValue?.isEmpty == false)
+    let streamed = streamText(model: model, prompt: "Count from 1 to 5 separated by spaces.")
+    #expect(try await streamed.text.contains("1 2 3 4 5"))
+    #expect(try await streamed.usage.outputTokens ?? 0 > 0)
+  }
+
+  @Test func responsesModelRunsStatelessToolLoop() async throws {
+    let result = try await generateText(
+      model: openaiOverDeepSeek.responses(flash), prompt: "What's the weather in Shanghai? Use the tool.",
+      tools: ["weather": weatherTool], providerOptions: ["openai": ["store": false]], stopWhen: [.isStepCount(3)])
+    #expect(result.steps.count >= 2)
+    #expect(result.steps.first?.toolCalls.first?.toolName == "weather")
+    #expect(result.text.contains("23") || result.text.lowercased().contains("sunny"))
+  }
+
   @Test func surfacesEarlyStreamErrorsAsAPICallErrors() async throws {
     let broken = try createOpenAI(OpenAIProviderSettings(baseURL: "https://api.deepseek.com", apiKey: "sk-invalid"))
     await #expect(throws: APICallError.self) {

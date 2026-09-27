@@ -19,7 +19,7 @@ A native Swift port of the [Vercel AI SDK](https://github.com/vercel/ai), built 
 | `AISDKDeepSeek` | `@ai-sdk/deepseek` | DeepSeek chat models (thinking, reasoning effort, tools, JSON output, prefix completion, logprobs) |
 | `AISDKAnthropic` | `@ai-sdk/anthropic` | Claude Messages API (thinking, effort, tools, cache control, PDFs, JSON output); also Anthropic-compatible endpoints such as DeepSeek |
 | `AISDKOpenAICompatible` | `@ai-sdk/openai-compatible` | Any OpenAI-format API (vLLM, Ollama, LM Studio, OpenRouter, Groq, …): chat, completions, embeddings, pass-through provider options |
-| `AISDKOpenAI` | `@ai-sdk/openai` | OpenAI Chat Completions (reasoning-model parameter rules, service tiers, prompt caching, logprobs, citations), completions, embeddings; Responses API in progress |
+| `AISDKOpenAI` | `@ai-sdk/openai` | OpenAI Responses API (default; built-in tools: web search, file search, code interpreter, image generation, MCP, shell, apply patch, computer, tool search, custom tools), Chat Completions, completions, embeddings |
 | `AISDKTestUtils` | `@ai-sdk/test-server`, `ai/test` | Replaying HTTP client, mock language model, stream helpers |
 
 ## Quick start
