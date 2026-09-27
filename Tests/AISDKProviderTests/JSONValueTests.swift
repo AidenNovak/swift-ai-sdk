@@ -26,7 +26,7 @@ import Testing
   }
 
   @Test func roundTripsThroughJSONText() throws {
-    let value: JSONValue = ["list": [1, "two", nil, ["nested": true]], "url": "https://x.dev/a"]
+    let value: JSONValue = ["list": [1, "two", .null, ["nested": true]], "url": "https://x.dev/a"]
     let text = value.jsonString(sortedKeys: true)
     #expect(text == #"{"list":[1,"two",null,{"nested":true}],"url":"https://x.dev/a"}"#)
     #expect(try JSONValue(jsonString: text) == value)
