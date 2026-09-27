@@ -33,7 +33,7 @@ public final class URLSessionHTTPClient: HTTPClient {
       urlRequest.setValue(value, forHTTPHeaderField: name)
     }
 
-    let delegate = StreamingDataDelegate()
+    let delegate = StreamingDataDelegate(redirect: request.redirect)
     #if canImport(FoundationNetworking)
       let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
       let task = session.dataTask(with: urlRequest)
@@ -56,6 +56,16 @@ public final class URLSessionHTTPClient: HTTPClient {
   }
 }
 
+/// The server redirected a request sent with `redirect: .error`.
+public struct HTTPRedirectError: Error, CustomStringConvertible {
+  public let url: URL?
+  public let statusCode: Int
+
+  public var description: String {
+    "Redirect (HTTP \(statusCode)) from \(url?.absoluteString ?? "request") is not allowed"
+  }
+}
+
 /// Bridges `URLSessionDataDelegate` callbacks to an async response head and a
 /// streaming body.
 private final class StreamingDataDelegate: NSObject, URLSessionDataDelegate, @unchecked Sendable {
@@ -63,11 +73,34 @@ private final class StreamingDataDelegate: NSObject, URLSessionDataDelegate, @un
   private var headContinuation: CheckedContinuation<HTTPResponse, any Error>?
   private let body: HTTPBodyStream
   private let bodyContinuation: HTTPBodyStream.Continuation
+  private let redirect: HTTPRedirectMode
   var onComplete: (@Sendable () -> Void)?
 
-  override init() {
+  init(redirect: HTTPRedirectMode) {
+    self.redirect = redirect
     (body, bodyContinuation) = HTTPBodyStream.makeStream()
     super.init()
+  }
+
+  #if canImport(FoundationNetworking)
+    func urlSession(
+      _ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+      newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void
+    ) {
+      completionHandler(redirectTarget(request))
+    }
+  #else
+    func urlSession(
+      _ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse,
+      newRequest request: URLRequest, completionHandler: @escaping @Sendable (URLRequest?) -> Void
+    ) {
+      completionHandler(redirectTarget(request))
+    }
+  #endif
+
+  /// The request to follow, or `nil` to deliver the redirect response itself.
+  private func redirectTarget(_ request: URLRequest) -> URLRequest? {
+    redirect == .follow ? request : nil
   }
 
   func start(_ task: URLSessionDataTask) async throws -> HTTPResponse {
@@ -97,8 +130,13 @@ private final class StreamingDataDelegate: NSObject, URLSessionDataDelegate, @un
     for (name, value) in httpResponse?.allHeaderFields ?? [:] {
       headers[String(describing: name).lowercased()] = String(describing: value)
     }
-    let result = HTTPResponse(
-      statusCode: httpResponse?.statusCode ?? 0, headers: headers, body: body)
+    let statusCode = httpResponse?.statusCode ?? 0
+    if redirect == .error, [301, 302, 303, 307, 308].contains(statusCode), headers["location"] != nil {
+      takeHeadContinuation()?.resume(throwing: HTTPRedirectError(url: dataTask.originalRequest?.url, statusCode: statusCode))
+      completionHandler(.cancel)
+      return
+    }
+    let result = HTTPResponse(statusCode: statusCode, headers: headers, body: body)
     takeHeadContinuation()?.resume(returning: result)
     completionHandler(.allow)
   }

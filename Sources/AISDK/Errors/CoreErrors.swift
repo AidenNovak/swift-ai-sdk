@@ -167,29 +167,3 @@ public struct InvalidDataContentError: AISDKError {
   }
 }
 
-/// Downloading a file failed. Mirrors upstream `DownloadError`.
-public struct DownloadError: AISDKError {
-  public let name = "AI_DownloadError"
-  public let message: String
-  public let url: String
-  public let statusCode: Int?
-  public let statusText: String?
-  public let cause: (any Error)?
-
-  public init(
-    url: String, statusCode: Int? = nil, statusText: String? = nil, cause: (any Error)? = nil,
-    message: String? = nil
-  ) {
-    self.url = url
-    self.statusCode = statusCode
-    self.statusText = statusText
-    self.cause = cause
-    if let message {
-      self.message = message
-    } else if cause == nil, let statusCode {
-      self.message = "Failed to download \(url): \(statusCode) \(statusText ?? "")"
-    } else {
-      self.message = "Failed to download \(url): \(getErrorMessage(cause))"
-    }
-  }
-}

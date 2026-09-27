@@ -42,20 +42,26 @@ public func createDefaultDownloadFunction(httpClient: (any HTTPClient)? = nil) -
   }
 }
 
-/// Downloads a file. Mirrors upstream `download`.
-public func download(url: URL, httpClient: (any HTTPClient)? = nil) async throws -> DownloadedFile {
-  let response: HTTPResponse
+/// Downloads a file from an untrusted URL, rejecting private-network targets
+/// on every redirect hop and enforcing a size limit. Mirrors upstream `download`.
+public func download(
+  url: URL, maxBytes: Int = DEFAULT_MAX_DOWNLOAD_SIZE, httpClient: (any HTTPClient)? = nil
+) async throws -> DownloadedFile {
+  let urlText = url.absoluteString
   do {
-    response = try await (httpClient ?? defaultHTTPClient).send(HTTPRequest(method: "GET", url: url))
-  } catch let error where isCancellationError(error) {
+    let response = try await fetchUntrustedUrl(
+      url: urlText, headers: withUserAgentSuffix([:], "ai-sdk/\(AISDK_VERSION)", "runtime/swift"),
+      httpClient: httpClient)
+    guard response.isOK else {
+      throw DownloadError(url: urlText, statusCode: response.statusCode, statusText: response.statusText)
+    }
+    let data = try await readResponseWithSizeLimit(response, url: urlText, maxBytes: maxBytes)
+    return DownloadedFile(data: data, mediaType: response.headers["content-type"])
+  } catch let error where error is DownloadError || isCancellationError(error) {
     throw error
   } catch {
-    throw DownloadError(url: url.absoluteString, cause: error)
+    throw DownloadError(url: urlText, cause: error)
   }
-  guard response.isOK else {
-    throw DownloadError(url: url.absoluteString, statusCode: response.statusCode, statusText: response.statusText)
-  }
-  return DownloadedFile(data: try await response.bodyData(), mediaType: response.headers["content-type"])
 }
 
 /// Converts a standardized prompt to the specification prompt, downloading
