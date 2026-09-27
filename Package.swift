@@ -14,15 +14,32 @@ let package = Package(
   ],
   products: [
     .library(name: "AISDKProvider", targets: ["AISDKProvider"]),
+    .library(name: "AISDKProviderUtils", targets: ["AISDKProviderUtils"]),
+    .library(name: "AISDKTestUtils", targets: ["AISDKTestUtils"]),
   ],
   targets: [
     .target(
       name: "AISDKProvider",
       swiftSettings: swiftSettings
     ),
+    .target(
+      name: "AISDKProviderUtils",
+      dependencies: ["AISDKProvider"],
+      swiftSettings: swiftSettings
+    ),
+    .target(
+      name: "AISDKTestUtils",
+      dependencies: ["AISDKProviderUtils"],
+      swiftSettings: swiftSettings
+    ),
     .testTarget(
       name: "AISDKProviderTests",
       dependencies: ["AISDKProvider"],
+      swiftSettings: swiftSettings
+    ),
+    .testTarget(
+      name: "AISDKProviderUtilsTests",
+      dependencies: ["AISDKProviderUtils", "AISDKTestUtils"],
       swiftSettings: swiftSettings
     ),
   ]
