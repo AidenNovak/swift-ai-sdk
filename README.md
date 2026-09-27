@@ -6,6 +6,7 @@ A native Swift port of the [Vercel AI SDK](https://github.com/vercel/ai), built 
 - **Zero third-party dependencies**: only Foundation and URLSession.
 - **Provider-agnostic**: one API for DeepSeek, OpenAI, Anthropic and any OpenAI-compatible endpoint.
 - **Swift 6 concurrency**: `Sendable` everywhere, streaming via `AsyncThrowingStream`, cancellation via structured `Task` cancellation.
+- **Codable protocol types**: prompts, call options, results, stream parts, model messages, UI messages and UI message chunks encode to the same JSON as the TypeScript SDK, so they can be persisted, recorded or exchanged with JavaScript.
 
 > Status: early development. APIs will change until `1.0`.
 
