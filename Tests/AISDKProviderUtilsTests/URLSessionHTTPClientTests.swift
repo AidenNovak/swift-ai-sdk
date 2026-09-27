@@ -24,6 +24,7 @@ final class StubURLProtocol: URLProtocol, @unchecked Sendable {
   override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
 
   override func startLoading() {
+    if request.url?.path == "/hang" { return }
     let stub = Self.lock.withLock { () -> Stub? in
       Self.lastRequestBody = request.httpBody ?? request.httpBodyStream.map(Self.readAll)
       return Self.stubs[request.url?.path ?? ""]
@@ -103,8 +104,9 @@ final class StubURLProtocol: URLProtocol, @unchecked Sendable {
   @Test func cancelledTaskThrowsCancellation() async throws {
     let client = makeClient()
     let task = Task {
-      try await client.send(HTTPRequest(method: "GET", url: URL(string: "https://stub.test/never")!))
+      try await client.send(HTTPRequest(method: "GET", url: URL(string: "https://stub.test/hang")!))
     }
+    try await Task.sleep(nanoseconds: 50_000_000)
     task.cancel()
     await #expect(throws: CancellationError.self) { _ = try await task.value }
   }

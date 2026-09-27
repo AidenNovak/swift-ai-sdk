@@ -43,10 +43,15 @@ public final class URLSessionHTTPClient: HTTPClient {
       task.delegate = delegate
     #endif
 
-    return try await withTaskCancellationHandler {
-      try await delegate.start(task)
-    } onCancel: {
-      task.cancel()
+    do {
+      return try await withTaskCancellationHandler {
+        try await delegate.start(task)
+      } onCancel: {
+        task.cancel()
+      }
+    } catch {
+      if Task.isCancelled { throw CancellationError() }
+      throw error
     }
   }
 }

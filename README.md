@@ -15,7 +15,8 @@ A native Swift port of the [Vercel AI SDK](https://github.com/vercel/ai), built 
 | --- | --- | --- |
 | `AISDKProvider` | `@ai-sdk/provider` | The provider specification every model implements |
 | `AISDKProviderUtils` | `@ai-sdk/provider-utils` | HTTP transport, server-sent events, JSON parsing, schemas, retries |
-| `AISDKTestUtils` | `@ai-sdk/test-server` | Replaying HTTP client and stream helpers for tests |
+| `AISDK` | `ai` | `generateText`, tools, multi-step tool loops, tool approval, messages |
+| `AISDKTestUtils` | `@ai-sdk/test-server`, `ai/test` | Replaying HTTP client, mock language model, stream helpers |
 
 More modules land through pull requests; see [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
