@@ -9,18 +9,6 @@ public typealias EmbeddingModel = any EmbeddingModelV4
 /// Why a model finished generating. Mirrors upstream `FinishReason`.
 public typealias FinishReason = LanguageModelV4FinishReason.Unified
 
-/// A warning from the model provider. Mirrors upstream `Warning`.
-public typealias Warning = SharedV4Warning
-
-/// Provider-specific options. Mirrors upstream `ProviderOptions`.
-public typealias ProviderOptions = SharedV4ProviderOptions
-
-/// Provider-specific metadata. Mirrors upstream `ProviderMetadata`.
-public typealias ProviderMetadata = SharedV4ProviderMetadata
-
-/// File data in messages. Mirrors upstream `FileData` / `DataContent`.
-public typealias FileData = SharedV4FileData
-
 /// Tool choice for a generation call. Mirrors upstream `ToolChoice`.
 public enum ToolChoice: Sendable, Hashable {
   /// The model decides whether and which tool to call.
