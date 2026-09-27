@@ -134,6 +134,16 @@ func openAIResponsesSource(_ annotation: JSONValue, id: String, providerOptionsN
   }
 }
 
+private func contextManagementJSON(_ entries: [OpenAIResponsesOptions.ContextManagement]) -> JSONValue {
+  .array(
+    entries.map { entry -> JSONValue in
+      var object: JSONObject = [:]
+      object["type"] = .string(entry.type)
+      object["compact_threshold"] = .number(entry.compactThreshold)
+      return .object(object)
+    })
+}
+
 /// Mirrors upstream `getConfigurationUpdateUnsupportedReason`.
 private func configurationUpdateUnsupportedReason(
   _ capabilities: OpenAILanguageModelCapabilities, _ options: OpenAIResponsesOptions?
@@ -360,9 +370,7 @@ public struct OpenAIResponsesLanguageModel: LanguageModelV4 {
         "safety_identifier": .optional(openaiOptions?.safetyIdentifier),
         "top_logprobs": .optional(topLogprobs),
         "truncation": .optional(openaiOptions?.truncation),
-        "context_management": openaiOptions?.contextManagement.map { entries in
-          .array(entries.map { ["type": .string($0.type), "compact_threshold": .number($0.compactThreshold)] })
-        },
+        "context_management": openaiOptions?.contextManagement.map(contextManagementJSON),
         "reasoning": reasoning.isEmpty ? nil : .object(reasoning),
       ]).objectValue ?? [:]
 
@@ -752,16 +760,23 @@ func mcpCallResult(_ item: JSONValue) -> JSONValue {
   return .object(result)
 }
 
+private func fileSearchResultEntry(_ result: JSONValue) -> JSONValue {
+  var entry: JSONObject = [:]
+  entry["attributes"] = result["attributes"] ?? .object([:])
+  entry["fileId"] = result["file_id"] ?? .null
+  entry["filename"] = result["filename"] ?? .null
+  entry["score"] = result["score"] ?? .null
+  entry["text"] = result["text"] ?? .null
+  return .object(entry)
+}
+
 func fileSearchResult(_ item: JSONValue) -> JSONValue {
-  let results: JSONValue =
-    item["results"]?.arrayValue.map { results in
-      .array(
-        results.map {
-          [
-            "attributes": $0["attributes"] ?? [:], "fileId": $0["file_id"] ?? .null, "filename": $0["filename"] ?? .null,
-            "score": $0["score"] ?? .null, "text": $0["text"] ?? .null,
-          ]
-        })
-    } ?? .null
-  return ["queries": item["queries"] ?? [], "results": results]
+  var results: JSONValue = .null
+  if let entries = item["results"]?.arrayValue {
+    results = .array(entries.map(fileSearchResultEntry))
+  }
+  var output: JSONObject = [:]
+  output["queries"] = item["queries"] ?? .array([])
+  output["results"] = results
+  return .object(output)
 }

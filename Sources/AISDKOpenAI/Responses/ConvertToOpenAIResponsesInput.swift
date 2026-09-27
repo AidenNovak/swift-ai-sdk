@@ -643,9 +643,7 @@ func convertToOpenAIResponsesInput(_ prompt: LanguageModelV4Prompt, options: Ope
                   "type": "computer_screenshot", "image_url": screenshot?["imageUrl"], "file_id": screenshot?["fileId"],
                   "detail": screenshot?["detail"],
                 ]),
-                "acknowledged_safety_checks": value["acknowledgedSafetyChecks"]?.arrayValue.map { checks in
-                  .array(checks.map { jsonObject(["id": $0["id"], "code": $0["code"], "message": $0["message"]]) })
-                },
+                "acknowledged_safety_checks": value["acknowledgedSafetyChecks"]?.arrayValue.map(safetyChecksJSON),
               ]))
             continue
           }
@@ -703,6 +701,13 @@ func convertToOpenAIResponsesInput(_ prompt: LanguageModelV4Prompt, options: Ope
   }
 
   return (input, warnings)
+}
+
+private func safetyChecksJSON(_ checks: [JSONValue]) -> JSONValue {
+  .array(
+    checks.map { check -> JSONValue in
+      jsonObject(["id": check["id"], "code": check["code"], "message": check["message"]])
+    })
 }
 
 private func shellOutputItem(_ item: JSONValue) -> JSONValue {

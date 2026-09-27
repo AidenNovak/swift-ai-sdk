@@ -58,6 +58,30 @@ private func requireArg<T>(_ value: T?, _ toolId: String, _ name: String) throws
   return value
 }
 
+private func mapShellSkill(_ skill: JSONValue) throws -> JSONValue {
+  if skill["type"]?.stringValue == "skillReference" {
+    var reference: SharedV4ProviderReference = [:]
+    for (key, value) in skill["providerReference"]?.objectValue ?? [:] {
+      if let string = value.stringValue { reference[key] = string }
+    }
+    var object: JSONObject = [:]
+    object["type"] = "skill_reference"
+    object["skill_id"] = .string(try resolveProviderReference(reference, provider: "openai"))
+    object["version"] = skill["version"] ?? "latest"
+    return .object(object)
+  }
+  var source: JSONObject = [:]
+  source["type"] = "base64"
+  source["media_type"] = skill["source"]?["mediaType"] ?? .null
+  source["data"] = skill["source"]?["data"] ?? .null
+  var object: JSONObject = [:]
+  object["type"] = "inline"
+  object["name"] = skill["name"] ?? .null
+  object["description"] = skill["description"] ?? .null
+  object["source"] = .object(source)
+  return .object(object)
+}
+
 private func mapShellEnvironment(_ environment: JSONValue) throws -> JSONValue {
   switch environment["type"]?.stringValue {
   case "containerReference":
@@ -73,28 +97,7 @@ private func mapShellEnvironment(_ environment: JSONValue) throws -> JSONValue {
           "domain_secrets": policy["domainSecrets"],
         ])
       }
-    let skills: JSONValue? = try environment["skills"]?.arrayValue.map { skills in
-      .array(
-        try skills.map { skill -> JSONValue in
-          if skill["type"]?.stringValue == "skillReference" {
-            var reference: SharedV4ProviderReference = [:]
-            for (key, value) in skill["providerReference"]?.objectValue ?? [:] {
-              if let string = value.stringValue { reference[key] = string }
-            }
-            return [
-              "type": "skill_reference", "skill_id": .string(try resolveProviderReference(reference, provider: "openai")),
-              "version": skill["version"] ?? "latest",
-            ]
-          }
-          return [
-            "type": "inline", "name": skill["name"] ?? .null, "description": skill["description"] ?? .null,
-            "source": [
-              "type": "base64", "media_type": skill["source"]?["mediaType"] ?? .null,
-              "data": skill["source"]?["data"] ?? .null,
-            ],
-          ]
-        })
-    }
+    let skills: JSONValue? = try environment["skills"]?.arrayValue.map { .array(try $0.map(mapShellSkill)) }
     return jsonObject([
       "type": "container_auto", "file_ids": environment["fileIds"], "memory_limit": environment["memoryLimit"],
       "network_policy": networkPolicy, "skills": skills,
