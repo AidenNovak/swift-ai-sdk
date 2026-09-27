@@ -502,6 +502,18 @@ private func simpleResponse(model: String = "deepseek-chat", content: String = "
 }
 
 @Suite struct DeepSeekEndToEndTests {
+  @Test func streamTextReplaysRecordedReasoningStream() async throws {
+    let client = MockHTTPClient([chatURL: try chunksFixture("deepseek-reasoning")])
+    let result = streamText(model: makeProvider(client)("deepseek-reasoner"), prompt: "Hello")
+
+    let deltas = try await collect(result.textStream)
+    #expect(!deltas.isEmpty)
+    #expect(try await result.text == deltas.joined())
+    #expect(try await result.reasoningText?.isEmpty == false)
+    #expect(try await result.usage.inputTokens != nil)
+    #expect(try await result.response.modelId == "deepseek-reasoner")
+  }
+
   @Test func generateTextRunsToolLoopAgainstRecordedResponses() async throws {
     let client = MockHTTPClient()
     client.respond(
