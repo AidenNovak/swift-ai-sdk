@@ -15,7 +15,7 @@ A native Swift port of the [Vercel AI SDK](https://github.com/vercel/ai), built 
 | --- | --- | --- |
 | `AISDKProvider` | `@ai-sdk/provider` | The provider specification every model implements |
 | `AISDKProviderUtils` | `@ai-sdk/provider-utils` | HTTP transport, server-sent events, JSON parsing, schemas, retries |
-| `AISDK` | `ai` | `generateText`, `streamText`, structured output (`Output`, `generateObject`, `streamObject`), tools, multi-step tool loops, tool approval, messages |
+| `AISDK` | `ai` | `generateText`, `streamText`, structured output (`Output`, `generateObject`, `streamObject`), `ToolLoopAgent`, tools, multi-step tool loops, tool approval, messages |
 | `AISDKDeepSeek` | `@ai-sdk/deepseek` | DeepSeek chat models (thinking, reasoning effort, tools, JSON output, prefix completion, logprobs) |
 | `AISDKAnthropic` | `@ai-sdk/anthropic` | Claude Messages API (thinking, effort, tools, cache control, PDFs, JSON output); also Anthropic-compatible endpoints such as DeepSeek |
 | `AISDKTestUtils` | `@ai-sdk/test-server`, `ai/test` | Replaying HTTP client, mock language model, stream helpers |
