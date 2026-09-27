@@ -17,6 +17,7 @@ let package = Package(
     .library(name: "AISDKProviderUtils", targets: ["AISDKProviderUtils"]),
     .library(name: "AISDKTestUtils", targets: ["AISDKTestUtils"]),
     .library(name: "AISDK", targets: ["AISDK"]),
+    .library(name: "AISDKDeepSeek", targets: ["AISDKDeepSeek"]),
   ],
   targets: [
     .target(
@@ -36,6 +37,17 @@ let package = Package(
     .target(
       name: "AISDK",
       dependencies: ["AISDKProviderUtils"],
+      swiftSettings: swiftSettings
+    ),
+    .target(
+      name: "AISDKDeepSeek",
+      dependencies: ["AISDKProviderUtils"],
+      swiftSettings: swiftSettings
+    ),
+    .testTarget(
+      name: "AISDKDeepSeekTests",
+      dependencies: ["AISDKDeepSeek", "AISDK", "AISDKTestUtils"],
+      resources: [.copy("Fixtures")],
       swiftSettings: swiftSettings
     ),
     .testTarget(
