@@ -16,6 +16,7 @@ let package = Package(
     .library(name: "AISDKProvider", targets: ["AISDKProvider"]),
     .library(name: "AISDKProviderUtils", targets: ["AISDKProviderUtils"]),
     .library(name: "AISDKTestUtils", targets: ["AISDKTestUtils"]),
+    .library(name: "AISDK", targets: ["AISDK"]),
   ],
   targets: [
     .target(
@@ -30,6 +31,16 @@ let package = Package(
     .target(
       name: "AISDKTestUtils",
       dependencies: ["AISDKProviderUtils"],
+      swiftSettings: swiftSettings
+    ),
+    .target(
+      name: "AISDK",
+      dependencies: ["AISDKProviderUtils"],
+      swiftSettings: swiftSettings
+    ),
+    .testTarget(
+      name: "AISDKTests",
+      dependencies: ["AISDK", "AISDKTestUtils"],
       swiftSettings: swiftSettings
     ),
     .testTarget(
