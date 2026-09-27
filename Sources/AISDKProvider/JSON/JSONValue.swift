@@ -73,10 +73,10 @@ extension JSONValue {
 }
 
 // MARK: - Literals
-
-extension JSONValue: ExpressibleByNilLiteral {
-  public init(nilLiteral: ()) { self = .null }
-}
+//
+// JSONValue deliberately does not conform to ExpressibleByNilLiteral: in
+// `condition ? value : nil` a nil literal would silently become JSON `null`
+// instead of an absent value. Write `.null` explicitly.
 
 extension JSONValue: ExpressibleByBooleanLiteral {
   public init(booleanLiteral value: Bool) { self = .bool(value) }
