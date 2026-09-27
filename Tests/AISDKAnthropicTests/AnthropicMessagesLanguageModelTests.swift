@@ -174,7 +174,14 @@ private func makeProvider(_ client: MockHTTPClient, baseURL: String? = nil, name
     _ = try await makeProvider(client)("claude-sonnet-4-5").doGenerate(
       LanguageModelV4CallOptions(prompt: testPrompt, responseFormat: .json(schema: schema)))
     let body = try #require(client.lastRequest?.bodyJSON)
-    #expect(body["output_config"] == ["format": ["type": "json_schema", "schema": schema.value]])
+    #expect(
+      body["output_config"]
+        == [
+          "format": [
+            "type": "json_schema",
+            "schema": ["type": "object", "properties": ["name": ["type": "string"]], "additionalProperties": false],
+          ]
+        ])
     #expect(body["tools"] == nil)
   }
 
@@ -419,7 +426,8 @@ private func makeProvider(_ client: MockHTTPClient, baseURL: String? = nil, name
 
     #expect(result.text == "It is 25°C in Beijing.")
     #expect(result.steps[0].reasoningText == "Need the weather.")
-    #expect(result.steps[0].providerMetadata?["deepseek"] != nil)
+    #expect(result.steps[0].providerMetadata?["anthropic"] != nil)
+    #expect(result.steps[0].providerMetadata?["deepseek"] == nil)
 
     let secondBody = try #require(client.requests.last?.bodyJSON)
     #expect(

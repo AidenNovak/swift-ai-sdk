@@ -104,3 +104,24 @@ public func createAnthropic(_ settings: AnthropicProviderSettings = AnthropicPro
       supportedUrls: ["image/*": ["^https?://.*$"], "application/pdf": ["^https?://.*$"]],
       generateId: settings.generateId ?? AISDKProviderUtils.generateId))
 }
+
+/// Provider options that reuse the code execution container of the most
+/// recent step that had one, e.g. in `prepareStep`:
+///
+/// ```swift
+/// prepareStep: { options in
+///   PrepareStepResult(providerOptions: forwardAnthropicContainerIdFromLastStep(options.steps.map(\.providerMetadata)))
+/// }
+/// ```
+///
+/// Mirrors upstream `forwardAnthropicContainerIdFromLastStep`.
+public func forwardAnthropicContainerIdFromLastStep(_ stepProviderMetadata: [SharedV4ProviderMetadata?])
+  -> SharedV4ProviderOptions?
+{
+  for metadata in stepProviderMetadata.reversed() {
+    if let id = metadata?["anthropic"]?["container"]?["id"]?.stringValue, !id.isEmpty {
+      return ["anthropic": ["container": ["id": .string(id)]]]
+    }
+  }
+  return nil
+}
