@@ -195,7 +195,9 @@ private let userMessage = UIMessage(id: "u1", role: .user, parts: [.text(TextUIP
     state.messages = [userMessage, userMessage]
     #expect(changes.values.isEmpty)
     #expect(state.messages.count == 2)
-    try await Task.sleep(for: .milliseconds(80))
+    for _ in 0..<200 where changes.values.isEmpty {
+      try await Task.sleep(for: .milliseconds(10))
+    }
     #expect(changes.values.count == 1)
 
     track()
