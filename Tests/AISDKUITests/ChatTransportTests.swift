@@ -149,7 +149,8 @@ private let userMessage = UIMessage(id: "u1", role: .user, parts: [.text(TextUIP
     let chat = Chat(transport: transport, onFinish: { finishes.append($0) })
 
     let send = Task { try await chat.sendMessage(text: "Hi") }
-    while chat.status != .streaming { try await Task.sleep(for: .milliseconds(2)) }
+    while chat.messages.last?.text != "Partial" { try await Task.sleep(for: .milliseconds(2)) }
+    #expect(chat.status == .streaming)
     chat.stop()
     try await send.value
 
