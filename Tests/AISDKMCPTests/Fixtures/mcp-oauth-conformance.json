@@ -1,0 +1,1041 @@
+[
+ {
+  "name": "fresh-registration-and-redirect",
+  "serverUrl": "https://mcp.example.com/mcp",
+  "provider": {},
+  "responses": {
+   "GET https://mcp.example.com/.well-known/oauth-protected-resource/mcp": {
+    "status": 200,
+    "body": {
+     "resource": "https://mcp.example.com/mcp",
+     "authorization_servers": [
+      "https://auth.example.com"
+     ],
+     "scopes_supported": [
+      "mcp:read",
+      "mcp:write"
+     ]
+    }
+   },
+   "GET https://auth.example.com/.well-known/oauth-authorization-server": {
+    "status": 200,
+    "body": {
+     "issuer": "https://auth.example.com",
+     "authorization_endpoint": "https://auth.example.com/authorize",
+     "token_endpoint": "https://auth.example.com/token",
+     "registration_endpoint": "https://auth.example.com/register",
+     "response_types_supported": [
+      "code"
+     ],
+     "code_challenge_methods_supported": [
+      "S256"
+     ],
+     "grant_types_supported": [
+      "authorization_code",
+      "refresh_token"
+     ],
+     "token_endpoint_auth_methods_supported": [
+      "none"
+     ]
+    }
+   },
+   "POST https://auth.example.com/register": {
+    "status": 201,
+    "body": {
+     "client_id": "client-1",
+     "client_id_issued_at": 1,
+     "redirect_uris": [
+      "http://127.0.0.1:33418/callback"
+     ],
+     "client_name": "Swift AI SDK",
+     "grant_types": [
+      "authorization_code"
+     ],
+     "unknown_field": "dropped"
+    }
+   }
+  },
+  "requests": [
+   {
+    "method": "GET",
+    "url": "https://mcp.example.com/.well-known/oauth-protected-resource/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://auth.example.com/.well-known/oauth-authorization-server",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "POST",
+    "url": "https://auth.example.com/register",
+    "headers": {
+     "content-type": "application/json"
+    },
+    "body": {
+     "redirect_uris": [
+      "http://127.0.0.1:33418/callback"
+     ],
+     "client_name": "Swift AI SDK",
+     "scope": "mcp:read mcp:write",
+     "application_type": "native"
+    }
+   }
+  ],
+  "calls": [
+   {
+    "method": "saveClientInformation",
+    "value": {
+     "redirect_uris": [
+      "http://127.0.0.1:33418/callback"
+     ],
+     "grant_types": [
+      "authorization_code"
+     ],
+     "client_name": "Swift AI SDK",
+     "client_id": "client-1",
+     "client_id_issued_at": 1,
+     "issuer": "https://auth.example.com",
+     "authorization_server": "https://auth.example.com/",
+     "token_endpoint": "https://auth.example.com/token"
+    }
+   },
+   {
+    "method": "saveClientInformation",
+    "value": {
+     "redirect_uris": [
+      "http://127.0.0.1:33418/callback"
+     ],
+     "grant_types": [
+      "authorization_code"
+     ],
+     "client_name": "Swift AI SDK",
+     "client_id": "client-1",
+     "client_id_issued_at": 1,
+     "issuer": "https://auth.example.com",
+     "authorization_server": "https://auth.example.com/",
+     "token_endpoint": "https://auth.example.com/token"
+    }
+   },
+   {
+    "method": "saveCodeVerifier",
+    "value": "EajhDwyK_KJlMG4P3sWIawfbQJtE_3ViA3LE9ctZBeS"
+   },
+   {
+    "method": "redirectToAuthorization",
+    "value": "https://auth.example.com/authorize?response_type=code&client_id=client-1&code_challenge=qHHmgkv33dU1wIhrGfRfbNKKnwKKc2RkQp1ifPo1sm8&code_challenge_method=S256&redirect_uri=http%3A%2F%2F127.0.0.1%3A33418%2Fcallback&scope=mcp%3Aread+mcp%3Awrite&resource=https%3A%2F%2Fmcp.example.com%2Fmcp"
+   }
+  ],
+  "result": {
+   "value": "REDIRECT"
+  }
+ },
+ {
+  "name": "registration-response-missing-redirect-uris",
+  "serverUrl": "https://mcp.example.com/mcp",
+  "provider": {},
+  "responses": {
+   "GET https://mcp.example.com/.well-known/oauth-protected-resource/mcp": {
+    "status": 200,
+    "body": {
+     "resource": "https://mcp.example.com/mcp",
+     "authorization_servers": [
+      "https://auth.example.com"
+     ],
+     "scopes_supported": [
+      "mcp:read",
+      "mcp:write"
+     ]
+    }
+   },
+   "GET https://auth.example.com/.well-known/oauth-authorization-server": {
+    "status": 200,
+    "body": {
+     "issuer": "https://auth.example.com",
+     "authorization_endpoint": "https://auth.example.com/authorize",
+     "token_endpoint": "https://auth.example.com/token",
+     "registration_endpoint": "https://auth.example.com/register",
+     "response_types_supported": [
+      "code"
+     ],
+     "code_challenge_methods_supported": [
+      "S256"
+     ],
+     "grant_types_supported": [
+      "authorization_code",
+      "refresh_token"
+     ],
+     "token_endpoint_auth_methods_supported": [
+      "none"
+     ]
+    }
+   },
+   "POST https://auth.example.com/register": {
+    "status": 201,
+    "body": {
+     "client_id": "client-1"
+    }
+   }
+  },
+  "requests": [
+   {
+    "method": "GET",
+    "url": "https://mcp.example.com/.well-known/oauth-protected-resource/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://auth.example.com/.well-known/oauth-authorization-server",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "POST",
+    "url": "https://auth.example.com/register",
+    "headers": {
+     "content-type": "application/json"
+    },
+    "body": {
+     "redirect_uris": [
+      "http://127.0.0.1:33418/callback"
+     ],
+     "client_name": "Swift AI SDK",
+     "scope": "mcp:read mcp:write",
+     "application_type": "native"
+    }
+   }
+  ],
+  "calls": [],
+  "result": {
+   "error": "[\n  {\n    \"expected\": \"array\",\n    \"code\": \"invalid_type\",\n    \"path\": [\n      \"redirect_uris\"\n    ],\n    \"message\": \"Invalid input: expected array, received undefined\"\n  }\n]"
+  }
+ },
+ {
+  "name": "callback-exchanges-code",
+  "serverUrl": "https://mcp.example.com/mcp",
+  "options": {
+   "authorizationCode": "code-123",
+   "callbackState": "state-1",
+   "callbackIssuer": "https://auth.example.com"
+  },
+  "provider": {
+   "clientInformation": {
+    "client_id": "client-1",
+    "issuer": "https://auth.example.com",
+    "authorization_server": "https://auth.example.com/",
+    "token_endpoint": "https://auth.example.com/token"
+   },
+   "codeVerifier": "verifier-abc",
+   "storedState": "state-1"
+  },
+  "responses": {
+   "GET https://mcp.example.com/.well-known/oauth-protected-resource/mcp": {
+    "status": 200,
+    "body": {
+     "resource": "https://mcp.example.com/mcp",
+     "authorization_servers": [
+      "https://auth.example.com"
+     ],
+     "scopes_supported": [
+      "mcp:read",
+      "mcp:write"
+     ]
+    }
+   },
+   "GET https://auth.example.com/.well-known/oauth-authorization-server": {
+    "status": 200,
+    "body": {
+     "issuer": "https://auth.example.com",
+     "authorization_endpoint": "https://auth.example.com/authorize",
+     "token_endpoint": "https://auth.example.com/token",
+     "registration_endpoint": "https://auth.example.com/register",
+     "response_types_supported": [
+      "code"
+     ],
+     "code_challenge_methods_supported": [
+      "S256"
+     ],
+     "grant_types_supported": [
+      "authorization_code",
+      "refresh_token"
+     ],
+     "token_endpoint_auth_methods_supported": [
+      "none"
+     ]
+    }
+   },
+   "POST https://auth.example.com/token": {
+    "status": 200,
+    "body": {
+     "access_token": "access-1",
+     "token_type": "Bearer",
+     "refresh_token": "refresh-1",
+     "expires_in": 3600
+    }
+   }
+  },
+  "requests": [
+   {
+    "method": "GET",
+    "url": "https://mcp.example.com/.well-known/oauth-protected-resource/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://auth.example.com/.well-known/oauth-authorization-server",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "POST",
+    "url": "https://auth.example.com/token",
+    "headers": {
+     "accept": "application/json",
+     "content-type": "application/x-www-form-urlencoded"
+    },
+    "body": "grant_type=authorization_code&code=code-123&code_verifier=verifier-abc&redirect_uri=http%3A%2F%2F127.0.0.1%3A33418%2Fcallback&client_id=client-1&resource=https%3A%2F%2Fmcp.example.com%2Fmcp"
+   }
+  ],
+  "calls": [
+   {
+    "method": "saveTokens",
+    "value": {
+     "access_token": "access-1",
+     "token_type": "Bearer",
+     "expires_in": 3600,
+     "refresh_token": "refresh-1",
+     "issuer": "https://auth.example.com",
+     "authorization_server": "https://auth.example.com/",
+     "token_endpoint": "https://auth.example.com/token"
+    }
+   }
+  ],
+  "result": {
+   "value": "AUTHORIZED"
+  }
+ },
+ {
+  "name": "refreshes-tokens",
+  "serverUrl": "https://mcp.example.com/mcp",
+  "provider": {
+   "clientInformation": {
+    "client_id": "client-1",
+    "issuer": "https://auth.example.com",
+    "authorization_server": "https://auth.example.com/",
+    "token_endpoint": "https://auth.example.com/token"
+   },
+   "tokens": {
+    "access_token": "old",
+    "token_type": "Bearer",
+    "refresh_token": "refresh-1",
+    "issuer": "https://auth.example.com",
+    "authorization_server": "https://auth.example.com/",
+    "token_endpoint": "https://auth.example.com/token"
+   }
+  },
+  "responses": {
+   "GET https://mcp.example.com/.well-known/oauth-protected-resource/mcp": {
+    "status": 200,
+    "body": {
+     "resource": "https://mcp.example.com/mcp",
+     "authorization_servers": [
+      "https://auth.example.com"
+     ],
+     "scopes_supported": [
+      "mcp:read",
+      "mcp:write"
+     ]
+    }
+   },
+   "GET https://auth.example.com/.well-known/oauth-authorization-server": {
+    "status": 200,
+    "body": {
+     "issuer": "https://auth.example.com",
+     "authorization_endpoint": "https://auth.example.com/authorize",
+     "token_endpoint": "https://auth.example.com/token",
+     "registration_endpoint": "https://auth.example.com/register",
+     "response_types_supported": [
+      "code"
+     ],
+     "code_challenge_methods_supported": [
+      "S256"
+     ],
+     "grant_types_supported": [
+      "authorization_code",
+      "refresh_token"
+     ],
+     "token_endpoint_auth_methods_supported": [
+      "none"
+     ]
+    }
+   },
+   "POST https://auth.example.com/token": {
+    "status": 200,
+    "body": {
+     "access_token": "new",
+     "token_type": "Bearer"
+    }
+   }
+  },
+  "requests": [
+   {
+    "method": "GET",
+    "url": "https://mcp.example.com/.well-known/oauth-protected-resource/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://auth.example.com/.well-known/oauth-authorization-server",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "POST",
+    "url": "https://auth.example.com/token",
+    "headers": {
+     "accept": "application/json",
+     "content-type": "application/x-www-form-urlencoded"
+    },
+    "body": "grant_type=refresh_token&refresh_token=refresh-1&client_id=client-1&resource=https%3A%2F%2Fmcp.example.com%2Fmcp"
+   }
+  ],
+  "calls": [
+   {
+    "method": "saveTokens",
+    "value": {
+     "access_token": "new",
+     "token_type": "Bearer",
+     "refresh_token": "refresh-1",
+     "issuer": "https://auth.example.com",
+     "authorization_server": "https://auth.example.com/",
+     "token_endpoint": "https://auth.example.com/token"
+    }
+   }
+  ],
+  "result": {
+   "value": "AUTHORIZED"
+  }
+ },
+ {
+  "name": "invalid-grant-restarts-authorization",
+  "serverUrl": "https://mcp.example.com/mcp",
+  "provider": {
+   "clientInformation": {
+    "client_id": "client-1",
+    "issuer": "https://auth.example.com",
+    "authorization_server": "https://auth.example.com/",
+    "token_endpoint": "https://auth.example.com/token"
+   },
+   "tokens": {
+    "access_token": "old",
+    "token_type": "Bearer",
+    "refresh_token": "bad",
+    "issuer": "https://auth.example.com",
+    "authorization_server": "https://auth.example.com/",
+    "token_endpoint": "https://auth.example.com/token"
+   },
+   "canSaveAuthorizationServerInformation": true
+  },
+  "responses": {
+   "GET https://mcp.example.com/.well-known/oauth-protected-resource/mcp": {
+    "status": 200,
+    "body": {
+     "resource": "https://mcp.example.com/mcp",
+     "authorization_servers": [
+      "https://auth.example.com"
+     ],
+     "scopes_supported": [
+      "mcp:read",
+      "mcp:write"
+     ]
+    }
+   },
+   "GET https://auth.example.com/.well-known/oauth-authorization-server": {
+    "status": 200,
+    "body": {
+     "issuer": "https://auth.example.com",
+     "authorization_endpoint": "https://auth.example.com/authorize",
+     "token_endpoint": "https://auth.example.com/token",
+     "registration_endpoint": "https://auth.example.com/register",
+     "response_types_supported": [
+      "code"
+     ],
+     "code_challenge_methods_supported": [
+      "S256"
+     ],
+     "grant_types_supported": [
+      "authorization_code",
+      "refresh_token"
+     ],
+     "token_endpoint_auth_methods_supported": [
+      "none"
+     ]
+    }
+   },
+   "POST https://auth.example.com/token": {
+    "status": 400,
+    "body": {
+     "error": "invalid_grant",
+     "error_description": "expired"
+    }
+   }
+  },
+  "requests": [
+   {
+    "method": "GET",
+    "url": "https://mcp.example.com/.well-known/oauth-protected-resource/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://auth.example.com/.well-known/oauth-authorization-server",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "POST",
+    "url": "https://auth.example.com/token",
+    "headers": {
+     "accept": "application/json",
+     "content-type": "application/x-www-form-urlencoded"
+    },
+    "body": "grant_type=refresh_token&refresh_token=bad&client_id=client-1&resource=https%3A%2F%2Fmcp.example.com%2Fmcp"
+   },
+   {
+    "method": "GET",
+    "url": "https://mcp.example.com/.well-known/oauth-protected-resource/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://auth.example.com/.well-known/oauth-authorization-server",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   }
+  ],
+  "calls": [
+   {
+    "method": "invalidateCredentials",
+    "value": "tokens"
+   },
+   {
+    "method": "saveAuthorizationServerInformation",
+    "value": {
+     "issuer": "https://auth.example.com",
+     "authorizationServerUrl": "https://auth.example.com/",
+     "tokenEndpoint": "https://auth.example.com/token"
+    }
+   },
+   {
+    "method": "saveCodeVerifier",
+    "value": "uCNYx5FvL2aCmWeH-XWINC2oqsSR6s8_WUF6~AZJy8j"
+   },
+   {
+    "method": "redirectToAuthorization",
+    "value": "https://auth.example.com/authorize?response_type=code&client_id=client-1&code_challenge=tQq9XS_wnYnyW5_CwZunlpoDFn92jndfYgwheMRwFBI&code_challenge_method=S256&redirect_uri=http%3A%2F%2F127.0.0.1%3A33418%2Fcallback&scope=mcp%3Aread+mcp%3Awrite&resource=https%3A%2F%2Fmcp.example.com%2Fmcp"
+   }
+  ],
+  "result": {
+   "value": "REDIRECT"
+  }
+ },
+ {
+  "name": "legacy-server-as-authorization-server",
+  "serverUrl": "https://legacy.example.com/mcp",
+  "provider": {
+   "clientInformation": {
+    "client_id": "client-legacy"
+   },
+   "canSaveAuthorizationServerInformation": true
+  },
+  "responses": {
+   "GET https://legacy.example.com/.well-known/oauth-protected-resource/mcp": {
+    "status": 404
+   },
+   "GET https://legacy.example.com/.well-known/oauth-protected-resource": {
+    "status": 404
+   },
+   "GET https://legacy.example.com/.well-known/oauth-authorization-server/mcp": {
+    "status": 404
+   },
+   "GET https://legacy.example.com/.well-known/oauth-authorization-server": {
+    "status": 404
+   },
+   "GET https://legacy.example.com/.well-known/openid-configuration/mcp": {
+    "status": 404
+   },
+   "GET https://legacy.example.com/mcp/.well-known/openid-configuration": {
+    "status": 404
+   }
+  },
+  "requests": [
+   {
+    "method": "GET",
+    "url": "https://legacy.example.com/.well-known/oauth-protected-resource/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://legacy.example.com/.well-known/oauth-protected-resource",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://legacy.example.com/.well-known/oauth-authorization-server/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://legacy.example.com/.well-known/oauth-authorization-server",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://legacy.example.com/.well-known/openid-configuration/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://legacy.example.com/mcp/.well-known/openid-configuration",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   }
+  ],
+  "calls": [
+   {
+    "method": "saveAuthorizationServerInformation",
+    "value": {
+     "issuer": "https://legacy.example.com/mcp",
+     "authorizationServerUrl": "https://legacy.example.com/mcp",
+     "tokenEndpoint": "https://legacy.example.com/token"
+    }
+   },
+   {
+    "method": "saveCodeVerifier",
+    "value": "EQ1Sqi3o_58ZdIz~eu3kgGM43VyK-3esAXyjde9-TS8"
+   },
+   {
+    "method": "redirectToAuthorization",
+    "value": "https://legacy.example.com/authorize?response_type=code&client_id=client-legacy&code_challenge=bmxiLxAf-POCxGRwf_LjTAuRcDyIOsgNelupukKGFyI&code_challenge_method=S256&redirect_uri=http%3A%2F%2F127.0.0.1%3A33418%2Fcallback&scope=fallback"
+   }
+  ],
+  "result": {
+   "value": "REDIRECT"
+  }
+ },
+ {
+  "name": "oidc-discovery-with-path",
+  "serverUrl": "https://mcp.example.com/mcp",
+  "provider": {
+   "clientInformation": {
+    "client_id": "client-1"
+   },
+   "canSaveAuthorizationServerInformation": true
+  },
+  "responses": {
+   "GET https://mcp.example.com/.well-known/oauth-protected-resource/mcp": {
+    "status": 200,
+    "body": {
+     "resource": "https://mcp.example.com/mcp",
+     "authorization_servers": [
+      "https://idp.example.com/tenant"
+     ]
+    }
+   },
+   "GET https://idp.example.com/.well-known/oauth-authorization-server/tenant": {
+    "status": 404
+   },
+   "GET https://idp.example.com/.well-known/oauth-authorization-server": {
+    "status": 404
+   },
+   "GET https://idp.example.com/.well-known/openid-configuration/tenant": {
+    "status": 200,
+    "body": {
+     "issuer": "https://idp.example.com/tenant",
+     "authorization_endpoint": "https://idp.example.com/tenant/authorize",
+     "token_endpoint": "https://idp.example.com/tenant/token",
+     "jwks_uri": "https://idp.example.com/tenant/jwks",
+     "response_types_supported": [
+      "code"
+     ],
+     "subject_types_supported": [
+      "public"
+     ],
+     "id_token_signing_alg_values_supported": [
+      "RS256"
+     ],
+     "code_challenge_methods_supported": [
+      "S256"
+     ]
+    }
+   }
+  },
+  "requests": [
+   {
+    "method": "GET",
+    "url": "https://mcp.example.com/.well-known/oauth-protected-resource/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://idp.example.com/.well-known/oauth-authorization-server/tenant",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://idp.example.com/.well-known/oauth-authorization-server",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://idp.example.com/.well-known/openid-configuration/tenant",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   }
+  ],
+  "calls": [
+   {
+    "method": "saveAuthorizationServerInformation",
+    "value": {
+     "issuer": "https://idp.example.com/tenant",
+     "authorizationServerUrl": "https://idp.example.com/tenant",
+     "tokenEndpoint": "https://idp.example.com/tenant/token"
+    }
+   },
+   {
+    "method": "saveCodeVerifier",
+    "value": "RytDNKZjrD2MzL53ClXBpWyKt1yx9p0iui3GK0eAIwe"
+   },
+   {
+    "method": "redirectToAuthorization",
+    "value": "https://idp.example.com/tenant/authorize?response_type=code&client_id=client-1&code_challenge=mtJ_Ca7eE8OW2TFYtIty4vK7RK-tfOt5vuvs-cO5jms&code_challenge_method=S256&redirect_uri=http%3A%2F%2F127.0.0.1%3A33418%2Fcallback&scope=fallback&resource=https%3A%2F%2Fmcp.example.com%2Fmcp"
+   }
+  ],
+  "result": {
+   "value": "REDIRECT"
+  }
+ },
+ {
+  "name": "issuer-mismatch-fails",
+  "serverUrl": "https://mcp.example.com/mcp",
+  "provider": {
+   "clientInformation": {
+    "client_id": "client-1"
+   }
+  },
+  "responses": {
+   "GET https://mcp.example.com/.well-known/oauth-protected-resource/mcp": {
+    "status": 200,
+    "body": {
+     "resource": "https://mcp.example.com/mcp",
+     "authorization_servers": [
+      "https://auth.example.com"
+     ],
+     "scopes_supported": [
+      "mcp:read",
+      "mcp:write"
+     ]
+    }
+   },
+   "GET https://auth.example.com/.well-known/oauth-authorization-server": {
+    "status": 200,
+    "body": {
+     "issuer": "https://evil.example.com",
+     "authorization_endpoint": "https://auth.example.com/authorize",
+     "token_endpoint": "https://auth.example.com/token",
+     "registration_endpoint": "https://auth.example.com/register",
+     "response_types_supported": [
+      "code"
+     ],
+     "code_challenge_methods_supported": [
+      "S256"
+     ],
+     "grant_types_supported": [
+      "authorization_code",
+      "refresh_token"
+     ],
+     "token_endpoint_auth_methods_supported": [
+      "none"
+     ]
+    }
+   }
+  },
+  "requests": [
+   {
+    "method": "GET",
+    "url": "https://mcp.example.com/.well-known/oauth-protected-resource/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://auth.example.com/.well-known/oauth-authorization-server",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   }
+  ],
+  "calls": [],
+  "result": {
+   "error": "OAuth authorization server metadata issuer https://evil.example.com does not match expected issuer https://auth.example.com"
+  }
+ },
+ {
+  "name": "client-secret-basic",
+  "serverUrl": "https://mcp.example.com/mcp",
+  "options": {
+   "authorizationCode": "code-9"
+  },
+  "provider": {
+   "clientInformation": {
+    "client_id": "confidential",
+    "client_secret": "s3cret",
+    "issuer": "https://auth.example.com",
+    "authorization_server": "https://auth.example.com/",
+    "token_endpoint": "https://auth.example.com/token"
+   },
+   "codeVerifier": "verifier-xyz"
+  },
+  "responses": {
+   "GET https://mcp.example.com/.well-known/oauth-protected-resource/mcp": {
+    "status": 200,
+    "body": {
+     "resource": "https://mcp.example.com/mcp",
+     "authorization_servers": [
+      "https://auth.example.com"
+     ],
+     "scopes_supported": [
+      "mcp:read",
+      "mcp:write"
+     ]
+    }
+   },
+   "GET https://auth.example.com/.well-known/oauth-authorization-server": {
+    "status": 200,
+    "body": {
+     "issuer": "https://auth.example.com",
+     "authorization_endpoint": "https://auth.example.com/authorize",
+     "token_endpoint": "https://auth.example.com/token",
+     "registration_endpoint": "https://auth.example.com/register",
+     "response_types_supported": [
+      "code"
+     ],
+     "code_challenge_methods_supported": [
+      "S256"
+     ],
+     "grant_types_supported": [
+      "authorization_code",
+      "refresh_token"
+     ],
+     "token_endpoint_auth_methods_supported": [
+      "client_secret_basic",
+      "client_secret_post"
+     ]
+    }
+   },
+   "POST https://auth.example.com/token": {
+    "status": 200,
+    "body": {
+     "access_token": "a",
+     "token_type": "Bearer"
+    }
+   }
+  },
+  "requests": [
+   {
+    "method": "GET",
+    "url": "https://mcp.example.com/.well-known/oauth-protected-resource/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://auth.example.com/.well-known/oauth-authorization-server",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "POST",
+    "url": "https://auth.example.com/token",
+    "headers": {
+     "accept": "application/json",
+     "authorization": "Basic Y29uZmlkZW50aWFsOnMzY3JldA==",
+     "content-type": "application/x-www-form-urlencoded"
+    },
+    "body": "grant_type=authorization_code&code=code-9&code_verifier=verifier-xyz&redirect_uri=http%3A%2F%2F127.0.0.1%3A33418%2Fcallback&resource=https%3A%2F%2Fmcp.example.com%2Fmcp"
+   }
+  ],
+  "calls": [
+   {
+    "method": "saveTokens",
+    "value": {
+     "access_token": "a",
+     "token_type": "Bearer",
+     "issuer": "https://auth.example.com",
+     "authorization_server": "https://auth.example.com/",
+     "token_endpoint": "https://auth.example.com/token"
+    }
+   }
+  ],
+  "result": {
+   "value": "AUTHORIZED"
+  }
+ },
+ {
+  "name": "state-mismatch-fails",
+  "serverUrl": "https://mcp.example.com/mcp",
+  "options": {
+   "authorizationCode": "code",
+   "callbackState": "wrong"
+  },
+  "provider": {
+   "clientInformation": {
+    "client_id": "client-1",
+    "issuer": "https://auth.example.com",
+    "authorization_server": "https://auth.example.com/",
+    "token_endpoint": "https://auth.example.com/token"
+   },
+   "codeVerifier": "v",
+   "storedState": "right"
+  },
+  "responses": {
+   "GET https://mcp.example.com/.well-known/oauth-protected-resource/mcp": {
+    "status": 200,
+    "body": {
+     "resource": "https://mcp.example.com/mcp",
+     "authorization_servers": [
+      "https://auth.example.com"
+     ],
+     "scopes_supported": [
+      "mcp:read",
+      "mcp:write"
+     ]
+    }
+   },
+   "GET https://auth.example.com/.well-known/oauth-authorization-server": {
+    "status": 200,
+    "body": {
+     "issuer": "https://auth.example.com",
+     "authorization_endpoint": "https://auth.example.com/authorize",
+     "token_endpoint": "https://auth.example.com/token",
+     "registration_endpoint": "https://auth.example.com/register",
+     "response_types_supported": [
+      "code"
+     ],
+     "code_challenge_methods_supported": [
+      "S256"
+     ],
+     "grant_types_supported": [
+      "authorization_code",
+      "refresh_token"
+     ],
+     "token_endpoint_auth_methods_supported": [
+      "none"
+     ]
+    }
+   }
+  },
+  "requests": [
+   {
+    "method": "GET",
+    "url": "https://mcp.example.com/.well-known/oauth-protected-resource/mcp",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   },
+   {
+    "method": "GET",
+    "url": "https://auth.example.com/.well-known/oauth-authorization-server",
+    "headers": {
+     "mcp-protocol-version": "2026-07-28"
+    },
+    "body": null
+   }
+  ],
+  "calls": [],
+  "result": {
+   "error": "OAuth state parameter mismatch - possible CSRF attack"
+  }
+ },
+ {
+  "name": "cross-origin-resource-metadata-rejected",
+  "serverUrl": "https://mcp.example.com/mcp",
+  "options": {
+   "resourceMetadataUrl": "https://other.example.com/.well-known/oauth-protected-resource"
+  },
+  "provider": {},
+  "responses": {},
+  "requests": [],
+  "calls": [],
+  "result": {
+   "error": "OAuth protected resource metadata URL https://other.example.com/.well-known/oauth-protected-resource must have the same origin as the MCP server URL https://mcp.example.com"
+  }
+ }
+]

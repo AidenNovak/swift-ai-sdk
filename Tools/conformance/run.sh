@@ -13,7 +13,7 @@ trap 'rm -rf "$WORK"; rm -f "$UPSTREAM/node_modules"' EXIT
 
 cd "$WORK"
 npm init -y >/dev/null
-npm install --silent zod@4 eventsource-parser@3 @standard-schema/spec @workflow/serde@4.1.0 undici@7 json-schema tsx@4
+npm install --silent zod@4 eventsource-parser@3 @standard-schema/spec @workflow/serde@4.1.0 undici@7 json-schema tsx@4 pkce-challenge@5 cross-spawn@7
 [ -e "$UPSTREAM/node_modules" ] || ln -s "$WORK/node_modules" "$UPSTREAM/node_modules"
 
 cat >tsconfig.json <<EOF
