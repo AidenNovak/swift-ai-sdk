@@ -16,12 +16,22 @@ public struct StreamingToolCallDelta: Sendable, Decodable, Equatable {
   public var id: String?
   public var type: String?
   public var function: Function?
+  /// Provider extensions such as Gemini's `extra_content.google.thought_signature`.
+  public var extraContent: JSONValue?
 
-  public init(index: Int? = nil, id: String? = nil, type: String? = nil, function: Function? = nil) {
+  enum CodingKeys: String, CodingKey {
+    case index, id, type, function
+    case extraContent = "extra_content"
+  }
+
+  public init(
+    index: Int? = nil, id: String? = nil, type: String? = nil, function: Function? = nil, extraContent: JSONValue? = nil
+  ) {
     self.index = index
     self.id = id
     self.type = type
     self.function = function
+    self.extraContent = extraContent
   }
 }
 

@@ -19,6 +19,7 @@ let package = Package(
     .library(name: "AISDK", targets: ["AISDK"]),
     .library(name: "AISDKDeepSeek", targets: ["AISDKDeepSeek"]),
     .library(name: "AISDKAnthropic", targets: ["AISDKAnthropic"]),
+    .library(name: "AISDKOpenAICompatible", targets: ["AISDKOpenAICompatible"]),
   ],
   targets: [
     .target(
@@ -50,6 +51,16 @@ let package = Package(
       dependencies: ["AISDKProviderUtils"],
       swiftSettings: swiftSettings
     ),
+    .target(
+      name: "AISDKOpenAICompatible",
+      dependencies: ["AISDKProviderUtils"],
+      swiftSettings: swiftSettings
+    ),
+    .testTarget(
+      name: "AISDKOpenAICompatibleTests",
+      dependencies: ["AISDKOpenAICompatible", "AISDK", "AISDKTestUtils"],
+      swiftSettings: swiftSettings
+    ),
     .testTarget(
       name: "AISDKAnthropicTests",
       dependencies: ["AISDKAnthropic", "AISDK", "AISDKTestUtils"],
@@ -58,7 +69,7 @@ let package = Package(
     ),
     .testTarget(
       name: "AISDKLiveTests",
-      dependencies: ["AISDK", "AISDKDeepSeek", "AISDKAnthropic", "AISDKTestUtils"],
+      dependencies: ["AISDK", "AISDKDeepSeek", "AISDKAnthropic", "AISDKOpenAICompatible", "AISDKTestUtils"],
       swiftSettings: swiftSettings
     ),
     .testTarget(
