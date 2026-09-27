@@ -171,15 +171,17 @@ extension JSONValue {
     try self.init(jsonData: data)
   }
 
-  /// Serializes the value to JSON data.
-  public func jsonData(sortedKeys: Bool = false) throws -> Data {
+  /// Serializes the value to JSON data. Keys are sorted by default so that
+  /// identical values always produce identical bytes, which provider prompt
+  /// caches depend on.
+  public func jsonData(sortedKeys: Bool = true) throws -> Data {
     let encoder = JSONEncoder()
     encoder.outputFormatting = sortedKeys ? [.sortedKeys, .withoutEscapingSlashes] : [.withoutEscapingSlashes]
     return try encoder.encode(self)
   }
 
   /// Serializes the value to a JSON string, like `JSON.stringify`.
-  public func jsonString(sortedKeys: Bool = false) -> String {
+  public func jsonString(sortedKeys: Bool = true) -> String {
     guard let data = try? jsonData(sortedKeys: sortedKeys) else { return "null" }
     return String(decoding: data, as: UTF8.self)
   }

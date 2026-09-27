@@ -16,7 +16,36 @@ A native Swift port of the [Vercel AI SDK](https://github.com/vercel/ai), built 
 | `AISDKProvider` | `@ai-sdk/provider` | The provider specification every model implements |
 | `AISDKProviderUtils` | `@ai-sdk/provider-utils` | HTTP transport, server-sent events, JSON parsing, schemas, retries |
 | `AISDK` | `ai` | `generateText`, tools, multi-step tool loops, tool approval, messages |
+| `AISDKDeepSeek` | `@ai-sdk/deepseek` | DeepSeek chat models (thinking, reasoning effort, tools, JSON output, prefix completion, logprobs) |
 | `AISDKTestUtils` | `@ai-sdk/test-server`, `ai/test` | Replaying HTTP client, mock language model, stream helpers |
+
+## Quick start
+
+```swift
+import AISDK
+import AISDKDeepSeek
+
+let deepseek = createDeepSeek(DeepSeekProviderSettings(apiKey: "sk-..."))
+
+struct City: Codable, Sendable { var city: String }
+
+let result = try await generateText(
+  model: deepseek("deepseek-v4-flash"),
+  prompt: "What's the weather in Beijing?",
+  tools: [
+    "weather": tool(
+      description: "Get the weather for a city",
+      inputSchema: Schema(City.self, jsonSchema: [
+        "type": "object",
+        "properties": ["city": ["type": "string"]],
+        "required": ["city"],
+      ])
+    ) { input, _ in ["city": .string(input.city), "celsius": 25] as JSONValue }
+  ],
+  stopWhen: [.isStepCount(5)]
+)
+print(result.text)
+```
 
 More modules land through pull requests; see [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
