@@ -1,0 +1,12 @@
+swift-ai-sdk
+Copyright 2026 AidenNovak and the swift-ai-sdk contributors
+
+This product is a Swift port of the AI SDK (https://github.com/vercel/ai),
+which is licensed under the Apache License, Version 2.0:
+
+  AI SDK
+  Copyright 2023 Vercel, Inc.
+
+Portions of this product are derived from the AI SDK source code, including its
+provider specification, core APIs, provider implementations, and tests. Those
+portions have been translated from TypeScript to Swift and modified.
